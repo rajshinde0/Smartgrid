@@ -158,7 +158,43 @@ Boys hostel. Four decisions logged. Eight figures.
 TimeSeriesSplit CV, feature selection, overfitting curve, MAE/RMSE/R2 per
 building. Model A gives the base load *a* and slope *b* that Phase 5 needs.
 
-## Phase 4 — Regression — not started
+## Phase 4 — Regression — done
+
+**Done.** `notebooks/04_regression.ipynb` plus new module `src/models.py`.
+Chronological 70/15/15 split, TimeSeriesSplit CV, one-hot encoding of cyclic
+time features, scaling inside a Pipeline, feature selection (correlation +
+SelectKBest), models A-D for all 7 buildings, actual-vs-predicted week,
+overfitting curves (polynomial degree 1-10 and RF depth), feature importances,
+residual analysis. Six decisions logged. Seven figures. Runtime ~4 min.
+
+**Found.**
+- **The campus grew 32%-48% in mean power from 2014 to 2017** (six of seven
+  buildings; Lecture -7% but unreliable). A major finding in its own right, and
+  it forced explicit handling of concept drift: the test split is 2017, the
+  highest-consuming period, so a model fitted on 2014-16 under-predicts it.
+  Handled with a validation-calibrated offset (no leakage: validation precedes
+  test) and both corrected and uncorrected metrics reported. Decision D04-02.
+- **The power-occupancy correlation itself weakened over time** in the Academic
+  building: r fell from 0.71 (2014) to 0.45 (2017).
+- **RQ2 answered: occupancy helps in 5 of 7 buildings, mean +0.107 validation
+  R2, range -0.063 to +0.444.** Helps most where people drive the load (Girls
+  hostel +0.444, Library +0.205); slightly hurts where equipment schedules and
+  weather do (Mess -0.007, Facilities -0.063). Matches the published LBNL result.
+- **Base load is 52%-86% of mean power in every building** (Facilities 85.7%,
+  Mess 83.2%, Girls hostel 75.1%, Academic 62.3%). This is the quantitative
+  core of the headline finding, and the model-A intercepts agree with an
+  independent night-time-median check.
+- **The lag-feature trap demonstrated, not just asserted:** adding power-1h
+  lifts validation R2 from 0.29 to 0.91, but such a model absorbs waste into its
+  expectation and would never flag lights left on. Excluded deliberately (D04-03).
+- Random forest at unlimited depth shows the textbook overfitting gap.
+
+**Next.** Phase 5 — the headline: low-occupancy energy share per building,
+sensitivity curve over thresholds 0-20%, base load vs night minimum,
+responsiveness ranking, semester vs vacation, hostel mains vs UPS, comparison
+with Masoso & Grobler (56%) and Anderson et al. (27.5-31.5%). Plus the two
+sensitivity checks owed from earlier phases: Lecture under a 24 h dead-meter
+rule (D01-07) and the corrected-occupancy robustness run (D00-06).
 
 ## Phase 5 — Wasted energy (headline) — not started
 

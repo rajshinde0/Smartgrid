@@ -1,0 +1,29 @@
+building,model,train R2,val R2,test R2,test R2 (drift-corrected),val MAE kW,test MAE kW,test RMSE kW
+Academic,A: power ~ occupancy,0.564,,-0.171,,,11.66,18.07
+Academic,B: time only,0.606,0.473,0.064,0.155,7.74,11.16,16.15
+Academic,C: time + occupancy,0.727,0.506,0.003,0.064,7.81,10.77,16.67
+Academic,D: random forest (time + occupancy),0.843,0.581,-0.011,0.087,6.54,10.45,16.79
+Boys_Hostel,A: power ~ occupancy,0.42,,0.104,,,8.67,12.11
+Boys_Hostel,B: time only,0.66,0.24,-0.052,0.247,9.06,10.07,13.12
+Boys_Hostel,C: time + occupancy,0.787,0.374,0.075,0.253,8.68,9.33,12.31
+Boys_Hostel,D: random forest (time + occupancy),0.747,0.497,0.134,0.224,7.17,8.7,11.91
+Girls_Hostel,A: power ~ occupancy,0.207,,-0.878,,,3.62,4.52
+Girls_Hostel,B: time only,0.656,-0.613,-0.973,-0.66,3.45,3.76,4.63
+Girls_Hostel,C: time + occupancy,0.723,-0.169,-0.938,-0.591,2.87,3.76,4.59
+Girls_Hostel,D: random forest (time + occupancy),0.687,-0.323,-0.791,-0.52,3.06,3.54,4.41
+Mess,A: power ~ occupancy,0.154,,-0.083,,,7.53,10.07
+Mess,B: time only,0.416,0.339,-0.079,0.038,4.57,7.78,10.06
+Mess,C: time + occupancy,0.44,0.331,-0.05,0.065,4.59,7.69,9.92
+Mess,D: random forest (time + occupancy),0.538,0.226,-0.059,-0.009,4.83,7.67,9.96
+Library,A: power ~ occupancy,0.303,,-0.046,,,6.82,8.53
+Library,B: time only,0.338,-0.28,0.003,-0.065,4.53,6.77,8.32
+Library,C: time + occupancy,0.453,-0.076,-0.109,-0.135,4.05,7.06,8.78
+Library,D: random forest (time + occupancy),0.623,0.195,-0.075,-0.073,3.08,6.54,8.64
+Lecture,A: power ~ occupancy,0.17,,-0.304,,,1.36,1.58
+Lecture,B: time only,0.45,-0.174,0.293,0.023,1.28,0.83,1.16
+Lecture,C: time + occupancy,0.461,-0.171,0.265,-0.002,1.29,0.87,1.19
+Lecture,D: random forest (time + occupancy),0.677,-0.04,0.287,0.07,1.24,0.83,1.17
+Facilities,A: power ~ occupancy,0.06,,-0.668,,,2.98,3.94
+Facilities,B: time only,0.268,0.27,0.031,0.187,1.95,2.25,3.01
+Facilities,C: time + occupancy,0.282,0.207,0.05,0.14,2.07,2.21,2.98
+Facilities,D: random forest (time + occupancy),0.462,0.286,-0.053,0.028,1.94,2.28,3.13

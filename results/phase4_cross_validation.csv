@@ -1,0 +1,15 @@
+building,model,CV MAE kW (mean),CV MAE kW (sd),folds
+Academic,B: time only,6.87,0.86,5
+Academic,C: time + occupancy,5.73,0.32,5
+Boys_Hostel,B: time only,7.47,1.54,5
+Boys_Hostel,C: time + occupancy,5.46,1.0,5
+Girls_Hostel,B: time only,2.66,0.43,5
+Girls_Hostel,C: time + occupancy,2.52,0.72,5
+Mess,B: time only,5.69,1.61,5
+Mess,C: time + occupancy,5.58,1.66,5
+Library,B: time only,5.3,1.48,5
+Library,C: time + occupancy,4.7,1.61,5
+Lecture,B: time only,1.5,1.1,5
+Lecture,C: time + occupancy,1.39,0.88,5
+Facilities,B: time only,2.87,0.5,5
+Facilities,C: time + occupancy,2.79,0.56,5
