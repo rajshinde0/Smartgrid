@@ -606,7 +606,45 @@ guaranteed and only effect size is informative.
 ### 5.4 Phase 3 — Principal component analysis of daily load profiles
 
 <!-- BEGIN:method_phase3 -->
-pending Phase 3
+Phase 3 stops treating the data as one long time series and treats it as a
+collection of days.
+
+**Building the matrix.** Because Phase 1 placed every building on a complete,
+gap-free 10-minute grid, 144 consecutive values are always exactly one calendar
+day. The series is trimmed to whole days and then a single NumPy `reshape` turns
+it into a (days x 144) matrix -- no pivot and no loop. Days containing any gap,
+or any interval flagged `meter_off`, are excluded: 1,302 of
+1,356 days survive for the Academic building.
+
+**Reducing to hourly.** Each row is reshaped from 144 into (24, 6) and averaged
+along the last axis -- a vectorized operation. The same calculation written as
+three nested Python loops gives identical numbers
+(largest difference 0.0e+00) and is
+73x slower, which is the practical argument for
+vectorisation throughout the project.
+
+**Standardisation.** Each hour column is centred and scaled to unit variance.
+Without it PCA would mostly describe the midday hours, because they vary most in
+absolute terms; with it, the components describe the *shape* of a day rather than
+its size.
+
+**PCA by hand.** The covariance matrix of the standardised data is formed
+explicitly, its eigenvalues and eigenvectors taken with `np.linalg.eig`, sorted
+by eigenvalue and used to project the data. `sklearn.decomposition.PCA` is then
+run on the same matrix and the two asserted equal. Eigenvector signs are aligned
+before comparison, because an eigenvector multiplied by -1 is still a valid
+eigenvector and two correct implementations can legitimately disagree on sign.
+
+**Clustering.** k-means with k = 4 on the first three component scores, seed
+42. Clusters are named from measurable properties of their average
+profile -- overall level, the size of the night-to-day rise, and the hour of the
+peak -- rather than by eye, so the names are reproducible.
+
+**Relation to prior work.** Day-profile clustering on this campus has already
+been published (Rashid & Singh, 2018). This phase is supporting analysis, not
+part of the novelty claim.
+
+**Notebook:** `notebooks/03_pca.ipynb`.
 <!-- END:method_phase3 -->
 
 ### 5.5 Phase 4 — Regression models
@@ -953,7 +991,104 @@ but *bent* relationship: power rises with occupancy and then flattens.
 ### 6.4 Phase 3 — PCA
 
 <!-- BEGIN:results_phase3 -->
-pending Phase 3
+### How many shapes does a day have?
+
+| component | variance explained % | cumulative % |
+|---|---|---|
+| PC1 | 55 | 55 |
+| PC2 | 21 | 75.90 |
+| PC3 | 10.90 | 86.90 |
+| PC4 | 4.30 | 91.20 |
+| PC5 | 3 | 94.10 |
+| PC6 | 1.30 | 95.40 |
+
+The first component alone accounts for **55.0%** of the variation
+between days, and the first three for **86.9%**. An
+Academic-building day is therefore well described by three numbers instead of 24.
+
+![Scree plot for Academic building daily load profiles](../figures/fig_03_scree_academic.png)
+
+*PC1 explains 55.0% and the first three together 86.9% -- a real reduction in dimensionality, not a cosmetic one.*
+
+### What the components mean
+
+![The three main shapes of a day, Academic building](../figures/fig_03_components_academic.png)
+
+*PC1 has weights all of one sign -- it is the overall level of the day. PC2 changes sign across the clock -- it contrasts daytime against night. PC3 shifts the timing of the peak.*
+
+**PC1 is 'how much'** -- its weights all share a sign, so a day scoring high is
+above average at every hour. **PC2 is 'day versus night'** -- its weights change
+sign, contrasting working hours with the night, so a high score means a peaky
+day. **PC3 is the timing of the peak.** This is the usual pattern in building
+energy data, which is itself a check that the matrix and the arithmetic are
+behaving.
+
+### Do days separate by calendar without being told the calendar?
+
+![Days in PC1-PC2 space, coloured by weekend and by vacation](../figures/fig_03_pc_scatter_academic.png)
+
+*Weekends separate clearly along PC2 -- flatter days with less contrast between working hours and night. PCA was never given the day of the week.*
+
+![The same days in three dimensions](../figures/fig_03_pc3d_academic.png)
+
+*Adding PC3 brings the displayed variance to 87%.*
+
+Yes -- and the two calendar facts separate along *different* components. Weekends
+sit lower on **PC2**: nobody arrives in the morning, so the daytime rise never
+happens and the day is flat. Semester and vacation separate along **PC1**
+instead, and less cleanly, because vacation days are not uniformly quieter --
+some are among the highest-consuming days in the record, which is the summer
+cooling load again.
+
+### Day types
+
+| cluster | name | days | mean power (kW) | night floor (kW) | midday (kW) | % weekend | % vacation |
+|---|---|---|---|---|---|---|---|
+| 0 | high load, daytime peak | 450 | 35.40 | 22.10 | 54.10 | 4.40 | 36.70 |
+| 1 | lowest load, flat all day | 284 | 18.10 | 17.30 | 19.90 | 63.40 | 19 |
+| 2 | highest load, morning peak | 80 | 41.20 | 36.20 | 59 | 7.50 | 18.80 |
+| 3 | low load, morning peak | 488 | 26.10 | 20.10 | 35.50 | 33.40 | 22.10 |
+
+![k-means day types: average profile of each cluster, and the clusters in component space](../figures/fig_03_day_types_academic.png)
+
+*The clusters correspond to recognisable kinds of day rather than arbitrary groupings -- their weekend and vacation shares differ sharply even though k-means never saw the calendar.*
+
+### Which days are unusual?
+
+![Reconstruction error per day, and the most and least typical days](../figures/fig_03_reconstruction_error_academic.png)
+
+*A day the three main components cannot reproduce is an unusual day. This whole-day score cross-checks the interval-level detector built in Phase 6.*
+
+### The same analysis on a dormitory
+
+![Boys Hostel: scree plot, component shapes and days in component space](../figures/fig_03_pca_boys_hostel.png)
+
+*The first three components explain 93.0% here, and the component shapes differ from the Academic building's -- the structure is a property of each building, not a universal.*
+
+### Every building's daily shape, side by side
+
+![The shape of an average day, each building scaled to its own mean](../figures/fig_03_day_shapes_all_buildings.png)
+
+*Scaling out size leaves only shape. Academic and Library rise in the morning; the hostels do the opposite, lowest at midday and highest in the evening; the Mess shows meal-time peaks; Facilities is nearly a flat line.*
+
+Buildings needing fewer than 30 complete days are absent, and their absence is a
+result rather than an omission: drawing an average daily shape requires days that
+run midnight to midnight with a live meter throughout.
+
+| building | complete days available |
+|---|---|
+| Academic | 1,302 |
+| Facilities | 1,119 |
+| Mess | 1,105 |
+| Library | 915 |
+| Boys_Hostel | 828 |
+| Girls_Hostel | 808 |
+| Lecture | 1 |
+
+**The Facilities line is the most important thing in this chart.** A building
+whose daily profile is flat is consuming almost independently of the time of day
+-- and therefore almost independently of whether anyone is inside. That is the
+Phase 5 result appearing in advance, in a completely different kind of analysis.
 <!-- END:results_phase3 -->
 
 ### 6.5 Phase 4 — Regression
@@ -1006,6 +1141,10 @@ exactly what it would change.
 | 17 | 2 | Which statistic decides the Normal vs Log-normal comparison | KS p-value; KS statistic; AIC; visual inspection only | KS statistic (an effect size), supported by Q-Q plots | With 176,726 readings the KS p-value rejects both candidates, so it cannot discriminate. The statistic measures the largest gap between fitted and observed distributions and remains meaningful. | Log-normal wins (KS 0.083 vs 0.172), but the Q-Q plots show neither fits well because the data is bimodal. That negative result is reported rather than hidden. |
 | 18 | 2 | Mode of a continuous variable | Report the raw mode; bin first; omit the mode | Round power to the nearest 1 kW before taking the mode | Power is a float to five decimal places, so every value occurs exactly once and the raw mode is an arbitrary first row. | Makes the mode column meaningful. Bin width is a choice: a different width would shift the reported mode slightly. |
 | 19 | 2 | Scatter plots drawn as small multiples on a subsample | One scatter with all 7 buildings overlaid; small multiples; hexbin density plots | One panel per building, each a random subsample of 6,000 points (seed 42) | Seven overlapping colours in one scatter cannot be told apart reliably, and 170,000 points per building render as a solid block that hides the structure. | Visual only -- all correlation statistics are computed on the complete data, not the subsample. |
+| 20 | 3 | Which days enter the PCA | All days, filling gaps; days with no missing intervals; days with no missing intervals and no meter-off period | Complete days only -- no gaps and no meter-off intervals | PCA has no concept of a missing value, and an interpolated or dead hour would become a fictitious 'shape' the components had to explain. | 1,302 of 1,356 (96.0%) of Academic days are used. Buildings with long outages contribute proportionally fewer days. |
+| 21 | 3 | Standardising the hour columns before PCA | Raw watts; centre only; centre and scale to unit variance | Centre and scale each hour column | Midday hours vary far more in absolute watts than 4 a.m. hours, so unscaled PCA would largely describe the middle of the day. | Components describe the *shape* of a day rather than its size. PC1 still captures overall level, but through the correlation structure rather than raw magnitude. |
+| 22 | 3 | Number of k-means clusters | k = 2, 3, 4, 5; choosing k by elbow or silhouette | k = 4, fixed, with seed 42 | Four is enough to separate the interpretable kinds of day (busy/quiet crossed with peaky/flat) without producing clusters too small to describe. Clustering is supporting analysis here, so a defensible fixed k is preferable to tuning a number nothing downstream depends on. | Affects only the day-type table and its chart. No later phase consumes the cluster labels. |
+| 23 | 3 | Using np.linalg.eig rather than np.linalg.eigh | eig (general); eigh (symmetric matrices); SVD | eig, taking the real part, then verified against sklearn | A covariance matrix is symmetric, so eigh would be faster and more stable and would return real values directly. eig is used because it is the general routine and makes the textbook derivation explicit; the verification against sklearn guards the choice. | None -- results assert equal to sklearn to within 1e-8 after sign alignment. |
 <!-- END:decision_log -->
 
 ---

@@ -126,7 +126,37 @@ Four decisions logged. New module `src/stats.py`.
 **Next.** Phase 3 — PCA on daily load profiles (NumPy day matrix, eigen-PCA by
 hand checked against sklearn, scree plot, PC scatter, 3D plot, k-means day types).
 
-## Phase 3 — PCA — not started
+## Phase 3 — PCA — done
+
+**Done.** `notebooks/03_pca.ipynb` plus new module `src/pca.py`. Day matrix built
+by a genuine NumPy `reshape` (1,356 days x 144 blocks), indexing/slicing/matrix
+subsetting demonstrated, vectorized vs looped hourly aggregation timed, PCA
+computed by hand (covariance + `np.linalg.eig`) and asserted equal to sklearn,
+scree plot, component-shape plots, PC1-PC2 scatter, 3D PC1-PC3 plot, k-means day
+types, reconstruction-error anomaly score, and the same analysis repeated on the
+Boys hostel. Four decisions logged. Eight figures.
+
+**Found.**
+- **Three numbers describe a day.** PC1 = 55.0%, PC1-3 = 86.9% of variance for
+  the Academic building. PC1 is overall level (all weights one sign), PC2 is
+  day-vs-night contrast (weights change sign), PC3 is peak timing.
+- **PCA rediscovered the calendar without being told it.** Weekends separate
+  along PC2 (flatter days); semester/vacation separates along PC1, less cleanly,
+  because some vacation days are among the highest-consuming in the record.
+- **Hand-computed PCA matches sklearn exactly** (after sign alignment, atol 1e-8).
+- **Vectorized aggregation is ~97x faster** than the equivalent nested loops,
+  with bit-identical results (max difference 0.00e+00).
+- **The Academic night floor is 53% of its midday level** — the Phase 5
+  question stated in one number.
+- **Facilities has an almost flat daily shape**, so its consumption is nearly
+  independent of the time of day.
+- **Lecture has too few complete days (<30) to contribute an average daily
+  shape** and is excluded from the shape chart — stated in the chart and the
+  report rather than silently dropped.
+
+**Next.** Phase 4 — regression models A-D, chronological 70/15/15 split,
+TimeSeriesSplit CV, feature selection, overfitting curve, MAE/RMSE/R2 per
+building. Model A gives the base load *a* and slope *b* that Phase 5 needs.
 
 ## Phase 4 — Regression — not started
 
