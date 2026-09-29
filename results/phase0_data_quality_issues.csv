@@ -1,0 +1,9 @@
+issue,where,evidence,reading,phase 1 action,phase 1 / 5 action
+Negative power_factor,"all 9 meters, 14-66% of rows",range exactly -0.999..+1.000 while power is never negative,"sign convention (leading/lagging), not bad data",keep abs(power_factor); keep a pf_was_negative flag,
+Dead meter (0 W for months),"Lecture building, 81.7% of rows",exact zeros in long unbroken runs,"meter stopped reporting, not zero consumption",flag runs of 0 W longer than 6 h as meter_off,
+Missing current,"all meters, 9-13% of rows, early period",NA in the first rows of every file; readme confirms,instrument not configured yet,leave as NaN; we do not model current,
+Out-of-range voltage,"all meters, under 0.1% of rows",values at 0 V and above 270 V on a 230 V feeder,momentary meter artefact,set outside 180-270 V to NaN,
+Long gaps,"Library and both hostels, up to ~208 days",largest_gap_hours column above,extended outage in data collection,put data on a complete time grid; interpolate only gaps <= 30 min,
+Staggered start dates,"Mess (Sep 2013), Facilities (Nov 2013)",first column above,meters installed later,per-building coverage reported; no back-filling,
+Occupancy never reaches zero,"all 7 buildings, minimum count = 1",occ_min column above,"WiFi counts idle devices, not people",,relative low-occupancy threshold + sensitivity curve
+Threshold unreachable for Facilities,Facilities (SRB),5% of p95 = 0.9 < minimum observed count of 1,"small building, occupancy range 1-47",,keep the rule; report the cell honestly; use the sensitivity curve
