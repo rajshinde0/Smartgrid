@@ -393,7 +393,44 @@ so energy and occupancy line up without any fuzzy time matching.
 ### 4.9 Missing-data heatmap from the authors' own status file
 
 <!-- BEGIN:phase1_missing_heatmap -->
-pending Phase 1
+![Percent of 1-minute readings present, by month and building](../figures/fig_01_missing_heatmap.png)
+
+*Built from the authors' own data_present_status_buildings.csv. The Girls mains meter loses most of a year across 2015-16, the Boys meters several months in the same period, and the Library a long stretch in 2014-15.*
+
+| building | month | pct present |
+|---|---|---|
+| Boys_main | 2015-06 | 0 |
+| Boys_main | 2015-07 | 0 |
+| Boys_main | 2015-08 | 0 |
+| Boys_main | 2015-09 | 44.30 |
+| Boys_main | 2015-10 | 16.40 |
+| Boys_main | 2015-11 | 45.60 |
+| Boys_main | 2015-12 | 0 |
+| Boys_main | 2016-01 | 0 |
+| Boys_main | 2016-02 | 0 |
+| Boys_main | 2016-03 | 0 |
+| Boys_main | 2016-04 | 0 |
+| Boys_main | 2016-05 | 0 |
+| Boys_main | 2017-06 | 22.80 |
+| Boys_main | 2017-07 | 4 |
+| Boys_backup | 2015-06 | 0 |
+| Boys_backup | 2015-07 | 0 |
+| Boys_backup | 2015-08 | 0 |
+| Boys_backup | 2015-09 | 44.30 |
+| Boys_backup | 2015-10 | 16.40 |
+| Boys_backup | 2015-11 | 45.60 |
+| Boys_backup | 2015-12 | 0 |
+| Boys_backup | 2016-01 | 0 |
+| Boys_backup | 2016-02 | 0 |
+| Boys_backup | 2016-03 | 0 |
+| Boys_backup | 2016-04 | 0 |
+| Boys_backup | 2016-05 | 0 |
+| Boys_backup | 2017-06 | 38.70 |
+| Boys_backup | 2017-07 | 5.20 |
+| Facilities | 2013-08 | 0 |
+| Facilities | 2013-09 | 0 |
+
+68 building-months are more than half missing (first 30 shown).
 <!-- END:phase1_missing_heatmap -->
 
 ### 4.10 Data-quality issues found, and what we do about each
@@ -431,7 +468,15 @@ whether anyone was in the building.
 ### 4.12 Data-quality table after cleaning
 
 <!-- BEGIN:phase1_data_quality_table -->
-pending Phase 1
+| building | meters | first | last | 10-min intervals | usable % | power missing % | occupancy missing % | meter-off hours | interpolated blocks | outliers flagged (IQR) | outliers flagged (Z>3) | invalid voltage fixed | negative pf readings | total kWh (usable) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Academic | 1 | 2014-02-16 | 2017-11-03 | 195,406 | 90.44 | 1.94 | 8.04 | 10.50 | 89 | 13,195 | 1,538 | 0 | 0 | 849,596.90 |
+| Boys_Hostel | 2 | 2014-02-16 | 2017-11-03 | 195,407 | 60.91 | 31.21 | 7.96 | 0 | 2,654 | 5,499 | 1,909 | 0 | 0 | 651,028.10 |
+| Girls_Hostel | 2 | 2014-02-16 | 2017-11-03 | 195,406 | 59.97 | 32.45 | 8.05 | 0 | 385 | 1,296 | 578 | 0 | 0 | 293,037.10 |
+| Mess | 1 | 2014-02-16 | 2017-11-03 | 195,405 | 80.48 | 11.24 | 8.69 | 0 | 281 | 3,464 | 1,632 | 0 | 0 | 616,561.30 |
+| Library | 1 | 2014-02-16 | 2017-11-03 | 195,406 | 60.76 | 30.42 | 11.46 | 0 | 166 | 10,002 | 2,350 | 0 | 0 | 201,059.60 |
+| Lecture | 1 | 2014-02-16 | 2017-11-03 | 195,397 | 18.90 | 1.94 | 22.46 | 25,487.50 | 2,269 | 125 | 119 | 0 | 0 | 18,581.90 |
+| Facilities | 1 | 2014-07-10 | 2017-11-03 | 174,600 | 85.54 | 4.82 | 9.71 | 0 | 537 | 7,208 | 190 | 0 | 0 | 281,274.10 |
 <!-- END:phase1_data_quality_table -->
 
 ---
@@ -471,7 +516,52 @@ the 10-minute occupancy files). That is what the heatmap in section 4.8 shows.
 ### 5.2 Phase 1 — Data preparation
 
 <!-- BEGIN:method_phase1 -->
-pending Phase 1
+Phase 1 turns the raw CSVs into one clean, merged, 10-minute table per building.
+
+**Invalid values.** Three rules are applied while reading, and every fix is
+counted: `power` outside 0 to 200 kW becomes `NaN`;
+`voltage` outside 180-270 V becomes `NaN`;
+`power_factor` keeps its magnitude with the sign retained as a separate flag
+(decision D00-02).
+
+**Dead meters.** Power exactly 0 for more than 6 continuous
+hours is flagged `meter_off`. The test uses the *maximum* power within each
+10-minute block, so a block counts as zero only if all ten of its 1-minute
+readings were zero; blocks with no readings break a run rather than extending it.
+
+**Outliers are flagged, never deleted.** Both IQR (Tukey fences at 1.5x) and
+Z-score (|z| > 3) are computed on live readings only and
+stored as columns. Deleting them would remove exactly the abnormal events Phase 6
+is built to detect.
+
+**Resampling.** 1-minute readings are averaged into 10min blocks to
+match the native resolution of the occupancy data. Because a block can straddle a
+chunk boundary, each chunk contributes per-block *sums and counts* which are added
+across chunks before the mean is formed -- exactly equal to a single-pass mean.
+Blocks are then placed on a complete time grid, so missing intervals are explicit
+rather than absent.
+
+**Merging.** Energy is joined to occupancy on the timestamp with an inner join.
+Every occupancy timestamp already falls exactly on a 10-minute boundary, so no
+tolerance matching is needed. For the two dormitories, mains and UPS are kept as
+separate columns and also summed; the sum is `NaN` if either meter is missing.
+
+**Gap filling.** Gaps of at most 30 minutes
+(3 blocks) are filled by time interpolation and marked
+`was_interpolated`. Longer gaps are left missing.
+
+**Features.** `hour`, `minute_of_day`, `month`, `year`, `weekday` (an *ordered*
+categorical so Monday sorts before Tuesday), `is_weekend`, `is_semester` /
+`is_vacation`, power lagged 1 hour and 1 day, 24-hour rolling mean and standard
+deviation (computed with `closed="left"` so the current block is excluded and no
+future information leaks), and `kwh = watts / 1000 x 10/60`.
+
+**Semester flag.** The I-BLEND project site publishes no academic calendar -- we
+verified that the repository holds only the website assets and reading scripts --
+so the windows are an approximation of a typical IIIT-Delhi year, validated
+against observed dormitory occupancy (decision D01-03).
+
+**Notebook:** `notebooks/01_data_prep.ipynb`.
 <!-- END:method_phase1 -->
 
 ### 5.3 Phase 2 — Statistics and exploratory data analysis
@@ -549,7 +639,111 @@ Exploration produced four findings that shaped everything after it.
 ### 6.2 Phase 1 — Cleaning and preparation
 
 <!-- BEGIN:results_phase1 -->
-pending Phase 1
+**Seven clean tables, and a very uneven amount of usable data.**
+
+After cleaning, merging with occupancy and flagging dead meters, the proportion
+of 10-minute intervals that are actually usable -- meter alive, reading present,
+occupancy known -- varies from **18.9%** to
+**90.4%**:
+
+| building | rows | usable rows | pct usable | pct power missing | pct occupancy missing | hours meter off | total kwh |
+|---|---|---|---|---|---|---|---|
+| Academic | 195,406 | 176,730 | 90.44 | 1.94 | 8.04 | 10.50 | 849,596.90 |
+| Boys_Hostel | 195,407 | 119,024 | 60.91 | 31.21 | 7.96 | 0 | 651,028.10 |
+| Girls_Hostel | 195,406 | 117,186 | 59.97 | 32.45 | 8.05 | 0 | 293,037.10 |
+| Mess | 195,405 | 157,266 | 80.48 | 11.24 | 8.69 | 0 | 616,561.30 |
+| Library | 195,406 | 118,720 | 60.76 | 30.42 | 11.46 | 0 | 201,059.60 |
+| Lecture | 195,397 | 36,930 | 18.90 | 1.94 | 22.46 | 25,487.50 | 18,581.90 |
+| Facilities | 174,600 | 149,353 | 85.54 | 4.82 | 9.71 | 0 | 281,274.10 |
+
+Three observations matter for everything that follows.
+
+1. **Lecture is only 18.9% usable.** Its meter is flagged off
+   for **25,488 hours** -- about
+   2.9 years of the 3.7-year window. Its
+   results rest on a far smaller sample than any other building, and every table
+   it appears in says so.
+2. **The Boys hostel, Girls hostel and Library sit near 60%** because of
+   multi-month meter outages visible in section 4.9. That is a smaller sample,
+   not a worse measurement.
+3. **Academic is the most complete** at 90.4%, which is why
+   it is used as the worked example throughout the notebooks.
+
+**The pipeline was independently cross-checked.** Our per-building mean power,
+computed from the individual meter files through chunked ingestion, was compared
+against `all_buildings_power.csv`, which holds every meter side by side. All
+seven agree to within
+**0.122%** (largest disagreement), which rules out
+a whole class of silent error in timestamp handling, unit conversion and chunk
+boundaries:
+
+| building | mean power from wide file w | mean power from our cache w | difference pct | agrees |
+|---|---|---|---|---|
+| Academic | 27,785.80 | 27,788.80 | 0.01 | True |
+| Boys_Hostel | 31,418.80 | 31,383.20 | 0.11 | True |
+| Girls_Hostel | 14,180.60 | 14,181.70 | 0.01 | True |
+| Mess | 22,195.30 | 22,194.90 | 0.00 | True |
+| Library | 9,074.70 | 9,075.90 | 0.01 | True |
+| Lecture | 641.70 | 642 | 0.05 | True |
+| Facilities | 10,458.90 | 10,471.70 | 0.12 | True |
+
+**The approximate academic calendar was validated against the data.** If the
+vacation windows were roughly right, dormitory occupancy should collapse inside
+them -- and it does. Boys hostel median occupancy in vacation is
+**42%** of its semester median, Girls
+hostel **53%**. The Academic building
+falls much less, which is what you would expect when staff keep working through
+the summer.
+
+![Median occupancy by month, with the approximated vacation months shaded](../figures/fig_01_semester_validation.png)
+
+*The dip is centred on June and July exactly where the approximation puts it, and it is much deeper in the two dormitories than in the Academic building.*
+
+**Dead-meter detection.**
+
+![Lecture building in a partly-dead month, with flagged meter-off periods shaded](../figures/fig_01_dead_meter_lecture.png)
+
+*Everything shaded is excluded from the energy accounting rather than counted as zero consumption.*
+
+**A limitation of this rule, stated openly.** In the month shown the meter
+alternates between about 4 kW by day and exactly zero every night -- which looks
+less like a broken meter than like a building switched off at the mains. Both
+report exactly 0 W, and no rule based on the power value alone can separate them.
+Checking the length of every zero run shows two distinct populations:
+
+![How long the Lecture building's zero-power stretches last](../figures/fig_01_zero_run_lengths_lecture.png)
+
+*Two populations: many short runs near half a day (the nightly switch-off, 34.5% of all zero hours) and a few very long runs that account for 65.5% of them.*
+
+| hours | runs | total hours | share of zero hours % |
+|---|---|---|---|
+| < 6 h | 418 | 408 | 1.30 |
+| 6-18 h | 574 | 7,997 | 26.10 |
+| 18-24 h | 106 | 2,152 | 7 |
+| 1-2 days | 95 | 3,642 | 11.90 |
+| 2-7 days | 88 | 7,504 | 24.50 |
+| over a week | 22 | 8,928 | 29.10 |
+
+The overwhelming majority of the Lecture meter's dead time sits in runs lasting
+days to months, where the rule is clearly right. The overnight runs are where it
+may be wrong. We keep the specified 6-hour rule as primary and quantify the
+ambiguity with a 24-hour sensitivity check in Phase 5 (decision D01-07).
+
+**Outlier flagging.**
+
+![Academic building: distribution with IQR fences, and two weeks with flagged points](../figures/fig_01_outlier_flags_academic.png)
+
+*The flagged points are mostly ordinary working-day peaks. An automatic 'remove outliers' step would have deleted every busy afternoon -- which is why this project flags instead of deletes.*
+
+**Transformation and scaling.**
+
+![Academic power before and after a log transform](../figures/fig_01_log_transform_power.png)
+
+*The log transform cuts skew from 1.16 to 0.02, but the distribution stays bimodal -- a night cluster and a day cluster -- because that is a real physical feature, not a distortion.*
+
+![The same power data: original, Min-Max scaled, and standardised](../figures/fig_01_scaling_comparison.png)
+
+*Scaling moves and stretches an axis; it does not change the shape of the distribution. What changes is which features dominate a distance or a regression coefficient.*
 <!-- END:results_phase1 -->
 
 ### 6.3 Phase 2 — Statistics and EDA
@@ -603,6 +797,13 @@ exactly what it would change.
 | 6 | 0 | WiFi over-count of idle devices | Ignore it; subtract the documented idle baseline before thresholding and use that as the headline; use raw counts for the headline and report a corrected variant | Raw counts for the headline; corrected-occupancy run reported as a robustness check in Phase 5 | The over-count (~20 devices, ~50 in Academic) is an approximate constant from the dataset paper, not a measurement. Building the headline on it would rest the main result on an estimate. | Headline is conservative (raw counts make buildings look more occupied than they are, so waste is understated). The corrected run quantifies by how much. |
 | 7 | 0 | Analysis resolution | Keep 1-minute energy and forward-fill occupancy; average energy into 10-minute blocks to match occupancy | 10min blocks | Occupancy is natively 10-minute. Up-sampling it to 1 minute would invent ten times more data than was measured. Every occupancy timestamp already falls exactly on a 10-minute boundary. | Reduces ~2.3M rows per meter to ~231k, which is what makes the whole project run on a laptop. No loss of information relative to the occupancy signal. |
 | 8 | 0 | Random seed | Unseeded; a fixed seed | seed = 42 everywhere (sampling, k-means, anomaly injection, random forest) | Results must be reproducible by a teammate or an examiner running the notebooks again. | None on the substance; makes every reported number exactly reproducible. |
+| 9 | 1 | Dead-meter rule | No rule; flag any zero reading; flag runs of 0 W longer than 6 h | Runs of exactly 0 W longer than 6 continuous hours are flagged meter_off; tested on the block maximum | A building can draw very little at night but not exactly 0.000 W for six hours. Flagging every isolated zero would also catch genuine brief shutdowns. | Removes 25,488 h from Lecture and 10 h from Academic. Without it, Lecture would appear to be the most efficient building on campus, which is an artefact. |
+| 10 | 1 | Outlier handling | Delete IQR outliers; delete Z>3 outliers; winsorise; flag both and delete neither | Flag with both IQR and Z-score; delete nothing | Extreme power readings are the phenomenon Phase 6 is built to detect. Removing them would remove the subject of the study, and IQR alone flags ~6.8% of the Academic record -- mostly ordinary working-day peaks. | No rows removed. Two extra boolean columns available to later phases. |
+| 11 | 1 | Semester / vacation calendar | Use the I-BLEND published calendar; infer purely from the data; approximate from the academic year and validate against the data | Approximate windows (16 May - 31 Jul, 16 - 31 Dec), validated against dormitory occupancy | The I-BLEND project repository publishes no calendar file -- verified, it contains only website assets and reading scripts. A purely data-driven split would be circular, since occupancy is also our explanatory variable. | Validated: Boys hostel vacation occupancy is 42% of its semester median, Girls 53%. Good enough for coarse semester-vs-vacation comparisons; boundaries are accurate to within days, not hours. |
+| 12 | 1 | Interpolation limit | No interpolation; fill all gaps; fill only short gaps | Time interpolation for gaps up to 30 minutes (3 blocks); longer gaps left missing; every filled value marked was_interpolated | Filling 20 minutes between two similar readings is safe; filling a 200-day outage would be inventing data. | Fills 6,381 blocks across all seven buildings -- under 0.47% of the total. Negligible effect on any aggregate. |
+| 13 | 1 | Combining hostel mains and UPS meters | Use mains only; use the sum only; keep both separate and also sum | Keep mains and UPS as separate columns AND provide the sum; the sum is NaN if either meter is missing | Which supply keeps running when rooms empty out is a Phase 5 question, so the split must survive. Adding a measured value to a missing one would silently understate the building total. | Hostel totals are only available when both meters report, which is part of why the two dormitories sit near 60% usable rather than 90%. |
+| 14 | 1 | Chunk-boundary handling when resampling | Read whole files and resample once; resample each chunk and average the averages; accumulate per-block sums and counts across chunks | Per-block sums and counts, combined across chunks before the mean is formed | Averaging chunk averages is wrong whenever a 10-minute block spans two chunks. Sums and counts combine exactly. | None relative to a correct single-pass mean -- that is the point. Verified against all_buildings_power.csv to within 0.122%. |
+| 15 | 1 | Ambiguity between a dead meter and a building switched off at night | Keep the 6 h rule and say nothing; raise the threshold to 24 h so nightly switch-offs count as real zero consumption; keep the rule and publish a sensitivity check | Keep the specified 6 h rule as primary; re-run the Lecture figure with a 24 h rule in Phase 5 as a sensitivity check | A switched-off building and a dead meter both report exactly 0 W and cannot be told apart from the power value alone. The zero-run histogram shows two populations: short runs near half a day (34.5% of zero hours) and multi-day runs (65.5% of zero hours). | Affects Lecture only, and only its denominator. The sensitivity check in Phase 5 quantifies it; the rest of the campus is unaffected because no other meter has sustained exact zeros. |
 <!-- END:decision_log -->
 
 ---

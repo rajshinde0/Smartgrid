@@ -60,7 +60,39 @@ post-cleaning data-quality table.
 
 ---
 
-## Phase 1 — Data preparation — not started
+## Phase 1 — Data preparation — done
+
+**Done.** `notebooks/01_data_prep.ipynb` does the full inspection
+(head/tail/info/describe), builds the missing-data heatmap from
+`data_present_status_buildings.csv`, applies the invalid-value rules, flags dead
+meters and outliers (flag, never delete), resamples to 10 min, merges with
+occupancy, interpolates gaps <= 30 min, adds all features, and stacks everything
+into one long table (1,347,027 rows). Also covers `loc`/`iloc`, sorting, ordered
+categoricals, the log transform, Min-Max vs standardisation, and one occupancy
+file analysed with the stdlib `csv` module using only lists and dicts (checked
+against pandas with asserts). Seven decisions logged. Five figures.
+
+**Found.**
+- **Usable coverage is very uneven**: Academic 90.4%, Facilities 85.5%, Mess
+  80.5%, Boys 60.9%, Library 60.8%, Girls 60.0%, **Lecture 18.9%**.
+- **Lecture meter is off for 25,488 hours** (~2.9 years of the 3.7-year window).
+- **Pipeline independently verified**: our per-building mean power agrees with
+  `all_buildings_power.csv` to within **0.113%** across all seven buildings.
+- **Approximate academic calendar validated**: Boys hostel vacation occupancy is
+  42% of its semester median, Girls 53%, Academic 83% (staff keep working).
+- **New problem found and documented (D01-07):** a building switched off at the
+  mains overnight and a dead meter both read exactly 0 W. The zero-run histogram
+  for Lecture shows two populations — median run 13.7 h (nightly switch-off),
+  max 1,123 h (46 days). 34.5% of Lecture's zero hours sit in runs of <= 24 h.
+  The specified 6 h rule catches both; Phase 5 will re-run Lecture with a 24 h
+  rule as a sensitivity check.
+- The highest-power blocks in the Academic building are **summer afternoons**
+  during vacation — air conditioning, not people. Early hint for Phase 5 and
+  for the no-weather-data limitation.
+
+**Next.** Phase 2 — attribute-type table, descriptive statistics (manual NumPy
+vs pandas), population-vs-sample simulation, distribution fitting with Q-Q and
+KS, hypothesis tests, and the EDA chart set.
 
 ## Phase 2 — Statistics and EDA — not started
 

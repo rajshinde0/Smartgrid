@@ -1,0 +1,8 @@
+building,mean_power_from_wide_file_w,mean_power_from_our_cache_w,difference_pct,agrees
+Academic,27785.8,27788.8,0.011,True
+Boys_Hostel,31418.8,31383.2,0.113,True
+Girls_Hostel,14180.6,14181.7,0.008,True
+Mess,22195.3,22194.9,0.002,True
+Library,9074.7,9075.9,0.013,True
+Lecture,641.7,642.0,0.048,True
+Facilities,10458.9,10471.7,0.122,True
