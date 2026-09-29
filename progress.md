@@ -196,7 +196,52 @@ with Masoso & Grobler (56%) and Anderson et al. (27.5-31.5%). Plus the two
 sensitivity checks owed from earlier phases: Lecture under a 24 h dead-meter
 rule (D01-07) and the corrected-occupancy robustness run (D00-06).
 
-## Phase 5 — Wasted energy (headline) — not started
+## Phase 5 — Wasted energy (headline) — done
+
+**Done.** `notebooks/05_waste.ipynb` plus new module `src/waste.py`. Headline
+table, sensitivity curve (0-20%), base load vs night minimum, responsiveness
+ranking, semester vs vacation, hostel mains vs UPS, commercial vs residential,
+comparison with the published literature, and the two sensitivity checks owed
+from earlier phases. Four decisions logged. Eight figures.
+
+**HEADLINE FINDING.** *When these buildings are at their emptiest they still
+draw 62%-85% of their average power.* Per building, low-occupancy energy share /
+intensity ratio: Lecture 19.1% / 85%, Library 17.4% / 62%, Mess 9.3% / 74%,
+Girls hostel 5.0% / 79%, Academic 4.8% / 74%, Boys hostel 4.5% / 75%,
+Facilities no qualifying interval at the standard threshold.
+
+**Found.**
+- **Strongest external check in the project:** applying Masoso & Grobler's own
+  clock-based definition (outside 08:00-18:00 weekdays) to our data gives
+  Academic **55.2%** and Library **55.0%** against their published **56%**.
+  Different continent, fifteen years apart, within a percentage point.
+- The clock rule and the occupancy rule are **not measuring the same thing** and
+  differ by an order of magnitude; our occupancy figure is a conservative lower
+  bound, which the corrected-occupancy check confirms independently.
+- **The intensity ratio was added** (D05-01) because the energy share depends on
+  how *often* a building is empty — a fact about the timetable, not the building.
+- **Two base-load estimates disagree where extrapolation is unsafe.** Model A's
+  intercept sits 52% below the measured night median for the Boys hostel, 46%
+  below for Lecture, 31% below for Girls hostel — dormitory occupancy never
+  approaches zero, so the intercept is extrapolated far outside the data.
+  Responsiveness is therefore ranked on the *measured* intensity ratio, with the
+  modelled value flagged unreliable. Conclusion unchanged either way.
+- **The Facilities sensitivity curve is a staircase**, not a smooth rise: its
+  occupancy is a small integer (1-47), so a sliding threshold only ever crosses
+  whole numbers. Same fact that makes the standard threshold unreachable there.
+- **Lecture 24 h dead-meter check (D01-07 settled):** share moves 19.06% -> 17.76%,
+  a difference of 1.30 pp, while usable intervals more than double. Ambiguity
+  real but small.
+- **Corrected-occupancy check (D00-06 settled):** subtracting the idle-device
+  baseline raises the share everywhere, confirming the raw headline is a lower
+  bound. For Facilities the correction is not credible (subtracting 20 from a
+  building whose p95 is 18), which is why it was never the headline.
+
+**Next.** Phase 6 — anomaly experiment: Detector T (model B residuals) vs
+Detector O (model C residuals), injected spikes and waste anomalies on a copy of
+the test data with seed 42, confusion matrices and precision/recall/F1 per
+detector x anomaly type, then Detector O on real data for the top 10 unusual
+patterns.
 
 ## Phase 6 — Anomaly experiment — not started
 

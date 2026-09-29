@@ -1,0 +1,8 @@
+building,kind,out-of-hours share % (clock rule),% intervals out of hours,low-occupancy share % (occupancy rule),% intervals low occupancy
+Academic,commercial,55.25,69.98,4.81,6.52
+Boys_Hostel,residential,74.1,69.65,4.45,5.96
+Girls_Hostel,residential,73.66,70.11,4.98,6.27
+Mess,commercial,66.37,69.98,9.34,12.59
+Library,commercial,54.96,68.82,17.43,28.36
+Lecture,commercial,22.09,27.62,19.06,22.39
+Facilities,commercial,63.65,68.64,0.0,0.0

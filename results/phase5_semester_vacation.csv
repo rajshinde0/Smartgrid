@@ -1,0 +1,15 @@
+period,threshold,intervals,total_kwh,low_occ_kwh,share_pct,mean_power_w,building
+semester,12.9,129756,617169.5,25483.9,4.13,28538.3,Academic
+vacation,12.9,46974,232427.4,15348.2,6.6,29688.0,Academic
+semester,21.05,94438,550420.7,17564.1,3.19,34970.3,Boys_Hostel
+vacation,21.05,24586,100607.4,11395.1,11.33,24552.4,Boys_Hostel
+semester,9.0,94691,240031.1,9338.3,3.89,15209.3,Girls_Hostel
+vacation,9.0,22495,53006.0,5249.5,9.9,14138.1,Girls_Hostel
+semester,8.85,122966,485679.0,32613.1,6.71,23698.2,Mess
+vacation,8.85,34300,130882.2,24967.5,19.08,22894.8,Mess
+semester,9.1,92804,162706.6,22983.2,14.13,10519.4,Library
+vacation,9.1,25916,38353.0,12060.3,31.45,8879.4,Library
+semester,14.9,26923,15943.4,2878.4,18.05,3553.1,Lecture
+vacation,14.9,10007,2638.5,663.4,25.14,1582.0,Lecture
+semester,0.9,109432,195592.8,0.0,0.0,10724.1,Facilities
+vacation,0.9,39921,85681.2,0.0,0.0,12877.6,Facilities

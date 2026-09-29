@@ -1,0 +1,8 @@
+building,kind,threshold,coverage %,total kWh measured,low-occupancy kWh,low-occupancy energy share %,% of intervals low,mean power overall (kW),mean power when low (kW),intensity ratio,base load a (kW),watts per occupant b
+Academic,commercial,12.9,90.4,849596.9,40832.1,4.81,6.52,28.84,21.25,0.737,16.95,128.1
+Boys_Hostel,residential,21.05,60.9,651028.1,28959.2,4.45,5.96,32.82,24.51,0.747,15.94,68.0
+Girls_Hostel,residential,9.0,60.0,293037.1,14587.8,4.98,6.27,15.0,11.92,0.794,10.6,36.3
+Mess,commercial,8.85,80.5,616561.3,57580.6,9.34,12.59,23.52,17.45,0.742,18.85,61.7
+Library,commercial,9.1,60.8,201059.6,35043.5,17.43,28.36,10.16,6.24,0.615,7.24,68.5
+Lecture,commercial,14.9,18.9,18581.9,3541.8,19.06,22.39,3.02,2.57,0.851,2.13,7.4
+Facilities,commercial,0.9,85.5,281274.1,0.0,0.0,0.0,11.3,,,9.27,231.7
