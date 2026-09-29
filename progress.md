@@ -94,7 +94,37 @@ against pandas with asserts). Seven decisions logged. Five figures.
 vs pandas), population-vs-sample simulation, distribution fitting with Q-Q and
 KS, hypothesis tests, and the EDA chart set.
 
-## Phase 2 — Statistics and EDA — not started
+## Phase 2 — Statistics and EDA — done
+
+**Done.** `notebooks/02_stats_eda.ipynb`: attribute-type table (including the
+asymmetric binary flags), descriptive statistics per building, the same
+statistics recomputed by hand with NumPy and asserted equal to pandas,
+population-vs-sample simulation (1,000 samples of 30 days), Normal vs Log-normal
+fitting with Q-Q and KS, hypothesis tests with effect sizes, and ten charts.
+Four decisions logged. New module `src/stats.py`.
+
+**Found.**
+- **Occupancy explains only 7%-45% of the variation in power.** Best: Academic
+  r = 0.67 (R2 = 0.45). Worst: Facilities r = 0.27 (R2 = 0.08). Most of what
+  drives consumption is not how many people are present.
+- **Every building has a large base load.** The Academic building still draws
+  ~20 kW at 3 a.m. against a 41 kW midday peak. Facilities is almost perfectly
+  flat across the whole day (~10-13 kW).
+- **Log-normal beats Normal** (KS 0.083 vs 0.172) but **neither fits** — power
+  is bimodal (night cluster + day cluster). So MAE goes beside RMSE in Phase 4.
+- **Manual NumPy statistics match pandas to 4.5e-15** (assertion in the notebook).
+- **Response to occupation is very uneven, and that is the key finding.**
+  Semester vs vacation: Lecture d = 1.24 and Boys hostel d = 0.89 (large), but
+  Academic d = -0.08 and Mess d = 0.09 (negligible), and **Facilities uses 17%
+  MORE in vacation** (d = -0.45) because Delhi's summer break is its hottest
+  season. Weekday vs weekend: Library -64%, Academic -45% (medium), both
+  hostels flat. Buildings *can* respond — so the ones that do not are making a
+  choice.
+- With n = 37k-177k every p-value is < 1e-300; only effect sizes are informative.
+  Recorded as decision D02-01.
+
+**Next.** Phase 3 — PCA on daily load profiles (NumPy day matrix, eigen-PCA by
+hand checked against sklearn, scree plot, PC scatter, 3D plot, k-means day types).
 
 ## Phase 3 — PCA — not started
 

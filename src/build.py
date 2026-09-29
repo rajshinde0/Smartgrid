@@ -152,7 +152,7 @@ def build_all(force: bool = False) -> dict[str, dict]:
 
 
 LONG_COLUMNS = [
-    "building", "building_kind", "power_w", "occupancy", "kwh", "hour",
+    "building", "building_kind", "power_w", "occupancy", "kwh", "date", "hour",
     "weekday", "month", "year", "is_weekend", "is_vacation", "is_semester",
     "period", "meter_off", "is_missing", "usable", "outlier_iqr",
     "outlier_zscore", "power_lag_1h", "power_lag_1d", "power_roll24h_mean",
@@ -169,8 +169,15 @@ def build_long_table(force: bool = False) -> pd.DataFrame:
     """
     if C.LONG_TABLE_PARQUET.is_file() and not force:
         df = pd.read_parquet(C.LONG_TABLE_PARQUET)
-        print(f"[cache] long table: {len(df):,} rows")
-        return df
+        # A cache written before a column was added to LONG_COLUMNS would be
+        # silently missing it, and the failure would surface far away as a
+        # KeyError inside a groupby. Check here instead.
+        missing = [c for c in LONG_COLUMNS if c not in df.columns]
+        if missing:
+            print(f"[stale] long table is missing {missing}; rebuilding")
+        else:
+            print(f"[cache] long table: {len(df):,} rows")
+            return df
 
     parts = []
     for building in C.BUILDING_ORDER:

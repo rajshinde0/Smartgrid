@@ -1,0 +1,20 @@
+column,attribute type,family,values,note
+timestamp (index),interval,continuous,date/time,"Ordered with meaningful differences, but no true zero -- you can subtract two timestamps, you cannot divide them."
+building,nominal,categorical,7 categories,Library is not greater or less than Mess.
+building_kind,binary (symmetric),categorical,commercial / residential,"Both states are equally informative, so it is symmetric."
+weekday,ordinal,categorical,7 ordered categories,Monday really does come before Tuesday; stored as an ordered pd.Categorical.
+hour,discrete numeric (cyclic),numeric,0-23,"Cyclic: hour 23 is adjacent to hour 0, which is why Phase 4 one-hot encodes it rather than treating it as a plain number."
+month,discrete numeric (cyclic),numeric,1-12,Same cyclic issue.
+year,discrete numeric,numeric,2014-2017,"Counted, not measured."
+is_weekend,binary (symmetric),categorical,True / False,Both states are common and informative.
+is_semester / is_vacation,binary (symmetric),categorical,True / False,Approximated from the academic calendar; see decision D01-03.
+occupancy,discrete numeric,numeric,1 to 614,A count of devices. Discrete: you cannot see 4.5 devices.
+power_w,continuous numeric (ratio),numeric,"0 to ~139,000 W","Has a true zero, so ratios are meaningful: 20 kW really is twice 10 kW."
+kwh,continuous numeric (ratio),numeric,derived,power / 1000 x 10/60 -- the quantity every energy total is built from.
+voltage,continuous numeric (interval-like),numeric,180-270 V,Practically interval within its narrow working band.
+power_factor,continuous numeric,numeric,0 to 1,Magnitude kept; the sign is stored separately as an asymmetric binary flag.
+meter_off,binary (ASYMMETRIC),categorical,True / False,Only True is informative. Two buildings both being 'not broken' says nothing about their similarity.
+is_missing,binary (ASYMMETRIC),categorical,True / False,Only True is informative.
+was_interpolated,binary (ASYMMETRIC),categorical,True / False,Only True is informative -- it marks a value we filled rather than measured.
+outlier_iqr / outlier_zscore,binary (ASYMMETRIC),categorical,True / False,"Only True is informative; this is the rare, interesting state."
+usable,binary (symmetric),categorical,True / False,"Used for filtering, and both states are common."

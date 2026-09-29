@@ -1,0 +1,8 @@
+group_a,group_b,n_a,n_b,mean_a,mean_b,median_a,median_b,difference_in_means,percent_difference,t_statistic,t_pvalue,mannwhitney_pvalue,cohens_d,effect_size_label,building
+semester,vacation,129756,46974,28538.3,29688.0,23576.3,25189.6,-1149.7,-3.9,-15.65,4.148806316653751e-55,1.3768103505651272e-140,-0.081,negligible,Academic
+semester,vacation,94438,24586,34970.3,24552.4,33141.5,23243.6,10417.9,42.4,158.3,0.0,0.0,0.887,large,Boys_Hostel
+semester,vacation,94691,22495,15209.3,14138.1,15031.7,14282.1,1071.3,7.6,37.17,3.193597783417503e-297,5.084100160499572e-193,0.249,small,Girls_Hostel
+semester,vacation,122966,34300,23698.2,22894.8,22384.8,20958.7,803.4,3.5,14.27,3.9988212375271975e-46,3.4076966643944525e-105,0.091,negligible,Mess
+semester,vacation,92804,25916,10519.4,8879.4,8141.4,5861.6,1640.0,18.5,35.48,4.210242607960965e-272,0.0,0.232,small,Library
+semester,vacation,26923,10007,3553.1,1582.0,4193.8,1483.6,1971.1,124.6,129.68,0.0,0.0,1.236,large,Lecture
+semester,vacation,109432,39921,10724.1,12877.6,10158.9,12201.6,-2153.5,-16.7,-91.02,0.0,0.0,-0.453,small,Facilities
