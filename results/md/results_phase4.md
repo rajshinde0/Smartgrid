@@ -14,17 +14,16 @@ Before any model result can be read, one thing has to be established:
 
 ![Mean power by year, indexed to 2014, and total growth per building](../figures/fig_04_drift_by_year.png)
 
-*Six of seven buildings grew between 32% and 48% in mean power over four years. The campus did not get more efficient; it got substantially more energy-hungry.*
+*Six of seven buildings grew between 32% and 48% in mean power over four years.
+The campus did not get more efficient; it got substantially more energy-hungry.*
 
 This is a finding in its own right and it is also a methodological problem. The
-test split is the last 15% of the record -- 2017, the highest-consuming period --
-so a model fitted on 2014-2016 under-predicts it systematically. Note too that in
-the Academic building the **power-occupancy correlation itself fell**, from
-0.71 in 2014 to
-0.45 in 2017: the
-relationship the models depend on weakened over time. Test-set numbers below
-should be read with that in mind, which is why model selection uses the
-validation split.
+test split is the last 15% of the record -- 2017, the highest-consuming period
+-- so a model fitted on 2014-2016 under-predicts it systematically. Note too
+that in the Academic building the **power-occupancy correlation itself fell**,
+from 0.71 in 2014 to 0.45 in 2017: the relationship the models depend on
+weakened over time. Test-set numbers below should be read with that in mind,
+which is why model selection uses the validation split.
 
 #### Model scores
 
@@ -73,24 +72,22 @@ validation split.
 
 ![Validation R-squared for models B and C, and the gain from adding occupancy](../figures/fig_04_model_comparison.png)
 
-*Occupancy improves validation R-squared in 5 of the 7 buildings, by a mean of +0.107, but the gain ranges from -0.063 to +0.444.*
+*Occupancy improves validation R-squared in 5 of the 7 buildings, by a mean of
++0.107, but the gain ranges from -0.063 to +0.444.*
 
 **Yes -- in most buildings, modestly, and very unevenly.** Adding occupancy
-raises validation R-squared in **5 of 7** buildings, with a
-mean gain of **+0.107**. But the spread is the real story: the largest
-gain is Girls Hostel at
-**+0.444**, while occupancy makes the model
-slightly *worse* in Mess, Facilities
-(-0.063 at worst). It improves MAE in
-3 of 7.
+raises validation R-squared in **5 of 7** buildings, with a mean gain of
+**+0.107**. But the spread is the real story: the largest gain is Girls Hostel
+at **+0.444**, while occupancy makes the model slightly *worse* in Mess,
+Facilities (-0.063 at worst). It improves MAE in 3 of 7.
 
 **A note on how to read these numbers.** Several validation R-squared values are
 negative, meaning the model does worse than simply predicting the validation
 mean. That is the concept drift of section 6.5 again -- the validation period
 sits at a different consumption level from the training period. The *difference*
 between C and B is still meaningful, because both models are fitted on the same
-training data and face exactly the same drift; whatever the drift costs, it costs
-them equally.
+training data and face exactly the same drift; whatever the drift costs, it
+costs them equally.
 
 This is consistent with the LBNL finding that occupancy data adds only modestly
 to building baseline models, and it is a real answer to research question 2
@@ -99,12 +96,9 @@ number of people in them.** The same conclusion arrives independently from the
 Phase 2 correlations and the Phase 3 flat daily profiles.
 
 The pattern across buildings is also readable. Occupancy helps most where people
-genuinely drive the load -- the Girls hostel
-(+0.444)
-and the Library
-(+0.205) --
-and helps least, or slightly hurts, in the Mess and Facilities, whose loads are
-driven by equipment schedules and weather rather than by headcount.
+genuinely drive the load -- the Girls hostel (+0.444) and the Library (+0.205)
+-- and helps least, or slightly hurts, in the Mess and Facilities, whose loads
+are driven by equipment schedules and weather rather than by headcount.
 
 #### Cross-validation with TimeSeriesSplit
 
@@ -139,18 +133,21 @@ driven by equipment schedules and weather rather than by headcount.
 
 ![Base load against responsiveness, one point per building](../figures/fig_04_base_load_vs_responsiveness.png)
 
-*Buildings towards the top-left run their equipment regardless of who is present; buildings towards the bottom-right scale with their occupants.*
+*Buildings towards the top-left run their equipment regardless of who is
+present; buildings towards the bottom-right scale with their occupants.*
 
 The `a` column is the load the fitted line predicts at zero occupancy -- the
 power a building draws with nobody in it -- and the night-time median column is
-an independent check on it from a completely different calculation. Phase 5 takes
-these two coefficients and turns them into the headline ranking.
+an independent check on it from a completely different calculation. Phase 5
+takes these two coefficients and turns them into the headline ranking.
 
 #### Predictions against reality
 
 ![Academic building: actual and predicted power over one test week, with occupancy below](../figures/fig_04_actual_vs_predicted_academic.png)
 
-*Both models reproduce the daily rhythm; model C bends towards the actual line when occupancy is unusual for the time of day. Neither captures the sharp peaks -- and those leftover peaks are what Phase 6 detects.*
+*Both models reproduce the daily rhythm; model C bends towards the actual line
+when occupancy is unusual for the time of day. Neither captures the sharp peaks
+-- and those leftover peaks are what Phase 6 detects.*
 
 Note the chart uses two stacked panels rather than two y-axes. Watts and people
 are different quantities, and putting them on one axis would invent a visual
@@ -171,13 +168,16 @@ relationship that does not exist.
 
 ![Training and validation error against model complexity](../figures/fig_04_overfitting_curves.png)
 
-*The forest shows the textbook picture: at unlimited depth its training error is 2.71 kW but its validation error is 6.47 kW, a gap of 2.4x. That gap is overfitting made visible.*
+*The forest shows the textbook picture: at unlimited depth its training error is
+2.71 kW but its validation error is 6.47 kW, a gap of 2.4x. That gap is
+overfitting made visible.*
 
 #### What the forest uses
 
 ![Random-forest feature importances for Academic power](../figures/fig_04_feature_importance.png)
 
-*Occupancy is the strongest single input, ahead of every hour-of-day indicator -- which is reassuring for a project built around it.*
+*Occupancy is the strongest single input, ahead of every hour-of-day indicator
+-- which is reassuring for a project built around it.*
 
 #### Residuals
 
@@ -188,4 +188,7 @@ relationship that does not exist.
 
 ![Residual distributions for models B and C, and residuals against prediction](../figures/fig_04_residuals_academic.png)
 
-*After the drift correction both distributions sit near zero and model C's is narrower. Residuals fan out at high predicted power, so Phase 6 scores deviations relative to the spread of the residuals rather than in absolute watts.*
+*After the drift correction both distributions sit near zero and model C's is
+narrower. Residuals fan out at high predicted power, so Phase 6 scores
+deviations relative to the spread of the residuals rather than in absolute
+watts.*

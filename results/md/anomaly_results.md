@@ -35,14 +35,16 @@ identical.
 
 ![Confusion matrices for both detectors, Academic building  [SYNTHETIC]](../figures/fig_06_confusion_matrices.png)
 
-*Detector O has higher recall and lower precision at this threshold -- but see the fairness correction below.*
+*Detector O has higher recall and lower precision at this threshold -- but see
+the fairness correction below.*
 
 #### The fair comparison
 
 A fixed threshold does not put the two detectors on equal terms: model C fits
 better, so its residuals are tighter, so its MAD is smaller, so the same
-deviation in watts scores a larger Z and it raises more alerts. Comparing at that
-threshold measures scale calibration rather than the value of the information.
+deviation in watts scores a larger Z and it raises more alerts. Comparing at
+that threshold measures scale calibration rather than the value of the
+information.
 
 | comparison | detector T | detector O | metric | difference (O - T) |
 |---|---|---|---|---|
@@ -58,11 +60,10 @@ threshold measures scale calibration rather than the value of the information.
 *Compared fairly, the two detectors perform almost identically.*
 
 **Answer to research question 3: a qualified yes -- occupancy helps
-consistently, but only a little.** The fixed-threshold comparison is discarded as
-a calibration artefact. On the 5 fair comparisons, 5 favour
-Detector O: matched-budget F1 0.285 -> 0.294, average
-precision 0.426 -> 0.446, ROC AUC 0.685 -> 0.703, and
-waste-event recall 21.8% -> 24.7%.
+consistently, but only a little.** The fixed-threshold comparison is discarded
+as a calibration artefact. On the 5 fair comparisons, 5 favour Detector O:
+matched-budget F1 0.285 -> 0.294, average precision 0.426 -> 0.446, ROC AUC
+0.685 -> 0.703, and waste-event recall 21.8% -> 24.7%.
 
 Every margin is one to three percentage points. What makes them credible is that
 they all point the same way and that **the largest gains fall on the waste
@@ -73,8 +74,8 @@ Occupancy adds nothing to catching spikes, which stand out against any baseline.
 This modest result is consistent with everything else the project found:
 occupancy explains only 7-45% of power variation (Phase 2), adds +0.107 to
 validation R-squared on average (Phase 4), and several buildings have a nearly
-flat daily profile (Phase 3). **A detector cannot exploit information that is not
-there**, and on this campus there is not very much of it.
+flat daily profile (Phase 3). **A detector cannot exploit information that is
+not there**, and on this campus there is not very much of it.
 
 #### Rule variants
 
@@ -118,20 +119,20 @@ once rather than twenty-four times.
 **Read that table with care: it is not ten findings, it is one finding ten
 times.** Almost every one of the most extreme episodes on the campus is the
 Academic building, starting around 03:20, running seven to eight hours, between
-August and November 2017, at an excess of roughly 35-38 kW -- repeating day after
-day.
+August and November 2017, at an excess of roughly 35-38 kW -- repeating day
+after day.
 
 A repeating daily pattern is not what a fault looks like; it is what a **change
 of schedule** looks like. Something in that building began switching on in the
 small hours in the second half of 2017, and a model fitted on 2014-2016 does not
-know about it, so it reports the same surprise every morning. This is the concept
-drift of section 6.5 resurfacing as false alarms -- the same drift measured there
-as a 42% rise in Academic consumption across the record.
+know about it, so it reports the same surprise every morning. This is the
+concept drift of section 6.5 resurfacing as false alarms -- the same drift
+measured there as a 42% rise in Academic consumption across the record.
 
 The practical lesson is worth stating: **a detector built on a fixed historical
 baseline will eventually spend all of its alerts re-reporting a change it should
-have absorbed.** A deployed version of this would need periodic refitting. A more
-useful operator view takes the most unusual episode per building, so one
+have absorbed.** A deployed version of this would need periodic refitting. A
+more useful operator view takes the most unusual episode per building, so one
 recurring pattern occupies one row:
 
 | building | start | duration hours | peak z | mean excess kW | total excess kWh | total episodes |

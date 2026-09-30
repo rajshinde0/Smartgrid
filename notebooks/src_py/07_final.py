@@ -82,8 +82,8 @@ requires fine-grained energy data and some knowledge of whether anyone was there
 The public **I-BLEND** dataset has both: 1-minute electrical readings from nine
 meters across seven IIIT-Delhi buildings, paired with 10-minute counts of
 WiFi-associated devices. This project presents **the first occupancy-aware
-energy-waste and anomaly analysis of I-BLEND**, over the
-{len(ratio_valid)} + 1 buildings and 3.7 years where both signals overlap
+energy-waste and anomaly analysis of I-BLEND**, covering all
+{len(headline)} buildings over the 3.7 years where both signals overlap
 (February 2014 to November 2017). The methods are standard; the contribution is
 the application.
 

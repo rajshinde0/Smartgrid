@@ -31,27 +31,26 @@ could receive.
 #### 3. The injected anomalies are synthetic
 
 Every anomaly used to score the detectors in section 9 was **created by us** and
-injected into a copy of the test data with a recorded seed, because no real fault
-on this campus was ever labelled. They are a measuring instrument for comparing
-two detectors, and **no injected event corresponds to anything that happened at
-IIIT-Delhi**.
+injected into a copy of the test data with a recorded seed, because no real
+fault on this campus was ever labelled. They are a measuring instrument for
+comparing two detectors, and **no injected event corresponds to anything that
+happened at IIIT-Delhi**.
 
-This means the detector comparison is only as realistic as our idea of what waste
-looks like. We modelled it as a sustained +15-30% lift during low-occupancy
-periods; if real waste on this campus takes a different shape, the ranking could
-differ. The real-data findings are reported separately and described only as
-patterns worth inspecting.
+This means the detector comparison is only as realistic as our idea of what
+waste looks like. We modelled it as a sustained +15-30% lift during
+low-occupancy periods; if real waste on this campus takes a different shape, the
+ranking could differ. The real-data findings are reported separately and
+described only as patterns worth inspecting.
 
 #### 4. Very uneven data coverage
 
-Usable coverage ranges from **18.9%** to
-**90.4%**. The Lecture building is the extreme case: its
-meter is flagged off for **25,488 hours**, leaving
-only 18.9% of its intervals usable, so every Lecture
-figure rests on a much smaller sample than the others. The Boys hostel, Girls
-hostel and Library each lose several consecutive months to meter outages. This is
-a smaller sample, not a biased measurement -- but conclusions about those
-buildings are correspondingly less certain.
+Usable coverage ranges from **18.9%** to **90.4%**. The Lecture building is the
+extreme case: its meter is flagged off for **25,488 hours**, leaving only 18.9%
+of its intervals usable, so every Lecture figure rests on a much smaller sample
+than the others. The Boys hostel, Girls hostel and Library each lose several
+consecutive months to meter outages. This is a smaller sample, not a biased
+measurement -- but conclusions about those buildings are correspondingly less
+certain.
 
 #### 5. A dead meter and a building switched off look identical
 
@@ -65,32 +64,33 @@ quantified rather than hidden.
 #### 6. The academic calendar is approximated
 
 The I-BLEND project publishes no calendar file -- we checked the repository. The
-semester and vacation windows are approximated from a typical IIIT-Delhi year and
-then validated against the data: dormitory occupancy in the inferred vacation
-windows falls to 42% (Boys) and 53% (Girls) of its semester median, confirming
-the windows are roughly right. They are accurate to within days, not hours, which
-is adequate for the coarse comparisons we use them for and no finer.
+semester and vacation windows are approximated from a typical IIIT-Delhi year
+and then validated against the data: dormitory occupancy in the inferred
+vacation windows falls to 42% (Boys) and 53% (Girls) of its semester median,
+confirming the windows are roughly right. They are accurate to within days, not
+hours, which is adequate for the coarse comparisons we use them for and no
+finer.
 
 #### 7. The base load is partly an extrapolation
 
 Model A estimates base load as the power a fitted line predicts at zero
 occupancy. For buildings whose occupancy never approaches zero -- the two
 dormitories especially -- that point lies far outside the observed data, and the
-estimate departs from the directly measured night-time median by up to
-**52%**. Section 6.6 reports both, ranks buildings on the
-*measured* quantity, and flags where the modelled one should not be trusted.
+estimate departs from the directly measured night-time median by up to **52%**.
+Section 6.6 reports both, ranks buildings on the *measured* quantity, and flags
+where the modelled one should not be trusted.
 
 #### 8. The models are baselines, not forecasts, and they age
 
 Models B and C deliberately exclude lag features, which costs a great deal of
 accuracy (validation R-squared would rise from about 0.29 to over 0.9 with a
 one-hour lag). That is the price of a baseline that can detect sustained waste
-rather than absorbing it. Separately, campus consumption grew
-32-48% across the record, and the
-power-occupancy correlation itself weakened over time in the Academic building
-(r fell from 0.71 to 0.45). A model of this campus **needs periodic refitting**;
-section 9 shows what happens when it does not get it -- a schedule change in
-August 2017 is re-reported as an anomaly every morning for months.
+rather than absorbing it. Separately, campus consumption grew 32-48% across the
+record, and the power-occupancy correlation itself weakened over time in the
+Academic building (r fell from 0.71 to 0.45). A model of this campus **needs
+periodic refitting**; section 9 shows what happens when it does not get it -- a
+schedule change in August 2017 is re-reported as an anomaly every morning for
+months.
 
 #### 9. Seven buildings, one campus, one climate
 
@@ -104,5 +104,5 @@ offered as context, not as validation.
 
 Each building has one meter (two for the dormitories). We can say a building
 draws 20 kW at 3 a.m.; we cannot say how much of that is lighting, air
-conditioning, servers or lifts. That is exactly the information an energy manager
-would need to act on these findings, and it is the natural next step.
+conditioning, servers or lifts. That is exactly the information an energy
+manager would need to act on these findings, and it is the natural next step.

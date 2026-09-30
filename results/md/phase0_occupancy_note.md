@@ -1,15 +1,16 @@
-**The single most important finding in exploration: occupancy never reaches zero.**
-The minimum count in every one of the seven buildings is **1**, not 0. This is the
-WiFi over-counting the dataset authors warn about -- idle phones and laptops stay
-associated with an access point long after their owner has left. The consequence is
-structural, not cosmetic: *the main research question cannot be phrased as "energy
-used while the building is empty", because no such reading exists in this dataset.*
+**The single most important finding in exploration: occupancy never reaches
+zero.** The minimum count in every one of the seven buildings is **1**, not 0.
+This is the WiFi over-counting the dataset authors warn about -- idle phones and
+laptops stay associated with an access point long after their owner has left.
+The consequence is structural, not cosmetic: *the main research question cannot
+be phrased as "energy used while the building is empty", because no such reading
+exists in this dataset.*
 
-It must instead be "energy used while occupancy is **low**", against a threshold we
-state openly. We use a threshold relative to each building's own scale:
-**low occupancy = occupancy at or below 5% of that building's
-95th-percentile occupancy.** An absolute cut-off would be
-meaningless across buildings whose normal populations differ by a factor of twenty.
+It must instead be "energy used while occupancy is **low**", against a threshold
+we state openly. We use a threshold relative to each building's own scale: **low
+occupancy = occupancy at or below 5% of that building's 95th-percentile
+occupancy.** An absolute cut-off would be meaningless across buildings whose
+normal populations differ by a factor of twenty.
 
 Two buildings do not fit the standard recipe, and both are reported rather than
 quietly dropped:
@@ -28,5 +29,5 @@ quietly dropped:
   over the periods when the meter was demonstrably alive, with the coverage
   reported alongside.
 
-Reassuringly, **every occupancy timestamp sits exactly on a 10-minute boundary**,
-so energy and occupancy line up without any fuzzy time matching.
+Reassuringly, **every occupancy timestamp sits exactly on a 10-minute
+boundary**, so energy and occupancy line up without any fuzzy time matching.

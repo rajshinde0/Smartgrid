@@ -28,49 +28,41 @@
 
 <!-- BEGIN:abstract -->
 Buildings consume electricity when nobody is using them, but measuring how much
-requires fine-grained energy data and some knowledge of whether anyone was there.
-The public **I-BLEND** dataset has both: 1-minute electrical readings from nine
-meters across seven IIIT-Delhi buildings, paired with 10-minute counts of
-WiFi-associated devices. This project presents **the first occupancy-aware
-energy-waste and anomaly analysis of I-BLEND**, over the
-6 + 1 buildings and 3.7 years where both signals overlap
-(February 2014 to November 2017). The methods are standard; the contribution is
-the application.
+requires fine-grained energy data and some knowledge of whether anyone was
+there. The public **I-BLEND** dataset has both: 1-minute electrical readings
+from nine meters across seven IIIT-Delhi buildings, paired with 10-minute counts
+of WiFi-associated devices. This project presents **the first occupancy-aware
+energy-waste and anomaly analysis of I-BLEND**, covering all 7 buildings over
+the 3.7 years where both signals overlap (February 2014 to November 2017). The
+methods are standard; the contribution is the application.
 
 Because WiFi occupancy **never reads zero** -- the minimum in every building is
 1, since idle devices stay connected -- "empty" is not a state this dataset can
 report. We therefore define low occupancy relative to each building's own scale,
-at or below 5% of its 95th-percentile occupancy, and
-publish a sensitivity curve across every threshold from 0% to 20%.
+at or below 5% of its 95th-percentile occupancy, and publish a sensitivity curve
+across every threshold from 0% to 20%.
 
 **The headline finding is that when these buildings are at their emptiest they
-still draw between 62% and
-85% of their average power.** Low-occupancy
-consumption accounts for
-4.5% to
-19.1% of measured energy
-depending on the building, and in every building the base load -- the power drawn
-whether or not anyone is present -- is the larger share of mean consumption. As
-an external check, applying the clock-based definition of Masoso & Grobler (2010)
-to this data reproduces their published 56% to within a percentage point
-(55.2% for the Academic building, 55.0% for the Library).
+still draw between 62% and 85% of their average power.** Low-occupancy
+consumption accounts for 4.5% to 19.1% of measured energy depending on the
+building, and in every building the base load -- the power drawn whether or not
+anyone is present -- is the larger share of mean consumption. As an external
+check, applying the clock-based definition of Masoso & Grobler (2010) to this
+data reproduces their published 56% to within a percentage point (55.2% for the
+Academic building, 55.0% for the Library).
 
 Two further results emerged. Occupancy is a **weak predictor**: it raises
-validation R-squared by only +0.107 on average over a time-only
-model, and explains between
-8% and
-44% of the variation in power. And a
-controlled experiment on synthetic anomalies shows an occupancy-aware detector is
-**consistently but only marginally** better than a time-only one -- matched-budget
-F1 0.285 against 0.294, average
-precision 0.426 against 0.446 -- with
-the gains concentrated, as theory predicts, on sustained waste rather than on
-spikes.
+validation R-squared by only +0.107 on average over a time-only model, and
+explains between 8% and 44% of the variation in power. And a controlled
+experiment on synthetic anomalies shows an occupancy-aware detector is
+**consistently but only marginally** better than a time-only one --
+matched-budget F1 0.285 against 0.294, average precision 0.426 against 0.446 --
+with the gains concentrated, as theory predicts, on sustained waste rather than
+on spikes.
 
-Separately, campus consumption **grew 32% to
-48% between 2014 and 2017**, which required explicit
-handling of concept drift and which reappears in the anomaly results as a
-recurring false alarm.
+Separately, campus consumption **grew 32% to 48% between 2014 and 2017**, which
+required explicit handling of concept drift and which reappears in the anomaly
+results as a recurring false alarm.
 
 The main limitation is the absence of weather data: Delhi's summer vacation is
 also its hottest season, so cooling an empty building is counted as
@@ -387,18 +379,19 @@ the number that should exist between its first and last timestamp.
 <!-- END:phase0_occupancy_distribution -->
 
 <!-- BEGIN:phase0_occupancy_note -->
-**The single most important finding in exploration: occupancy never reaches zero.**
-The minimum count in every one of the seven buildings is **1**, not 0. This is the
-WiFi over-counting the dataset authors warn about -- idle phones and laptops stay
-associated with an access point long after their owner has left. The consequence is
-structural, not cosmetic: *the main research question cannot be phrased as "energy
-used while the building is empty", because no such reading exists in this dataset.*
+**The single most important finding in exploration: occupancy never reaches
+zero.** The minimum count in every one of the seven buildings is **1**, not 0.
+This is the WiFi over-counting the dataset authors warn about -- idle phones and
+laptops stay associated with an access point long after their owner has left.
+The consequence is structural, not cosmetic: *the main research question cannot
+be phrased as "energy used while the building is empty", because no such reading
+exists in this dataset.*
 
-It must instead be "energy used while occupancy is **low**", against a threshold we
-state openly. We use a threshold relative to each building's own scale:
-**low occupancy = occupancy at or below 5% of that building's
-95th-percentile occupancy.** An absolute cut-off would be
-meaningless across buildings whose normal populations differ by a factor of twenty.
+It must instead be "energy used while occupancy is **low**", against a threshold
+we state openly. We use a threshold relative to each building's own scale: **low
+occupancy = occupancy at or below 5% of that building's 95th-percentile
+occupancy.** An absolute cut-off would be meaningless across buildings whose
+normal populations differ by a factor of twenty.
 
 Two buildings do not fit the standard recipe, and both are reported rather than
 quietly dropped:
@@ -417,8 +410,8 @@ quietly dropped:
   over the periods when the meter was demonstrably alive, with the coverage
   reported alongside.
 
-Reassuringly, **every occupancy timestamp sits exactly on a 10-minute boundary**,
-so energy and occupancy line up without any fuzzy time matching.
+Reassuringly, **every occupancy timestamp sits exactly on a 10-minute
+boundary**, so energy and occupancy line up without any fuzzy time matching.
 <!-- END:phase0_occupancy_note -->
 
 ### 4.8 Completeness over time
@@ -426,7 +419,10 @@ so energy and occupancy line up without any fuzzy time matching.
 <!-- BEGIN:phase0_coverage_figure -->
 ![Monthly completeness of every energy meter and occupancy file](../figures/fig_00_coverage_timeline.png)
 
-*The record is far patchier than the row counts suggest: the Boys hostel, Girls mains and Library meters each lose several consecutive months entirely, and the occupancy block (below the black line) exists only between the two dashed lines.*
+*The record is far patchier than the row counts suggest: the Boys hostel, Girls
+mains and Library meters each lose several consecutive months entirely, and the
+occupancy block (below the black line) exists only between the two dashed
+lines.*
 <!-- END:phase0_coverage_figure -->
 
 ### 4.9 Missing-data heatmap from the authors' own status file
@@ -434,7 +430,9 @@ so energy and occupancy line up without any fuzzy time matching.
 <!-- BEGIN:phase1_missing_heatmap -->
 ![Percent of 1-minute readings present, by month and building](../figures/fig_01_missing_heatmap.png)
 
-*Built from the authors' own data_present_status_buildings.csv. The Girls mains meter loses most of a year across 2015-16, the Boys meters several months in the same period, and the Library a long stretch in 2014-15.*
+*Built from the authors' own data_present_status_buildings.csv. The Girls mains
+meter loses most of a year across 2015-16, the Boys meters several months in the
+same period, and the Library a long stretch in 2014-15.*
 
 | building | month | pct present |
 |---|---|---|
@@ -490,18 +488,16 @@ so energy and occupancy line up without any fuzzy time matching.
 ### 4.11 Working period
 
 <!-- BEGIN:phase0_working_period -->
-Energy recording runs from **2013-08-10** to
-**2017-12-31**, but occupancy only exists from
-**2014-02-16** to **2017-11-03**.
-Every research question in this project needs both, so the working period is the
-overlap:
+Energy recording runs from **2013-08-10** to **2017-12-31**, but occupancy only
+exists from **2014-02-16** to **2017-11-03**. Every research question in this
+project needs both, so the working period is the overlap:
 
 > **16 February 2014 to 03 November 2017** -- 1,356 days,
 > 195,406 ten-minute intervals.
 
 The roughly six months of energy data that precede the occupancy record are not
-used. They are not deleted, simply out of scope for questions that require knowing
-whether anyone was in the building.
+used. They are not deleted, simply out of scope for questions that require
+knowing whether anyone was in the building.
 <!-- END:phase0_working_period -->
 
 ### 4.12 Data-quality table after cleaning
@@ -528,26 +524,27 @@ whether anyone was in the building.
 Exploration was done before any cleaning, to find out what the data actually
 contains rather than what the documentation promises.
 
-**What we did.** We listed every file with its size; read both `Readme.txt` files
-and the ISA-Tab metadata that records the instruments used; printed the first and
-last rows of all 9 energy meters and all 7 occupancy
-files; and profiled each file for coverage, gaps and data-quality counts.
+**What we did.** We listed every file with its size; read both `Readme.txt`
+files and the ISA-Tab metadata that records the instruments used; printed the
+first and last rows of all 9 energy meters and all 7 occupancy files; and
+profiled each file for coverage, gaps and data-quality counts.
 
 **How we handled the size.** The energy folder is about 1.5 GB, so no step ever
 loads it all. Files are read one at a time, in chunks of 500,000 rows, keeping
 only the needed columns. Reading the last rows of a 125 MB file, for example, is
 done by streaming through it and keeping only the final chunk.
 
-**Timestamps.** All UNIX timestamps are converted with
-`pd.to_datetime(..., unit="s", utc=True).dt.tz_convert("Asia/Kolkata")`, which is
-what the dataset readme requires. Getting this wrong by 5.5 hours would put every
-"night-time" reading in the afternoon and silently invalidate the entire project.
+**Timestamps.** All UNIX timestamps are converted with `pd.to_datetime(...,
+unit="s", utc=True).dt.tz_convert("Asia/Kolkata")`, which is what the dataset
+readme requires. Getting this wrong by 5.5 hours would put every "night-time"
+reading in the afternoon and silently invalidate the entire project.
 
-**Coverage measurement.** Rather than drawing a bar from each meter's first to its
-last timestamp -- which makes a meter that went silent for 200 days look
-continuous -- we counted readings per calendar month and divided by how many that
-month should contain (1440 per day for the 1-minute energy files, 144 per day for
-the 10-minute occupancy files). That is what the heatmap in section 4.8 shows.
+**Coverage measurement.** Rather than drawing a bar from each meter's first to
+its last timestamp -- which makes a meter that went silent for 200 days look
+continuous -- we counted readings per calendar month and divided by how many
+that month should contain (1440 per day for the 1-minute energy files, 144 per
+day for the 10-minute occupancy files). That is what the heatmap in section 4.8
+shows.
 
 **Notebook:** `notebooks/00_explore.ipynb`.
 <!-- END:method_phase0 -->
@@ -558,36 +555,34 @@ the 10-minute occupancy files). That is what the heatmap in section 4.8 shows.
 Phase 1 turns the raw CSVs into one clean, merged, 10-minute table per building.
 
 **Invalid values.** Three rules are applied while reading, and every fix is
-counted: `power` outside 0 to 200 kW becomes `NaN`;
-`voltage` outside 180-270 V becomes `NaN`;
-`power_factor` keeps its magnitude with the sign retained as a separate flag
-(decision D00-02).
+counted: `power` outside 0 to 200 kW becomes `NaN`; `voltage` outside 180-270 V
+becomes `NaN`; `power_factor` keeps its magnitude with the sign retained as a
+separate flag (decision D00-02).
 
-**Dead meters.** Power exactly 0 for more than 6 continuous
-hours is flagged `meter_off`. The test uses the *maximum* power within each
-10-minute block, so a block counts as zero only if all ten of its 1-minute
-readings were zero; blocks with no readings break a run rather than extending it.
+**Dead meters.** Power exactly 0 for more than 6 continuous hours is flagged
+`meter_off`. The test uses the *maximum* power within each 10-minute block, so a
+block counts as zero only if all ten of its 1-minute readings were zero; blocks
+with no readings break a run rather than extending it.
 
 **Outliers are flagged, never deleted.** Both IQR (Tukey fences at 1.5x) and
-Z-score (|z| > 3) are computed on live readings only and
-stored as columns. Deleting them would remove exactly the abnormal events Phase 6
-is built to detect.
+Z-score (|z| > 3) are computed on live readings only and stored as columns.
+Deleting them would remove exactly the abnormal events Phase 6 is built to
+detect.
 
-**Resampling.** 1-minute readings are averaged into 10min blocks to
-match the native resolution of the occupancy data. Because a block can straddle a
-chunk boundary, each chunk contributes per-block *sums and counts* which are added
+**Resampling.** 1-minute readings are averaged into 10min blocks to match the
+native resolution of the occupancy data. Because a block can straddle a chunk
+boundary, each chunk contributes per-block *sums and counts* which are added
 across chunks before the mean is formed -- exactly equal to a single-pass mean.
-Blocks are then placed on a complete time grid, so missing intervals are explicit
-rather than absent.
+Blocks are then placed on a complete time grid, so missing intervals are
+explicit rather than absent.
 
 **Merging.** Energy is joined to occupancy on the timestamp with an inner join.
 Every occupancy timestamp already falls exactly on a 10-minute boundary, so no
 tolerance matching is needed. For the two dormitories, mains and UPS are kept as
 separate columns and also summed; the sum is `NaN` if either meter is missing.
 
-**Gap filling.** Gaps of at most 30 minutes
-(3 blocks) are filled by time interpolation and marked
-`was_interpolated`. Longer gaps are left missing.
+**Gap filling.** Gaps of at most 30 minutes (3 blocks) are filled by time
+interpolation and marked `was_interpolated`. Longer gaps are left missing.
 
 **Features.** `hour`, `minute_of_day`, `month`, `year`, `weekday` (an *ordered*
 categorical so Monday sorts before Tuesday), `is_weekend`, `is_semester` /
@@ -596,8 +591,8 @@ deviation (computed with `closed="left"` so the current block is excluded and no
 future information leaks), and `kwh = watts / 1000 x 10/60`.
 
 **Semester flag.** The I-BLEND project site publishes no academic calendar -- we
-verified that the repository holds only the website assets and reading scripts --
-so the windows are an approximation of a typical IIIT-Delhi year, validated
+verified that the repository holds only the website assets and reading scripts
+-- so the windows are an approximation of a typical IIIT-Delhi year, validated
 against observed dormitory occupancy (decision D01-03).
 
 **Notebook:** `notebooks/01_data_prep.ipynb`.
@@ -612,8 +607,8 @@ Phase 2 describes the data before any model is fitted.
 binary (symmetric or **asymmetric**), discrete numeric or continuous numeric.
 The asymmetric binary attributes -- `meter_off`, `is_missing`,
 `was_interpolated`, `outlier_iqr`, `outlier_zscore` -- are the ones where only
-the "True" state carries information; treating them as ordinary binary attributes
-would overstate how similar two records are.
+the "True" state carries information; treating them as ordinary binary
+attributes would overstate how similar two records are.
 
 **Descriptive statistics.** Mean, median, mode, range, variance, standard
 deviation, quartiles and IQR for every building. The mode of a continuous
@@ -629,15 +624,14 @@ standard error the central limit theorem predicts.
 
 **Distribution fitting.** A Normal and a Log-normal are fitted with `scipy`,
 compared by histogram overlay, Q-Q plot and Kolmogorov-Smirnov test. With
-176,726 readings the KS p-value is uninformative -- it rejects any
-distribution -- so the comparison is made on the **KS statistic**, which is an
-effect size.
+176,726 readings the KS p-value is uninformative -- it rejects any distribution
+-- so the comparison is made on the **KS statistic**, which is an effect size.
 
 **Hypothesis tests.** Semester versus vacation and weekday versus weekend, for
 every building, with both a Welch t-test (means, assumes approximate normality)
-and a Mann-Whitney U test (stochastic dominance, assumes nothing). **Cohen's d is
-reported beside every p-value**, because at these sample sizes significance is
-guaranteed and only effect size is informative.
+and a Mann-Whitney U test (stochastic dominance, assumes nothing). **Cohen's d
+is reported beside every p-value**, because at these sample sizes significance
+is guaranteed and only effect size is informative.
 
 **Notebook:** `notebooks/02_stats_eda.ipynb`.
 <!-- END:method_phase2 -->
@@ -652,20 +646,19 @@ collection of days.
 gap-free 10-minute grid, 144 consecutive values are always exactly one calendar
 day. The series is trimmed to whole days and then a single NumPy `reshape` turns
 it into a (days x 144) matrix -- no pivot and no loop. Days containing any gap,
-or any interval flagged `meter_off`, are excluded: 1,302 of
-1,356 days survive for the Academic building.
+or any interval flagged `meter_off`, are excluded: 1,302 of 1,356 days survive
+for the Academic building.
 
 **Reducing to hourly.** Each row is reshaped from 144 into (24, 6) and averaged
 along the last axis -- a vectorized operation. The same calculation written as
-three nested Python loops gives identical numbers
-(largest difference 0.0e+00) and is
-79x slower, which is the practical argument for
-vectorisation throughout the project.
+three nested Python loops gives identical numbers (largest difference 0.0e+00)
+and is 83x slower, which is the practical argument for vectorisation throughout
+the project.
 
 **Standardisation.** Each hour column is centred and scaled to unit variance.
 Without it PCA would mostly describe the midday hours, because they vary most in
-absolute terms; with it, the components describe the *shape* of a day rather than
-its size.
+absolute terms; with it, the components describe the *shape* of a day rather
+than its size.
 
 **PCA by hand.** The covariance matrix of the standardised data is formed
 explicitly, its eigenvalues and eigenvectors taken with `np.linalg.eig`, sorted
@@ -694,41 +687,40 @@ Phase 4 builds a baseline of *expected* consumption, not a forecast.
 **Models.** **A** is `power = a + b x occupancy`, fitted unscaled so its two
 coefficients keep physical units -- `a` watts with nobody present, `b` extra
 watts per occupant. **B** uses calendar features only (hour, weekday, month,
-weekend flag, semester flag). **C** adds occupancy to B. **D** is a random forest
-on C's features, capped at depth 12.
+weekend flag, semester flag). **C** adds occupancy to B. **D** is a random
+forest on C's features, capped at depth 12.
 
-**No lag features.** Power one hour ago correlates with current power at about
-r = 0.95, and including it lifts validation R-squared from
-0.55 to 0.83. It is excluded anyway,
-because a model that knows what the building was drawing an hour ago has already
-absorbed any waste into its expectation: if the lights have been on since 2 a.m.
-it confidently predicts they will still be on at 3 a.m. and reports nothing
-wrong. The notebook demonstrates this rather than asserting it.
+**No lag features.** Power one hour ago correlates with current power at about r
+= 0.95, and including it lifts validation R-squared from 0.55 to 0.83. It is
+excluded anyway, because a model that knows what the building was drawing an
+hour ago has already absorbed any waste into its expectation: if the lights have
+been on since 2 a.m. it confidently predicts they will still be on at 3 a.m. and
+reports nothing wrong. The notebook demonstrates this rather than asserting it.
 
 **Encoding.** `hour` and `month` are cyclic categories -- hour 23 is adjacent to
 hour 0 -- so they are one-hot encoded with `drop="first"` rather than treated as
 numbers. The `StandardScaler` sits **inside the scikit-learn `Pipeline`**, so it
-is fitted on the training fold only; scaling before splitting would leak the test
-set's mean and spread into training.
+is fitted on the training fold only; scaling before splitting would leak the
+test set's mean and spread into training.
 
 **Splitting.** Chronological 70 / 15 / 15 via `train_test_split(shuffle=False)`.
 Shuffling a time series would fit the model on Thursday to predict Wednesday.
-Cross-validation uses `TimeSeriesSplit` with 5 folds, which always
-trains on a prefix and validates on the block immediately after.
+Cross-validation uses `TimeSeriesSplit` with 5 folds, which always trains on a
+prefix and validates on the block immediately after.
 
-**Concept drift, and how it is handled.** Mean power rose
-32-48% across the record (section 6.5), so the test
-split -- the last 15%, which is 2017 -- is the highest-consuming period and a
-model fitted on 2014-2016 systematically under-predicts it. Test metrics are
-reported **both** uncorrected and after a **validation-calibrated offset**: the
-mean error measured on the validation split, which lies entirely before the test
-split in time. That is what a deployed system could legitimately do and involves
-no test data. Model *selection* is done on validation.
+**Concept drift, and how it is handled.** Mean power rose 32-48% across the
+record (section 6.5), so the test split -- the last 15%, which is 2017 -- is the
+highest-consuming period and a model fitted on 2014-2016 systematically
+under-predicts it. Test metrics are reported **both** uncorrected and after a
+**validation-calibrated offset**: the mean error measured on the validation
+split, which lies entirely before the test split in time. That is what a
+deployed system could legitimately do and involves no test data. Model
+*selection* is done on validation.
 
-**Feature selection.** A correlation filter and `SelectKBest` with `f_regression`
-are reported for transparency but not used to prune: with a few dozen encoded
-columns and 123,710 training rows there is no overfitting pressure to
-relieve, and dropping hour dummies would cost interpretability for no gain.
+**Feature selection.** A correlation filter and `SelectKBest` with
+`f_regression` are reported for transparency but not used to prune: with a few
+dozen encoded columns and 123,710 training rows there is no overfitting pressure
+to relieve, and dropping hour dummies would cost interpretability for no gain.
 
 **Notebook:** `notebooks/04_regression.ipynb`.
 <!-- END:method_phase4 -->
@@ -748,10 +740,10 @@ The threshold is relative to each building's own scale because an absolute count
 is not comparable between a 600-person dormitory and a 47-person facilities
 block. Thresholds are reported per building.
 
-**What counts as energy.** Only *usable* intervals: meter alive, reading present,
-occupancy known. Numerator and denominator use the same set, so the share is a
-true proportion of measured consumption rather than an artefact of missing data;
-coverage is reported beside every figure.
+**What counts as energy.** Only *usable* intervals: meter alive, reading
+present, occupancy known. Numerator and denominator use the same set, so the
+share is a true proportion of measured consumption rather than an artefact of
+missing data; coverage is reported beside every figure.
 
 **Two measures, because they answer different questions.** The *low-occupancy
 energy share* depends partly on how often a building happens to be nearly empty,
@@ -759,16 +751,18 @@ which is a fact about the campus timetable. The *intensity ratio* -- mean power
 when nearly empty divided by mean power overall -- isolates the building's own
 behaviour, and is the number to quote.
 
-**Sensitivity.** Because 5% is a judgement, the whole calculation is repeated for
-every threshold from 0% to 20% of p95 and published as a curve.
+**Sensitivity.** Because 5% is a judgement, the whole calculation is repeated
+for every threshold from 0% to 20% of p95 and published as a curve.
 
 **Comparison with the literature.** The published figures use a *clock-based*
-rule, not a measured occupancy signal, so we compute their definition on our data
-(outside 08:00-18:00 on weekdays) as well as our own, and compare like with like.
+rule, not a measured occupancy signal, so we compute their definition on our
+data (outside 08:00-18:00 on weekdays) as well as our own, and compare like with
+like.
 
-**Two sensitivity checks owed from earlier phases** are settled here: the Lecture
-building recomputed under a 24-hour dead-meter rule (D01-07), and a
-corrected-occupancy run subtracting the documented idle-device baseline (D00-06).
+**Two sensitivity checks owed from earlier phases** are settled here: the
+Lecture building recomputed under a 24-hour dead-meter rule (D01-07), and a
+corrected-occupancy run subtracting the documented idle-device baseline
+(D00-06).
 
 **Notebook:** `notebooks/05_waste.ipynb`.
 <!-- END:method_phase5 -->
@@ -778,8 +772,8 @@ corrected-occupancy run subtracting the documented idle-device baseline (D00-06)
 <!-- BEGIN:method_phase6 -->
 Phase 6 is set up as a controlled experiment, not a pipeline. Two detectors, the
 same data, the same procedure, one difference: **Detector T** scores the
-residuals of model B (time features only) and **Detector O** scores the residuals
-of model C (time and occupancy).
+residuals of model B (time features only) and **Detector O** scores the
+residuals of model C (time and occupancy).
 
 **Why anomalies are injected.** Nobody labelled the real faults on this campus,
 so there is no ground truth to score against. A **copy** of the test period is
@@ -806,9 +800,8 @@ count achieved, never the count requested**.
 deviation** rather than the mean and standard deviation, because the standard
 deviation is inflated by the very anomalies being hunted -- a few large events
 would raise the bar and hide themselves. The 1.4826 factor rescales the MAD so
-the thresholds of 2 and 3 keep their usual meaning. Bands are NORMAL below
-2, WARNING from 2 to 3, ANOMALY
-above 3, cross-checked against Tukey IQR fences.
+the thresholds of 2 and 3 keep their usual meaning. Bands are NORMAL below 2,
+WARNING from 2 to 3, ANOMALY above 3, cross-checked against Tukey IQR fences.
 
 **Three comparisons rather than one.** A fixed threshold turned out not to be a
 fair test (section 6.7), so the detectors are also compared at a **matched alert
@@ -822,27 +815,27 @@ budget** and with **threshold-free** measures (ROC AUC and average precision).
 <!-- BEGIN:method_phase7 -->
 Phase 7 delivers the project and verifies it.
 
-**Dashboard.** `dashboard/app.py` is a Streamlit page with a building selector, a
-date-range picker, a power-and-occupancy chart with anomaly bands coloured, the
-key numbers for the selected building, and the threshold-sensitivity curve with
-that building highlighted. It **reads saved output only** -- the parquet files
-written by `src/dashboard.py` and the CSV tables in `results/` -- and trains
-nothing. Refitting inside a dashboard would be slow during a demonstration and,
-worse, would let the numbers on screen drift away from the numbers in this
-report.
+**Dashboard.** `dashboard/app.py` is a Streamlit page with a building selector,
+a date-range picker, a power-and-occupancy chart with anomaly bands coloured,
+the key numbers for the selected building, and the threshold-sensitivity curve
+with that building highlighted. It **reads saved output only** -- the parquet
+files written by `src/dashboard.py` and the CSV tables in `results/` -- and
+trains nothing. Refitting inside a dashboard would be slow during a
+demonstration and, worse, would let the numbers on screen drift away from the
+numbers in this report.
 
 The chart uses two stacked panels sharing one time axis rather than two y-axes.
 Watts and people are different quantities, and a shared axis would invent a
 visual relationship that does not exist.
 
-**Report assembly.** Every section of this report is generated. The file contains
-named placeholder blocks which the notebooks fill through `src/report.py`, so no
-number is ever typed by hand and re-running a notebook rewrites its section.
-Anything not yet computed reads "pending Phase N", and Phase 7 asserts that none
-remain.
+**Report assembly.** Every section of this report is generated. The file
+contains named placeholder blocks which the notebooks fill through
+`src/report.py`, so no number is ever typed by hand and re-running a notebook
+rewrites its section. Anything not yet computed reads "pending Phase N", and
+Phase 7 asserts that none remain.
 
-**Verification.** Three checks run as assertions at the end of
-`07_final.ipynb`, so the notebook fails rather than reporting a problem quietly:
+**Verification.** Three checks run as assertions at the end of `07_final.ipynb`,
+so the notebook fails rather than reporting a problem quietly:
 
 1. no section still says "pending"
 2. every embedded figure link resolves to a file that actually exists
@@ -898,8 +891,7 @@ Exploration produced four findings that shaped everything after it.
 
 After cleaning, merging with occupancy and flagging dead meters, the proportion
 of 10-minute intervals that are actually usable -- meter alive, reading present,
-occupancy known -- varies from **18.9%** to
-**90.4%**:
+occupancy known -- varies from **18.9%** to **90.4%**:
 
 | building | rows | usable rows | pct usable | pct power missing | pct occupancy missing | hours meter off | total kwh |
 |---|---|---|---|---|---|---|---|
@@ -927,9 +919,8 @@ Three observations matter for everything that follows.
 **The pipeline was independently cross-checked.** Our per-building mean power,
 computed from the individual meter files through chunked ingestion, was compared
 against `all_buildings_power.csv`, which holds every meter side by side. All
-seven agree to within
-**0.122%** (largest disagreement), which rules out
-a whole class of silent error in timestamp handling, unit conversion and chunk
+seven agree to within **0.122%** (largest disagreement), which rules out a whole
+class of silent error in timestamp handling, unit conversion and chunk
 boundaries:
 
 | building | mean power from wide file w | mean power from our cache w | difference pct | agrees |
@@ -944,31 +935,32 @@ boundaries:
 
 **The approximate academic calendar was validated against the data.** If the
 vacation windows were roughly right, dormitory occupancy should collapse inside
-them -- and it does. Boys hostel median occupancy in vacation is
-**42%** of its semester median, Girls
-hostel **53%**. The Academic building
-falls much less, which is what you would expect when staff keep working through
-the summer.
+them -- and it does. Boys hostel median occupancy in vacation is **42%** of its
+semester median, Girls hostel **53%**. The Academic building falls much less,
+which is what you would expect when staff keep working through the summer.
 
 ![Median occupancy by month, with the approximated vacation months shaded](../figures/fig_01_semester_validation.png)
 
-*The dip is centred on June and July exactly where the approximation puts it, and it is much deeper in the two dormitories than in the Academic building.*
+*The dip is centred on June and July exactly where the approximation puts it,
+and it is much deeper in the two dormitories than in the Academic building.*
 
 **Dead-meter detection.**
 
 ![Lecture building in a partly-dead month, with flagged meter-off periods shaded](../figures/fig_01_dead_meter_lecture.png)
 
-*Everything shaded is excluded from the energy accounting rather than counted as zero consumption.*
+*Everything shaded is excluded from the energy accounting rather than counted as
+zero consumption.*
 
 **A limitation of this rule, stated openly.** In the month shown the meter
 alternates between about 4 kW by day and exactly zero every night -- which looks
 less like a broken meter than like a building switched off at the mains. Both
-report exactly 0 W, and no rule based on the power value alone can separate them.
-Checking the length of every zero run shows two distinct populations:
+report exactly 0 W, and no rule based on the power value alone can separate
+them. Checking the length of every zero run shows two distinct populations:
 
 ![How long the Lecture building's zero-power stretches last](../figures/fig_01_zero_run_lengths_lecture.png)
 
-*Two populations: many short runs near half a day (the nightly switch-off, 34.5% of all zero hours) and a few very long runs that account for 65.5% of them.*
+*Two populations: many short runs near half a day (the nightly switch-off, 34.5%
+of all zero hours) and a few very long runs that account for 65.5% of them.*
 
 | hours | runs | total hours | share of zero hours % |
 |---|---|---|---|
@@ -988,17 +980,23 @@ ambiguity with a 24-hour sensitivity check in Phase 5 (decision D01-07).
 
 ![Academic building: distribution with IQR fences, and two weeks with flagged points](../figures/fig_01_outlier_flags_academic.png)
 
-*The flagged points are mostly ordinary working-day peaks. An automatic 'remove outliers' step would have deleted every busy afternoon -- which is why this project flags instead of deletes.*
+*The flagged points are mostly ordinary working-day peaks. An automatic 'remove
+outliers' step would have deleted every busy afternoon -- which is why this
+project flags instead of deletes.*
 
 **Transformation and scaling.**
 
 ![Academic power before and after a log transform](../figures/fig_01_log_transform_power.png)
 
-*The log transform cuts skew from 1.16 to 0.02, but the distribution stays bimodal -- a night cluster and a day cluster -- because that is a real physical feature, not a distortion.*
+*The log transform cuts skew from 1.16 to 0.02, but the distribution stays
+bimodal -- a night cluster and a day cluster -- because that is a real physical
+feature, not a distortion.*
 
 ![The same power data: original, Min-Max scaled, and standardised](../figures/fig_01_scaling_comparison.png)
 
-*Scaling moves and stretches an axis; it does not change the shape of the distribution. What changes is which features dominate a distance or a regression coefficient.*
+*Scaling moves and stretches an axis; it does not change the shape of the
+distribution. What changes is which features dominate a distance or a regression
+coefficient.*
 <!-- END:results_phase1 -->
 
 ### 6.3 Phase 2 — Statistics and EDA
@@ -1017,32 +1015,30 @@ ambiguity with a 24-hour sensitivity check in Phase 5 (decision D01-07).
 | Facilities | 149,353 | 11,299.70 | 10,791.80 | 9,000 | 547.20 | 138,916.10 | 138,368.90 | 23,527,220 | 4,850.50 | 8,797.20 | 13,110.60 | 4,313.30 | 10.59 |
 
 The mean exceeds the median in every building, so every distribution is
-right-skewed. The Boys hostel has the highest average power
-(32.8 kW),
-above the Academic building, because it is occupied around the clock. Facilities
-is the extreme case with a skew of
-10.6 -- its maximum
-is more than ten times its median, pointing to a large intermittent load.
+right-skewed. The Boys hostel has the highest average power (32.8 kW), above the
+Academic building, because it is occupied around the clock. Facilities is the
+extreme case with a skew of 10.6 -- its maximum is more than ten times its
+median, pointing to a large intermittent load.
 
 #### Manual calculation checked against pandas
 
 Every statistic above was recomputed from its definition with NumPy and asserted
 equal to the pandas result. The largest relative difference across all eleven
-statistics was
-4.5e-15
--- floating-point noise. The check runs as an assertion, so the notebook fails if
-they ever diverge.
+statistics was 4.5e-15 -- floating-point noise. The check runs as an assertion,
+so the notebook fails if they ever diverge.
 
 #### Population versus sample
 
 ![Means of 1,000 random 30-day samples against the true population mean](../figures/fig_02_sampling_distribution.png)
 
-*The sample means form the bell shape the central limit theorem predicts, centred on the population mean; the observed standard error (36 kWh) matches the predicted one (37 kWh).*
+*The sample means form the bell shape the central limit theorem predicts,
+centred on the population mean; the observed standard error (36 kWh) matches the
+predicted one (37 kWh).*
 
-65.0% of 30-day samples land within 5% of the true mean -- **but only
-because the days are drawn at random across the whole year**. An audit that
-happened to run in June would measure the air-conditioning season instead. This
-is why the project uses the full 3.7-year record rather than a sample.
+65.0% of 30-day samples land within 5% of the true mean -- **but only because
+the days are drawn at random across the whole year**. An audit that happened to
+run in June would measure the air-conditioning season instead. This is why the
+project uses the full 3.7-year record rather than a sample.
 
 #### What distribution does power follow?
 
@@ -1052,13 +1048,14 @@ is why the project uses the full 3.7-year record rather than a sample.
 | Log-normal | 0.08 | 1.03e-300 |
 
 The log-normal fits better on the KS statistic, as expected for a strictly
-positive right-skewed quantity. But the Q-Q plots show **neither is a good fit**:
-the Academic building's power is genuinely bimodal -- a night cluster and a day
-cluster -- and no unimodal distribution can describe two clusters.
+positive right-skewed quantity. But the Q-Q plots show **neither is a good
+fit**: the Academic building's power is genuinely bimodal -- a night cluster and
+a day cluster -- and no unimodal distribution can describe two clusters.
 
 ![Fitted distributions and Q-Q plots for Academic building power](../figures/fig_02_distribution_fit.png)
 
-*Both candidate distributions bend away from the line at the extremes; the data is bimodal, which is a physical feature rather than a distortion.*
+*Both candidate distributions bend away from the line at the extremes; the data
+is bimodal, which is a physical feature rather than a distortion.*
 
 This shapes Phase 4: because power is not normally distributed, MAE is reported
 alongside RMSE, since RMSE is dominated by the tail.
@@ -1089,55 +1086,63 @@ alongside RMSE, since RMSE is dominated by the tail.
 | Lecture | 3,146.50 | 2,271.60 | 874.90 | 38.50 | 0.49 | small | 2.70e-123 | < 1e-300 |
 | Facilities | 11,581.70 | 10,582.70 | 999 | 9.40 | 0.21 | small | 3.48e-217 | < 1e-300 |
 
-Every p-value here is small enough to print in scientific notation, so on a naive
-"p < 0.05" reading every difference is significant and the p-values tell us
-nothing beyond the fact that we have a lot of data. The **Cohen's d** column
+Every p-value here is small enough to print in scientific notation, so on a
+naive "p < 0.05" reading every difference is significant and the p-values tell
+us nothing beyond the fact that we have a lot of data. The **Cohen's d** column
 carries the finding, and it is **not uniform across the campus**.
 
-*Semester versus vacation* splits the buildings in two. The
-**Boys Hostel** (d = 0.89) and **Lecture** (d = 1.24) show large effects -- buildings whose purpose empties out when term
-ends. But the **Academic** (d = -0.08) and **Mess** (d = 0.09) barely move, and **Facilities** (d = -0.45) actually consumes **more** power
-during vacation, because the Indian summer vacation coincides with Delhi's
+*Semester versus vacation* splits the buildings in two. The **Boys Hostel** (d =
+0.89) and **Lecture** (d = 1.24) show large effects -- buildings whose purpose
+empties out when term ends. But the **Academic** (d = -0.08) and **Mess** (d =
+0.09) barely move, and **Facilities** (d = -0.45) actually consumes **more**
+power during vacation, because the Indian summer vacation coincides with Delhi's
 hottest months: cooling load rises exactly as occupation falls. That is the
 no-weather-data limitation made visible.
 
-*Weekday versus weekend* splits them the other way. The
-**Academic** (d = 0.73) and **Library** (d = 0.66) fall substantially at weekends, while both hostels are essentially
-flat (d = 0.19
-and 0.20) --
-which is correct, because people live there on Saturdays too.
+*Weekday versus weekend* splits them the other way. The **Academic** (d = 0.73)
+and **Library** (d = 0.66) fall substantially at weekends, while both hostels
+are essentially flat (d = 0.19 and 0.20) -- which is correct, because people
+live there on Saturdays too.
 
 The contrast is what matters for Phase 5. Buildings *can* respond strongly to
-whether people are present -- the Library drops
-64% at
-weekends, so it is clearly possible. Buildings that do not respond are therefore
-making a choice, not obeying a physical necessity.
+whether people are present -- the Library drops 64% at weekends, so it is
+clearly possible. Buildings that do not respond are therefore making a choice,
+not obeying a physical necessity.
 
 #### The chart set
 
 ![Share of total measured campus energy by building](../figures/fig_02_pie_energy_share.png)
 
-*Shares reflect *measured* energy, and the buildings have very different amounts of usable data (Lecture only 19%), so this shows what was recorded rather than what the campus consumed.*
+*Shares reflect *measured* energy, and the buildings have very different amounts
+of usable data (Lecture only 19%), so this shows what was recorded rather than
+what the campus consumed.*
 
 ![Average daily energy use by building](../figures/fig_02_bar_daily_energy.png)
 
-*The fair comparison, independent of how many days each meter recorded. The Boys hostel is the largest daily consumer at 731 kWh/day.*
+*The fair comparison, independent of how many days each meter recorded. The Boys
+hostel is the largest daily consumer at 731 kWh/day.*
 
 ![Distribution of 10-minute power readings by building](../figures/fig_02_box_power_by_building.png)
 
-*The hostels have narrow boxes -- steady load from continuous occupation. Academic and Library have tall boxes: they swing between a quiet night baseline and a busy day.*
+*The hostels have narrow boxes -- steady load from continuous occupation.
+Academic and Library have tall boxes: they swing between a quiet night baseline
+and a busy day.*
 
 ![Power distribution in each building](../figures/fig_02_hist_power_all_buildings.png)
 
-*Academic and Library are visibly bimodal (a night hump and a day hump); the hostels are closer to one broad peak because they never really switch off.*
+*Academic and Library are visibly bimodal (a night hump and a day hump); the
+hostels are closer to one broad peak because they never really switch off.*
 
 ![Mean power by hour of day, one line per building](../figures/fig_02_hourly_profile_all.png)
 
-*The most important chart in this phase: the commercial buildings fall at night but do not fall to zero -- the Academic building still draws around 20 kW at 3 a.m. That gap is what Phase 5 quantifies.*
+*The most important chart in this phase: the commercial buildings fall at night
+but do not fall to zero -- the Academic building still draws around 20 kW at 3
+a.m. That gap is what Phase 5 quantifies.*
 
 ![Power against occupancy, one panel per building](../figures/fig_02_scatter_power_occupancy.png)
 
-*Every cloud slopes upward, and every cloud has a floor well above zero on the left: even at minimum occupancy the building draws a substantial load.*
+*Every cloud slopes upward, and every cloud has a floor well above zero on the
+left: even at minimum occupancy the building draws a substantial load.*
 
 #### Power-occupancy correlation
 
@@ -1151,25 +1156,29 @@ making a choice, not obeying a physical necessity.
 | Lecture | commercial | 36,930 | 0.31 | < 1e-300 | 0.36 | < 1e-300 | 0.10 |
 | Facilities | commercial | 149,353 | 0.27 | < 1e-300 | 0.37 | < 1e-300 | 0.07 |
 
-Occupancy and power are correlated in every building but never strongly. The best
-case is **Academic at r = 0.67**,
-meaning occupancy explains about 44% of the
-variation in its power; the weakest is
-**Facilities at r = 0.27**
-(8%). So **most of what determines a building's
-power draw is not how many people are in it** -- a result in its own right, and
-the quantitative form of the base-load floor visible in the scatter plots.
+Occupancy and power are correlated in every building but never strongly. The
+best case is **Academic at r = 0.67**, meaning occupancy explains about 44% of
+the variation in its power; the weakest is **Facilities at r = 0.27** (8%). So
+**most of what determines a building's power draw is not how many people are in
+it** -- a result in its own right, and the quantitative form of the base-load
+floor visible in the scatter plots.
 
 Spearman exceeds Pearson for the Library (0.61 against 0.50), indicating a real
 but *bent* relationship: power rises with occupancy and then flattens.
 
 ![Correlation between numeric features, Academic building](../figures/fig_02_correlation_heatmap.png)
 
-*The strongest predictor of power is power one hour ago (r about 0.95) -- buildings are inertial. Occupancy sits well behind the lag features, which is why Phase 4's interpretable models use calendar and occupancy features rather than lags.*
+*The strongest predictor of power is power one hour ago (r about 0.95) --
+buildings are inertial. Occupancy sits well behind the lag features, which is
+why Phase 4's interpretable models use calendar and occupancy features rather
+than lags.*
 
 ![Mean power by day of week, and semester against vacation](../figures/fig_02_weekday_semester_patterns.png)
 
-*The weekend drop is a few percent, not a collapse. In several buildings vacation power is as high as or higher than semester power, because Delhi's summer vacation coincides with the hottest months and the cooling runs regardless.*
+*The weekend drop is a few percent, not a collapse. In several buildings
+vacation power is as high as or higher than semester power, because Delhi's
+summer vacation coincides with the hottest months and the cooling runs
+regardless.*
 <!-- END:results_phase2 -->
 
 ### 6.4 Phase 3 — PCA
@@ -1186,19 +1195,22 @@ but *bent* relationship: power rises with occupancy and then flattens.
 | PC5 | 3 | 94.10 |
 | PC6 | 1.30 | 95.40 |
 
-The first component alone accounts for **55.0%** of the variation
-between days, and the first three for **86.9%**. An
-Academic-building day is therefore well described by three numbers instead of 24.
+The first component alone accounts for **55.0%** of the variation between days,
+and the first three for **86.9%**. An Academic-building day is therefore well
+described by three numbers instead of 24.
 
 ![Scree plot for Academic building daily load profiles](../figures/fig_03_scree_academic.png)
 
-*PC1 explains 55.0% and the first three together 86.9% -- a real reduction in dimensionality, not a cosmetic one.*
+*PC1 explains 55.0% and the first three together 86.9% -- a real reduction in
+dimensionality, not a cosmetic one.*
 
 #### What the components mean
 
 ![The three main shapes of a day, Academic building](../figures/fig_03_components_academic.png)
 
-*PC1 has weights all of one sign -- it is the overall level of the day. PC2 changes sign across the clock -- it contrasts daytime against night. PC3 shifts the timing of the peak.*
+*PC1 has weights all of one sign -- it is the overall level of the day. PC2
+changes sign across the clock -- it contrasts daytime against night. PC3 shifts
+the timing of the peak.*
 
 **PC1 is 'how much'** -- its weights all share a sign, so a day scoring high is
 above average at every hour. **PC2 is 'day versus night'** -- its weights change
@@ -1211,18 +1223,19 @@ behaving.
 
 ![Days in PC1-PC2 space, coloured by weekend and by vacation](../figures/fig_03_pc_scatter_academic.png)
 
-*Weekends separate clearly along PC2 -- flatter days with less contrast between working hours and night. PCA was never given the day of the week.*
+*Weekends separate clearly along PC2 -- flatter days with less contrast between
+working hours and night. PCA was never given the day of the week.*
 
 ![The same days in three dimensions](../figures/fig_03_pc3d_academic.png)
 
 *Adding PC3 brings the displayed variance to 87%.*
 
-Yes -- and the two calendar facts separate along *different* components. Weekends
-sit lower on **PC2**: nobody arrives in the morning, so the daytime rise never
-happens and the day is flat. Semester and vacation separate along **PC1**
-instead, and less cleanly, because vacation days are not uniformly quieter --
-some are among the highest-consuming days in the record, which is the summer
-cooling load again.
+Yes -- and the two calendar facts separate along *different* components.
+Weekends sit lower on **PC2**: nobody arrives in the morning, so the daytime
+rise never happens and the day is flat. Semester and vacation separate along
+**PC1** instead, and less cleanly, because vacation days are not uniformly
+quieter -- some are among the highest-consuming days in the record, which is the
+summer cooling load again.
 
 #### Day types
 
@@ -1235,29 +1248,36 @@ cooling load again.
 
 ![k-means day types: average profile of each cluster, and the clusters in component space](../figures/fig_03_day_types_academic.png)
 
-*The clusters correspond to recognisable kinds of day rather than arbitrary groupings -- their weekend and vacation shares differ sharply even though k-means never saw the calendar.*
+*The clusters correspond to recognisable kinds of day rather than arbitrary
+groupings -- their weekend and vacation shares differ sharply even though
+k-means never saw the calendar.*
 
 #### Which days are unusual?
 
 ![Reconstruction error per day, and the most and least typical days](../figures/fig_03_reconstruction_error_academic.png)
 
-*A day the three main components cannot reproduce is an unusual day. This whole-day score cross-checks the interval-level detector built in Phase 6.*
+*A day the three main components cannot reproduce is an unusual day. This
+whole-day score cross-checks the interval-level detector built in Phase 6.*
 
 #### The same analysis on a dormitory
 
 ![Boys Hostel: scree plot, component shapes and days in component space](../figures/fig_03_pca_boys_hostel.png)
 
-*The first three components explain 93.0% here, and the component shapes differ from the Academic building's -- the structure is a property of each building, not a universal.*
+*The first three components explain 93.0% here, and the component shapes differ
+from the Academic building's -- the structure is a property of each building,
+not a universal.*
 
 #### Every building's daily shape, side by side
 
 ![The shape of an average day, each building scaled to its own mean](../figures/fig_03_day_shapes_all_buildings.png)
 
-*Scaling out size leaves only shape. Academic and Library rise in the morning; the hostels do the opposite, lowest at midday and highest in the evening; the Mess shows meal-time peaks; Facilities is nearly a flat line.*
+*Scaling out size leaves only shape. Academic and Library rise in the morning;
+the hostels do the opposite, lowest at midday and highest in the evening; the
+Mess shows meal-time peaks; Facilities is nearly a flat line.*
 
 Buildings needing fewer than 30 complete days are absent, and their absence is a
-result rather than an omission: drawing an average daily shape requires days that
-run midnight to midnight with a live meter throughout.
+result rather than an omission: drawing an average daily shape requires days
+that run midnight to midnight with a live meter throughout.
 
 | building | complete days available |
 |---|---|
@@ -1294,17 +1314,16 @@ Before any model result can be read, one thing has to be established:
 
 ![Mean power by year, indexed to 2014, and total growth per building](../figures/fig_04_drift_by_year.png)
 
-*Six of seven buildings grew between 32% and 48% in mean power over four years. The campus did not get more efficient; it got substantially more energy-hungry.*
+*Six of seven buildings grew between 32% and 48% in mean power over four years.
+The campus did not get more efficient; it got substantially more energy-hungry.*
 
 This is a finding in its own right and it is also a methodological problem. The
-test split is the last 15% of the record -- 2017, the highest-consuming period --
-so a model fitted on 2014-2016 under-predicts it systematically. Note too that in
-the Academic building the **power-occupancy correlation itself fell**, from
-0.71 in 2014 to
-0.45 in 2017: the
-relationship the models depend on weakened over time. Test-set numbers below
-should be read with that in mind, which is why model selection uses the
-validation split.
+test split is the last 15% of the record -- 2017, the highest-consuming period
+-- so a model fitted on 2014-2016 under-predicts it systematically. Note too
+that in the Academic building the **power-occupancy correlation itself fell**,
+from 0.71 in 2014 to 0.45 in 2017: the relationship the models depend on
+weakened over time. Test-set numbers below should be read with that in mind,
+which is why model selection uses the validation split.
 
 #### Model scores
 
@@ -1353,24 +1372,22 @@ validation split.
 
 ![Validation R-squared for models B and C, and the gain from adding occupancy](../figures/fig_04_model_comparison.png)
 
-*Occupancy improves validation R-squared in 5 of the 7 buildings, by a mean of +0.107, but the gain ranges from -0.063 to +0.444.*
+*Occupancy improves validation R-squared in 5 of the 7 buildings, by a mean of
++0.107, but the gain ranges from -0.063 to +0.444.*
 
 **Yes -- in most buildings, modestly, and very unevenly.** Adding occupancy
-raises validation R-squared in **5 of 7** buildings, with a
-mean gain of **+0.107**. But the spread is the real story: the largest
-gain is Girls Hostel at
-**+0.444**, while occupancy makes the model
-slightly *worse* in Mess, Facilities
-(-0.063 at worst). It improves MAE in
-3 of 7.
+raises validation R-squared in **5 of 7** buildings, with a mean gain of
+**+0.107**. But the spread is the real story: the largest gain is Girls Hostel
+at **+0.444**, while occupancy makes the model slightly *worse* in Mess,
+Facilities (-0.063 at worst). It improves MAE in 3 of 7.
 
 **A note on how to read these numbers.** Several validation R-squared values are
 negative, meaning the model does worse than simply predicting the validation
 mean. That is the concept drift of section 6.5 again -- the validation period
 sits at a different consumption level from the training period. The *difference*
 between C and B is still meaningful, because both models are fitted on the same
-training data and face exactly the same drift; whatever the drift costs, it costs
-them equally.
+training data and face exactly the same drift; whatever the drift costs, it
+costs them equally.
 
 This is consistent with the LBNL finding that occupancy data adds only modestly
 to building baseline models, and it is a real answer to research question 2
@@ -1379,12 +1396,9 @@ number of people in them.** The same conclusion arrives independently from the
 Phase 2 correlations and the Phase 3 flat daily profiles.
 
 The pattern across buildings is also readable. Occupancy helps most where people
-genuinely drive the load -- the Girls hostel
-(+0.444)
-and the Library
-(+0.205) --
-and helps least, or slightly hurts, in the Mess and Facilities, whose loads are
-driven by equipment schedules and weather rather than by headcount.
+genuinely drive the load -- the Girls hostel (+0.444) and the Library (+0.205)
+-- and helps least, or slightly hurts, in the Mess and Facilities, whose loads
+are driven by equipment schedules and weather rather than by headcount.
 
 #### Cross-validation with TimeSeriesSplit
 
@@ -1419,18 +1433,21 @@ driven by equipment schedules and weather rather than by headcount.
 
 ![Base load against responsiveness, one point per building](../figures/fig_04_base_load_vs_responsiveness.png)
 
-*Buildings towards the top-left run their equipment regardless of who is present; buildings towards the bottom-right scale with their occupants.*
+*Buildings towards the top-left run their equipment regardless of who is
+present; buildings towards the bottom-right scale with their occupants.*
 
 The `a` column is the load the fitted line predicts at zero occupancy -- the
 power a building draws with nobody in it -- and the night-time median column is
-an independent check on it from a completely different calculation. Phase 5 takes
-these two coefficients and turns them into the headline ranking.
+an independent check on it from a completely different calculation. Phase 5
+takes these two coefficients and turns them into the headline ranking.
 
 #### Predictions against reality
 
 ![Academic building: actual and predicted power over one test week, with occupancy below](../figures/fig_04_actual_vs_predicted_academic.png)
 
-*Both models reproduce the daily rhythm; model C bends towards the actual line when occupancy is unusual for the time of day. Neither captures the sharp peaks -- and those leftover peaks are what Phase 6 detects.*
+*Both models reproduce the daily rhythm; model C bends towards the actual line
+when occupancy is unusual for the time of day. Neither captures the sharp peaks
+-- and those leftover peaks are what Phase 6 detects.*
 
 Note the chart uses two stacked panels rather than two y-axes. Watts and people
 are different quantities, and putting them on one axis would invent a visual
@@ -1451,13 +1468,16 @@ relationship that does not exist.
 
 ![Training and validation error against model complexity](../figures/fig_04_overfitting_curves.png)
 
-*The forest shows the textbook picture: at unlimited depth its training error is 2.71 kW but its validation error is 6.47 kW, a gap of 2.4x. That gap is overfitting made visible.*
+*The forest shows the textbook picture: at unlimited depth its training error is
+2.71 kW but its validation error is 6.47 kW, a gap of 2.4x. That gap is
+overfitting made visible.*
 
 #### What the forest uses
 
 ![Random-forest feature importances for Academic power](../figures/fig_04_feature_importance.png)
 
-*Occupancy is the strongest single input, ahead of every hour-of-day indicator -- which is reassuring for a project built around it.*
+*Occupancy is the strongest single input, ahead of every hour-of-day indicator
+-- which is reassuring for a project built around it.*
 
 #### Residuals
 
@@ -1468,7 +1488,10 @@ relationship that does not exist.
 
 ![Residual distributions for models B and C, and residuals against prediction](../figures/fig_04_residuals_academic.png)
 
-*After the drift correction both distributions sit near zero and model C's is narrower. Residuals fan out at high predicted power, so Phase 6 scores deviations relative to the spread of the residuals rather than in absolute watts.*
+*After the drift correction both distributions sit near zero and model C's is
+narrower. Residuals fan out at high predicted power, so Phase 6 scores
+deviations relative to the spread of the residuals rather than in absolute
+watts.*
 <!-- END:results_phase4 -->
 
 ### 6.6 Phase 5 — Wasted energy
@@ -1486,11 +1509,11 @@ relationship that does not exist.
 | Lecture | commercial | 298 | 14.90 | 36,930 | 8,270 | 22.39 | True |
 | Facilities | commercial | 18 | 0.90 | 149,353 | 0 | 0 | False |
 
-Facilities is the exception predicted in Phase 0: its occupancy runs 1 to 47 with
-a 95th percentile of 18, so the threshold is **0.9** -- below its own minimum
-observed count -- and **no interval qualifies**. The rule is kept identical for
-every building rather than bent for one; its behaviour is read off the
-sensitivity curve instead.
+Facilities is the exception predicted in Phase 0: its occupancy runs 1 to 47
+with a 95th percentile of 18, so the threshold is **0.9** -- below its own
+minimum observed count -- and **no interval qualifies**. The rule is kept
+identical for every building rather than bent for one; its behaviour is read off
+the sensitivity curve instead.
 
 #### The headline table
 
@@ -1506,23 +1529,26 @@ sensitivity curve instead.
 
 ![Low-occupancy energy share and intensity ratio, per building](../figures/fig_05_headline.png)
 
-*The right-hand panel is the one to read: when nearly empty, these buildings still draw between 62% and 85% of their average power.*
+*The right-hand panel is the one to read: when nearly empty, these buildings
+still draw between 62% and 85% of their average power.*
 
 #### Sensitivity to the threshold
 
 ![Low-occupancy energy share against threshold, 0% to 20% of p95](../figures/fig_05_sensitivity_curve.png)
 
-*Six of seven curves rise smoothly and the ranking of buildings barely changes across the range, so the finding does not depend on the exact threshold. Facilities is a staircase because its occupancy is a small integer.*
+*Six of seven curves rise smoothly and the ranking of buildings barely changes
+across the range, so the finding does not depend on the exact threshold.
+Facilities is a staircase because its occupancy is a small integer.*
 
-Six of the seven curves rise smoothly with no jumps, and the ranking of buildings
-is stable across the whole range, so the headline does not rest on the choice of
-5%. **Facilities is the exception, and the shape of its curve is diagnostic**: it
-is a staircase, jumping at roughly 6%, 12% and 17% and flat in between. Occupancy
-there is a small integer running from 1 to 47, so a sliding threshold only ever
-crosses whole numbers, and between crossings nothing changes. That is the same
-fact that made the standard threshold unreachable for this building, seen from
-another angle -- a relative threshold assumes occupancy is effectively
-continuous, and in a building this small it is not.
+Six of the seven curves rise smoothly with no jumps, and the ranking of
+buildings is stable across the whole range, so the headline does not rest on the
+choice of 5%. **Facilities is the exception, and the shape of its curve is
+diagnostic**: it is a staircase, jumping at roughly 6%, 12% and 17% and flat in
+between. Occupancy there is a small integer running from 1 to 47, so a sliding
+threshold only ever crosses whole numbers, and between crossings nothing
+changes. That is the same fact that made the standard threshold unreachable for
+this building, seen from another angle -- a relative threshold assumes occupancy
+is effectively continuous, and in a building this small it is not.
 
 #### Comparison with the published literature
 
@@ -1538,14 +1564,15 @@ continuous, and in a building this small it is not.
 
 ![Clock-based and occupancy-based definitions against the published figures](../figures/fig_05_published_comparison.png)
 
-*Applying Masoso & Grobler's own clock-based definition to this data gives the Academic building 55.2% and the Library 55.0%, against their published 56%.*
+*Applying Masoso & Grobler's own clock-based definition to this data gives the
+Academic building 55.2% and the Library 55.0%, against their published 56%.*
 
 **This is the strongest external check in the project.** Applying Masoso &
 Grobler's clock-based definition to our data gives the Academic building
-**55.2%** and the Library **55.0%** -- against their published
-**56%**, from different buildings on a different continent fifteen years earlier.
-Landing within a percentage point is good evidence that the pipeline measures
-what it claims to.
+**55.2%** and the Library **55.0%** -- against their published **56%**, from
+different buildings on a different continent fifteen years earlier. Landing
+within a percentage point is good evidence that the pipeline measures what it
+claims to.
 
 It also shows that the two definitions are **not measuring the same thing**. A
 clock rule calls 3 p.m. on a vacation Tuesday "occupied" when the building is
@@ -1570,7 +1597,9 @@ independently confirms.
 
 ![Model A intercept against the directly measured night-time median](../figures/fig_05_base_load_vs_night.png)
 
-*A regression intercept and a raw night-time median are computed in completely different ways; that they track each other is real corroboration that the base load is not an artefact of the fit.*
+*A regression intercept and a raw night-time median are computed in completely
+different ways; that they track each other is real corroboration that the base
+load is not an artefact of the fit.*
 
 Where the two disagree, the direction is informative. The Boys hostel's night
 median sits far *above* its model intercept -- exactly right for a dormitory,
@@ -1593,19 +1622,17 @@ unoccupied and been wrong.
 
 ![How much of each building's load actually follows its occupants](../figures/fig_05_responsiveness.png)
 
-*In every building the base load -- the part drawn whether or not anyone is present -- is the larger share.*
+*In every building the base load -- the part drawn whether or not anyone is
+present -- is the larger share.*
 
 **The two metrics disagree, and the disagreement is informative.** Ranked by the
-*measured* intensity ratio, the most responsive building is
-**Library**
-(62% of average power when nearly empty) and
-the least is **Lecture**
-(85%). Ranked by the *modelled*
-non-base-load share the order differs, because that version extrapolates model A
-down to zero occupancy -- and for the two dormitories and the Lecture building
-that point lies far outside the occupancy range ever observed. In the worst case
-the extrapolated intercept sits 52% away from the directly
-measured night-time median.
+*measured* intensity ratio, the most responsive building is **Library** (62% of
+average power when nearly empty) and the least is **Lecture** (85%). Ranked by
+the *modelled* non-base-load share the order differs, because that version
+extrapolates model A down to zero occupancy -- and for the two dormitories and
+the Lecture building that point lies far outside the occupancy range ever
+observed. In the worst case the extrapolated intercept sits 52% away from the
+directly measured night-time median.
 
 Where the two disagree we rank on the measured ratio and flag the modelled value
 as unreliable. The conclusion survives either way: **even the best performer has
@@ -1626,7 +1653,8 @@ fixed share is larger than the modelled figure, not smaller.
 
 ![Low-occupancy share and mean power, semester against vacation](../figures/fig_05_semester_vacation.png)
 
-*Holding the threshold fixed across both periods so the comparison measures behaviour rather than the definition.*
+*Holding the threshold fixed across both periods so the comparison measures
+behaviour rather than the definition.*
 
 #### Hostel mains against UPS
 
@@ -1639,7 +1667,8 @@ fixed share is larger than the modelled figure, not smaller.
 
 ![Low-occupancy share and mean power by supply, for the two dormitories](../figures/fig_05_mains_vs_ups.png)
 
-*Only I-BLEND meters the mains and backup supplies separately, so this comparison is not available in other campus datasets.*
+*Only I-BLEND meters the mains and backup supplies separately, so this
+comparison is not available in other campus datasets.*
 
 #### Commercial against residential
 
@@ -1658,9 +1687,9 @@ fixed share is larger than the modelled figure, not smaller.
 Phase 1 established that a building switched off at the mains overnight and a
 meter that has stopped reporting both read exactly 0 W, and that the specified
 6-hour rule cannot separate them (D01-07). Relaxing the rule to 24 hours more
-than doubles the usable intervals and moves the headline share by
-**1.30 percentage
-points**. The ambiguity is real but small, and the Lecture figure survives it.
+than doubles the usable intervals and moves the headline share by **1.30
+percentage points**. The ambiguity is real but small, and the Lecture figure
+survives it.
 
 #### Sensitivity check 2: corrected occupancy
 
@@ -1674,13 +1703,13 @@ points**. The ambiguity is real but small, and the Lecture figure survives it.
 | Lecture | 20 | 14.90 | 13.90 | 19.06 | 28.71 | 9.65 | 22.39 | 33.85 |
 | Facilities | 20 | 0.90 | 0 | 0 | 97.63 | 97.63 | 0 | 97.94 |
 
-Subtracting the documented idle-device baseline makes every building look emptier
-more often, so the low-occupancy share rises everywhere. This **confirms that the
-raw-count headline is a conservative lower bound**. For Facilities the correction
-is drastic -- subtracting 20 from a building whose 95th percentile is 18 pushes
-nearly every interval to zero -- which is not a credible description of the
-building and illustrates why the headline was not built on this adjustment
-(D00-06).
+Subtracting the documented idle-device baseline makes every building look
+emptier more often, so the low-occupancy share rises everywhere. This **confirms
+that the raw-count headline is a conservative lower bound**. For Facilities the
+correction is drastic -- subtracting 20 from a building whose 95th percentile is
+18 pushes nearly every interval to zero -- which is not a credible description
+of the building and illustrates why the headline was not built on this
+adjustment (D00-06).
 <!-- END:results_phase5 -->
 
 ### 6.7 Phase 6 — Anomaly experiment
@@ -1702,17 +1731,21 @@ Spikes are short and can go anywhere, so nearly all 200 are placed. Waste events
 run 2-6 hours and must start inside a low-occupancy period, and those are only
 6% of the Academic building's record -- there is no room for 200 non-overlapping
 multi-hour events inside them, so placement saturates. That is a property of the
-campus, not a fault in the method, and every score below uses the achieved count.
+campus, not a fault in the method, and every score below uses the achieved
+count.
 
 ![A single injected waste event, with occupancy below  [SYNTHETIC]](../figures/fig_06_injected_waste_example.png)
 
-*Deliberately subtle: a modest lift sustained for hours while the building is nearly empty. A spike stands out against any baseline; slow waste looks like a slightly busier night unless the detector knows nobody was there.*
+*Deliberately subtle: a modest lift sustained for hours while the building is
+nearly empty. A spike stands out against any baseline; slow waste looks like a
+slightly busier night unless the detector knows nobody was there.*
 
 #### The fixed threshold specified in the plan
 
 ![Confusion matrices for both detectors, Academic building  [SYNTHETIC]](../figures/fig_06_confusion_matrices.png)
 
-*At a fixed |z| > 3 threshold Detector O has higher recall and lower precision than Detector T.*
+*At a fixed |z| > 3 threshold Detector O has higher recall and lower precision
+than Detector T.*
 
 | detector | anomaly type | n anomaly intervals | true positives | false positives | false negatives | precision | recall | f1 | accuracy |
 |---|---|---|---|---|---|---|---|---|---|
@@ -1747,8 +1780,8 @@ often -- buying recall and losing precision for reasons that have nothing to do
 with occupancy. Comparing the two at that threshold measures the calibration of
 the scale, not the usefulness of the information.
 
-So the detectors are also compared two fairer ways: at a **matched alert budget**
-(same number of alerts each -- which 500 intervals should an operator
+So the detectors are also compared two fairer ways: at a **matched alert
+budget** (same number of alerts each -- which 500 intervals should an operator
 investigate?) and with **threshold-free** measures.
 
 | building | detector | alert budget | precision | recall | f1 |
@@ -1787,7 +1820,8 @@ investigate?) and with **threshold-free** measures.
 
 ![Detector T against Detector O at a matched budget and threshold-free  [SYNTHETIC]](../figures/fig_06_detector_comparison.png)
 
-*Once the comparison is made fairly, the two detectors perform almost identically.*
+*Once the comparison is made fairly, the two detectors perform almost
+identically.*
 
 #### The answer to research question 3
 
@@ -1800,10 +1834,10 @@ investigate?) and with **threshold-free** measures.
 | waste anomalies only, matched budget | 0.14 | 0.17 | mean F1 | 0.02 |
 | waste events noticed at all | 0.22 | 0.25 | event recall | 0.03 |
 
-**Detector o is consistently but modestly better once the comparison is made fairly.** At the fixed threshold the mean F1 is 0.293
-for T against 0.288 for O -- but that gap is the calibration artefact
-described above and should be disregarded. On the 5 **fair** comparisons,
-5 favour Detector O:
+**Detector o is consistently but modestly better once the comparison is made
+fairly.** At the fixed threshold the mean F1 is 0.293 for T against 0.288 for O
+-- but that gap is the calibration artefact described above and should be
+disregarded. On the 5 **fair** comparisons, 5 favour Detector O:
 
 - matched alert budget: mean F1 0.285 -> 0.294 (+0.009)
 - average precision: 0.426 -> 0.446 (+0.020)
@@ -1815,18 +1849,18 @@ described above and should be disregarded. On the 5 **fair** comparisons,
 but the size is small.** Every individual margin is between one and three
 percentage points. What makes them worth believing is that they all point the
 same way, and that **the largest gains are on the waste anomalies** -- the case
-designed to favour occupancy, because a sustained modest lift only looks wrong if
-you know the building was empty. Occupancy adds nothing to catching spikes, which
-stand out against any baseline, and it adds most to catching exactly the
+designed to favour occupancy, because a sustained modest lift only looks wrong
+if you know the building was empty. Occupancy adds nothing to catching spikes,
+which stand out against any baseline, and it adds most to catching exactly the
 behaviour Phase 5 measured.
 
 **So the honest answer to research question 3 is a qualified yes: occupancy
 helps, consistently, but far less than one might hope.** That is consistent with
 everything else the project found by different routes -- occupancy explains only
 7-45% of power variation (Phase 2), adds +0.107 to validation R-squared on
-average (Phase 4), and several buildings have nearly flat daily profiles
-(Phase 3). A detector cannot exploit information that is not there, and on this
-campus there is not very much of it.
+average (Phase 4), and several buildings have nearly flat daily profiles (Phase
+3). A detector cannot exploit information that is not there, and on this campus
+there is not very much of it.
 
 The practical reading: if you are building an anomaly detector for a campus like
 this one, a WiFi occupancy feed will improve it slightly and will not transform
@@ -1869,7 +1903,8 @@ Phase 2 established that these residuals are heavy-tailed.
 
 ![The most unusual real pattern found, with occupancy below](../figures/fig_06_top_real_pattern.png)
 
-*Worth inspecting, NOT a confirmed fault. With no weather data the model cannot distinguish a genuine fault from a hot day.*
+*Worth inspecting, NOT a confirmed fault. With no weather data the model cannot
+distinguish a genuine fault from a hot day.*
 <!-- END:results_phase6 -->
 
 ---
@@ -1946,19 +1981,15 @@ exactly what it would change.
 
 **The campus-wide picture.** In every building the base load -- the power drawn
 whether or not anyone is present -- is the *larger* share of mean consumption,
-ranging from 51% down to
-18% of load that actually varies with
-occupancy. On the directly measured intensity ratio the most responsive building
-is Library
-(62% of average power when nearly empty) and
-the least is Lecture
-(85%).
+ranging from 51% down to 18% of load that actually varies with occupancy. On the
+directly measured intensity ratio the most responsive building is Library (62%
+of average power when nearly empty) and the least is Lecture (85%).
 
 **In context.** Applying the clock-based definition used by Masoso & Grobler
-(2010) to this data gives 55.2% for the Academic building and
-55.0% for the Library, against their published 56% for audited
-commercial buildings elsewhere. Our stricter occupancy-based figures are lower by
-construction and should be read as a conservative lower bound.
+(2010) to this data gives 55.2% for the Academic building and 55.0% for the
+Library, against their published 56% for audited commercial buildings elsewhere.
+Our stricter occupancy-based figures are lower by construction and should be
+read as a conservative lower bound.
 
 **The headline table**
 
@@ -2015,14 +2046,16 @@ identical.
 
 ![Confusion matrices for both detectors, Academic building  [SYNTHETIC]](../figures/fig_06_confusion_matrices.png)
 
-*Detector O has higher recall and lower precision at this threshold -- but see the fairness correction below.*
+*Detector O has higher recall and lower precision at this threshold -- but see
+the fairness correction below.*
 
 #### The fair comparison
 
 A fixed threshold does not put the two detectors on equal terms: model C fits
 better, so its residuals are tighter, so its MAD is smaller, so the same
-deviation in watts scores a larger Z and it raises more alerts. Comparing at that
-threshold measures scale calibration rather than the value of the information.
+deviation in watts scores a larger Z and it raises more alerts. Comparing at
+that threshold measures scale calibration rather than the value of the
+information.
 
 | comparison | detector T | detector O | metric | difference (O - T) |
 |---|---|---|---|---|
@@ -2038,11 +2071,10 @@ threshold measures scale calibration rather than the value of the information.
 *Compared fairly, the two detectors perform almost identically.*
 
 **Answer to research question 3: a qualified yes -- occupancy helps
-consistently, but only a little.** The fixed-threshold comparison is discarded as
-a calibration artefact. On the 5 fair comparisons, 5 favour
-Detector O: matched-budget F1 0.285 -> 0.294, average
-precision 0.426 -> 0.446, ROC AUC 0.685 -> 0.703, and
-waste-event recall 21.8% -> 24.7%.
+consistently, but only a little.** The fixed-threshold comparison is discarded
+as a calibration artefact. On the 5 fair comparisons, 5 favour Detector O:
+matched-budget F1 0.285 -> 0.294, average precision 0.426 -> 0.446, ROC AUC
+0.685 -> 0.703, and waste-event recall 21.8% -> 24.7%.
 
 Every margin is one to three percentage points. What makes them credible is that
 they all point the same way and that **the largest gains fall on the waste
@@ -2053,8 +2085,8 @@ Occupancy adds nothing to catching spikes, which stand out against any baseline.
 This modest result is consistent with everything else the project found:
 occupancy explains only 7-45% of power variation (Phase 2), adds +0.107 to
 validation R-squared on average (Phase 4), and several buildings have a nearly
-flat daily profile (Phase 3). **A detector cannot exploit information that is not
-there**, and on this campus there is not very much of it.
+flat daily profile (Phase 3). **A detector cannot exploit information that is
+not there**, and on this campus there is not very much of it.
 
 #### Rule variants
 
@@ -2098,20 +2130,20 @@ once rather than twenty-four times.
 **Read that table with care: it is not ten findings, it is one finding ten
 times.** Almost every one of the most extreme episodes on the campus is the
 Academic building, starting around 03:20, running seven to eight hours, between
-August and November 2017, at an excess of roughly 35-38 kW -- repeating day after
-day.
+August and November 2017, at an excess of roughly 35-38 kW -- repeating day
+after day.
 
 A repeating daily pattern is not what a fault looks like; it is what a **change
 of schedule** looks like. Something in that building began switching on in the
 small hours in the second half of 2017, and a model fitted on 2014-2016 does not
-know about it, so it reports the same surprise every morning. This is the concept
-drift of section 6.5 resurfacing as false alarms -- the same drift measured there
-as a 42% rise in Academic consumption across the record.
+know about it, so it reports the same surprise every morning. This is the
+concept drift of section 6.5 resurfacing as false alarms -- the same drift
+measured there as a 42% rise in Academic consumption across the record.
 
 The practical lesson is worth stating: **a detector built on a fixed historical
 baseline will eventually spend all of its alerts re-reporting a change it should
-have absorbed.** A deployed version of this would need periodic refitting. A more
-useful operator view takes the most unusual episode per building, so one
+have absorbed.** A deployed version of this would need periodic refitting. A
+more useful operator view takes the most unusual episode per building, so one
 recurring pattern occupies one row:
 
 | building | start | duration hours | peak z | mean excess kW | total excess kWh | total episodes |
@@ -2163,27 +2195,26 @@ could receive.
 #### 3. The injected anomalies are synthetic
 
 Every anomaly used to score the detectors in section 9 was **created by us** and
-injected into a copy of the test data with a recorded seed, because no real fault
-on this campus was ever labelled. They are a measuring instrument for comparing
-two detectors, and **no injected event corresponds to anything that happened at
-IIIT-Delhi**.
+injected into a copy of the test data with a recorded seed, because no real
+fault on this campus was ever labelled. They are a measuring instrument for
+comparing two detectors, and **no injected event corresponds to anything that
+happened at IIIT-Delhi**.
 
-This means the detector comparison is only as realistic as our idea of what waste
-looks like. We modelled it as a sustained +15-30% lift during low-occupancy
-periods; if real waste on this campus takes a different shape, the ranking could
-differ. The real-data findings are reported separately and described only as
-patterns worth inspecting.
+This means the detector comparison is only as realistic as our idea of what
+waste looks like. We modelled it as a sustained +15-30% lift during
+low-occupancy periods; if real waste on this campus takes a different shape, the
+ranking could differ. The real-data findings are reported separately and
+described only as patterns worth inspecting.
 
 #### 4. Very uneven data coverage
 
-Usable coverage ranges from **18.9%** to
-**90.4%**. The Lecture building is the extreme case: its
-meter is flagged off for **25,488 hours**, leaving
-only 18.9% of its intervals usable, so every Lecture
-figure rests on a much smaller sample than the others. The Boys hostel, Girls
-hostel and Library each lose several consecutive months to meter outages. This is
-a smaller sample, not a biased measurement -- but conclusions about those
-buildings are correspondingly less certain.
+Usable coverage ranges from **18.9%** to **90.4%**. The Lecture building is the
+extreme case: its meter is flagged off for **25,488 hours**, leaving only 18.9%
+of its intervals usable, so every Lecture figure rests on a much smaller sample
+than the others. The Boys hostel, Girls hostel and Library each lose several
+consecutive months to meter outages. This is a smaller sample, not a biased
+measurement -- but conclusions about those buildings are correspondingly less
+certain.
 
 #### 5. A dead meter and a building switched off look identical
 
@@ -2197,32 +2228,33 @@ quantified rather than hidden.
 #### 6. The academic calendar is approximated
 
 The I-BLEND project publishes no calendar file -- we checked the repository. The
-semester and vacation windows are approximated from a typical IIIT-Delhi year and
-then validated against the data: dormitory occupancy in the inferred vacation
-windows falls to 42% (Boys) and 53% (Girls) of its semester median, confirming
-the windows are roughly right. They are accurate to within days, not hours, which
-is adequate for the coarse comparisons we use them for and no finer.
+semester and vacation windows are approximated from a typical IIIT-Delhi year
+and then validated against the data: dormitory occupancy in the inferred
+vacation windows falls to 42% (Boys) and 53% (Girls) of its semester median,
+confirming the windows are roughly right. They are accurate to within days, not
+hours, which is adequate for the coarse comparisons we use them for and no
+finer.
 
 #### 7. The base load is partly an extrapolation
 
 Model A estimates base load as the power a fitted line predicts at zero
 occupancy. For buildings whose occupancy never approaches zero -- the two
 dormitories especially -- that point lies far outside the observed data, and the
-estimate departs from the directly measured night-time median by up to
-**52%**. Section 6.6 reports both, ranks buildings on the
-*measured* quantity, and flags where the modelled one should not be trusted.
+estimate departs from the directly measured night-time median by up to **52%**.
+Section 6.6 reports both, ranks buildings on the *measured* quantity, and flags
+where the modelled one should not be trusted.
 
 #### 8. The models are baselines, not forecasts, and they age
 
 Models B and C deliberately exclude lag features, which costs a great deal of
 accuracy (validation R-squared would rise from about 0.29 to over 0.9 with a
 one-hour lag). That is the price of a baseline that can detect sustained waste
-rather than absorbing it. Separately, campus consumption grew
-32-48% across the record, and the
-power-occupancy correlation itself weakened over time in the Academic building
-(r fell from 0.71 to 0.45). A model of this campus **needs periodic refitting**;
-section 9 shows what happens when it does not get it -- a schedule change in
-August 2017 is re-reported as an anomaly every morning for months.
+rather than absorbing it. Separately, campus consumption grew 32-48% across the
+record, and the power-occupancy correlation itself weakened over time in the
+Academic building (r fell from 0.71 to 0.45). A model of this campus **needs
+periodic refitting**; section 9 shows what happens when it does not get it -- a
+schedule change in August 2017 is re-reported as an anomaly every morning for
+months.
 
 #### 9. Seven buildings, one campus, one climate
 
@@ -2236,8 +2268,8 @@ offered as context, not as validation.
 
 Each building has one meter (two for the dormitories). We can say a building
 draws 20 kW at 3 a.m.; we cannot say how much of that is lighting, air
-conditioning, servers or lifts. That is exactly the information an energy manager
-would need to act on these findings, and it is the natural next step.
+conditioning, servers or lifts. That is exactly the information an energy
+manager would need to act on these findings, and it is the natural next step.
 <!-- END:limitations -->
 
 ---
@@ -2254,20 +2286,17 @@ whether an occupancy-aware anomaly detector beats a time-only one.
 #### What we found
 
 **1. Nearly-empty buildings still draw most of their average power.** Between
-62% and
-85% of it, depending on the building. In
-every one of the seven, the base load -- the part drawn whether or not anyone is
-present -- is the larger share of consumption. Applying the published literature's
-own clock-based definition to our data reproduces its headline figure to within a
-percentage point, which is strong evidence the measurement is sound.
+62% and 85% of it, depending on the building. In every one of the seven, the
+base load -- the part drawn whether or not anyone is present -- is the larger
+share of consumption. Applying the published literature's own clock-based
+definition to our data reproduces its headline figure to within a percentage
+point, which is strong evidence the measurement is sound.
 
-**2. Occupancy is a weak predictor of power.** It explains between
-8% and
-44% of the variation, and adds only
-+0.107 to validation R-squared over a time-only model. This arrived
-independently from three different directions -- correlation analysis, regression,
-and the flat daily profiles PCA produced -- and it agrees with the published LBNL
-result.
+**2. Occupancy is a weak predictor of power.** It explains between 8% and 44% of
+the variation, and adds only +0.107 to validation R-squared over a time-only
+model. This arrived independently from three different directions -- correlation
+analysis, regression, and the flat daily profiles PCA produced -- and it agrees
+with the published LBNL result.
 
 **3. An occupancy-aware detector is better, but only just.** All five fair
 comparisons favour it, by one to three percentage points each, with the largest
@@ -2275,11 +2304,10 @@ gains on exactly the anomaly type where occupancy ought to help. A detector
 cannot exploit information that is not there, and finding (2) explains finding
 (3).
 
-**4. Two things we did not go looking for.** Campus consumption grew
-32-48% in four years. And the most
-extreme "anomalies" in the real data turned out to be a single recurring schedule
-change being re-reported every morning -- a reminder that a detector on a fixed
-historical baseline decays.
+**4. Two things we did not go looking for.** Campus consumption grew 32-48% in
+four years. And the most extreme "anomalies" in the real data turned out to be a
+single recurring schedule change being re-reported every morning -- a reminder
+that a detector on a fixed historical baseline decays.
 
 #### What it means
 
@@ -2288,12 +2316,12 @@ turned out to add little that the clock does not already provide on this campus.
 The implication is that **the fixed part of these buildings' load is where the
 opportunity is**. A building that draws 74% of its average power with nobody in
 it is not failing to respond to occupancy -- it is running equipment on a
-schedule that ignores occupancy entirely, and that is a controls and commissioning
-problem rather than a sensing problem.
+schedule that ignores occupancy entirely, and that is a controls and
+commissioning problem rather than a sensing problem.
 
 The Library is the proof that it need not be so: it drops 65% at weekends and
-runs at 62% when nearly empty, the best on campus. Whatever the Library does, the
-others could do.
+runs at 62% when nearly empty, the best on campus. Whatever the Library does,
+the others could do.
 
 #### Future scope
 
@@ -2399,15 +2427,15 @@ python -m pip install -r requirements.txt
 python -m ipykernel install --user --name python3
 ```
 
-Built and tested on **Python 3.14.3**, Windows 11. The pinned
-versions in `requirements.txt` were read from the environment the notebooks were
-actually executed in, not typed by hand.
+Built and tested on **Python 3.14.3**, Windows 11. The pinned versions in
+`requirements.txt` were read from the environment the notebooks were actually
+executed in, not typed by hand.
 
 #### 2. Get the data
 
 The I-BLEND dataset is about 1.6 GB and is **deliberately not in this
-repository**. Download it from
-<https://doi.org/10.6084/m9.figshare.c.3893581> and unzip so that these exist:
+repository**. Download it from <https://doi.org/10.6084/m9.figshare.c.3893581>
+and unzip so that these exist:
 
 ```
 Dataset/energy_dataset/            (16 CSVs + Readme.txt)
@@ -2441,8 +2469,8 @@ python -m nbconvert --to notebook --execute --inplace notebooks/00_explore.ipynb
 **Order matters.** Phase 1 builds the parquet cache every later phase reads;
 Phase 4 writes the model-A coefficients Phase 5 needs; Phase 5 writes the
 headline table the dashboard shows. Phase 1 takes a few minutes on first run
-because it reads all 1.6 GB once; after that everything reads the cache.
-Phase 4 is the slowest at roughly four minutes.
+because it reads all 1.6 GB once; after that everything reads the cache. Phase 4
+is the slowest at roughly four minutes.
 
 #### 4. Run the dashboard
 
@@ -2450,8 +2478,8 @@ Phase 4 is the slowest at roughly four minutes.
 streamlit run dashboard/app.py
 ```
 
-It reads the parquet files and the CSVs in `results/`, and trains nothing. If the
-parquet files are missing, run notebook 07 first, or:
+It reads the parquet files and the CSVs in `results/`, and trains nothing. If
+the parquet files are missing, run notebook 07 first, or:
 
 ```bash
 python -c "import sys; sys.path.insert(0, '.'); from src import dashboard; dashboard.export_all()"
@@ -2521,83 +2549,72 @@ Fails if any file under `Dataset/` or `data/`, any `.parquet`, or any file over
 Twelve slides, **headline first**. The rule throughout: one idea per slide, the
 number on the slide, the caveat spoken aloud.
 
-**1. Title and the one-sentence finding**
-SMARTGRID-X. *"Seven buildings on a real campus draw
-62%-85%
-of their average power when they are at their emptiest."*
-Give the finding before the method. Everything after this slide is evidence for it.
+**1. Title and the one-sentence finding** SMARTGRID-X. *"Seven buildings on a
+real campus draw 62%-85% of their average power when they are at their
+emptiest."* Give the finding before the method. Everything after this slide is
+evidence for it.
 
-**2. The problem and the data**
-Buildings use power when nobody is there; measuring it needs energy data *and*
-occupancy data together. I-BLEND has both: 1-minute meters on 7 IIIT-Delhi
-buildings plus WiFi device counts, Feb 2014 - Nov 2017.
-*Figure:* `fig_00_coverage_timeline.png`.
+**2. The problem and the data** Buildings use power when nobody is there;
+measuring it needs energy data *and* occupancy data together. I-BLEND has both:
+1-minute meters on 7 IIIT-Delhi buildings plus WiFi device counts, Feb 2014 -
+Nov 2017. *Figure:* `fig_00_coverage_timeline.png`.
 
-**3. The problem we hit immediately**
-Occupancy never reads zero -- minimum is 1 in every building, because idle phones
-stay connected. So "empty" is not measurable and the question had to be
-re-specified around a **relative** low-occupancy threshold, published with a
-sensitivity curve. *This slide is where the examiner learns we read our own data.*
+**3. The problem we hit immediately** Occupancy never reads zero -- minimum is 1
+in every building, because idle phones stay connected. So "empty" is not
+measurable and the question had to be re-specified around a **relative**
+low-occupancy threshold, published with a sensitivity curve. *This slide is
+where the examiner learns we read our own data.*
 
-**4. Cleaning: what we found and what we did**
-81.7% of Lecture readings are exactly 0 W (dead meter, not an idle building).
-Negative power factor on up to 66% of rows is a sign convention, not corruption --
-dropping it would have destroyed 58% of the Library record.
-*Figure:* `fig_01_missing_heatmap.png`.
+**4. Cleaning: what we found and what we did** 81.7% of Lecture readings are
+exactly 0 W (dead meter, not an idle building). Negative power factor on up to
+66% of rows is a sign convention, not corruption -- dropping it would have
+destroyed 58% of the Library record. *Figure:* `fig_01_missing_heatmap.png`.
 
-**5. What a normal day looks like**
-*Figure:* `fig_02_hourly_profile_all.png`. Academic peaks at 41 kW and still
-draws about 20 kW at 3 a.m. Hostels do the opposite. Facilities is nearly flat --
-its consumption barely knows what time it is.
+**5. What a normal day looks like** *Figure:* `fig_02_hourly_profile_all.png`.
+Academic peaks at 41 kW and still draws about 20 kW at 3 a.m. Hostels do the
+opposite. Facilities is nearly flat -- its consumption barely knows what time it
+is.
 
-**6. THE HEADLINE**
-*Figure:* `fig_05_headline.png`. Give the intensity ratio, not just the share:
-"Lecture draws
-85% of its average power when nearly empty;
-Library, the best on campus, still draws
-62%."
+**6. THE HEADLINE** *Figure:* `fig_05_headline.png`. Give the intensity ratio,
+not just the share: "Lecture draws 85% of its average power when nearly empty;
+Library, the best on campus, still draws 62%."
 
-**7. Is the headline robust?**
-*Figure:* `fig_05_sensitivity_curve.png`. The threshold is a judgement, so here is
-every other threshold. Rankings do not move. Also: the base load computed two
-independent ways agrees.
+**7. Is the headline robust?** *Figure:* `fig_05_sensitivity_curve.png`. The
+threshold is a judgement, so here is every other threshold. Rankings do not
+move. Also: the base load computed two independent ways agrees.
 
-**8. Does it match anyone else?**
-*Figure:* `fig_05_published_comparison.png`. Applying Masoso & Grobler's own
-clock-based definition to our data gives 55.2% and 55.0%
-against their published 56%. Different continent, fifteen years apart.
+**8. Does it match anyone else?** *Figure:* `fig_05_published_comparison.png`.
+Applying Masoso & Grobler's own clock-based definition to our data gives 55.2%
+and 55.0% against their published 56%. Different continent, fifteen years apart.
 **This is the credibility slide.**
 
-**9. Can we predict it? (RQ2)**
-Occupancy adds only +0.107 to validation R-squared. Say the negative
-result plainly -- it matches published work, and three different analyses in this
-project reached it independently.
-*Figure:* `fig_04_model_comparison.png`.
+**9. Can we predict it? (RQ2)** Occupancy adds only +0.107 to validation
+R-squared. Say the negative result plainly -- it matches published work, and
+three different analyses in this project reached it independently. *Figure:*
+`fig_04_model_comparison.png`.
 
-**10. Can we detect it automatically? (RQ3)**
-The experiment: two detectors, synthetic labelled anomalies, seed 42.
-**Say "synthetic" out loud.** Result: occupancy helps consistently but by only
-1-3 points, and most on the waste anomalies. Mention the trap we caught -- the
-planned fixed threshold was not a fair comparison.
-*Figure:* `fig_06_detector_comparison.png`.
+**10. Can we detect it automatically? (RQ3)** The experiment: two detectors,
+synthetic labelled anomalies, seed 42. **Say "synthetic" out loud.** Result:
+occupancy helps consistently but by only 1-3 points, and most on the waste
+anomalies. Mention the trap we caught -- the planned fixed threshold was not a
+fair comparison. *Figure:* `fig_06_detector_comparison.png`.
 
-**11. Limitations, said before anyone asks**
-No weather data (Delhi's vacation is its hottest season, so some of this is
-cooling an empty building). WiFi counts devices, not people -- which makes our
-numbers a *lower* bound. Injected anomalies are synthetic. Lecture has only
-19% usable data. One campus, one climate.
+**11. Limitations, said before anyone asks** No weather data (Delhi's vacation
+is its hottest season, so some of this is cooling an empty building). WiFi
+counts devices, not people -- which makes our numbers a *lower* bound. Injected
+anomalies are synthetic. Lecture has only 19% usable data. One campus, one
+climate.
 
-**12. So what, and a live dashboard**
-The opportunity is the **fixed** part of the load: this is a controls and
-commissioning problem, not a sensing problem. The Library proves it can be done.
-Then demonstrate `streamlit run dashboard/app.py` -- pick a building, pick a week,
-show the flagged periods.
+**12. So what, and a live dashboard** The opportunity is the **fixed** part of
+the load: this is a controls and commissioning problem, not a sensing problem.
+The Library proves it can be done. Then demonstrate `streamlit run
+dashboard/app.py` -- pick a building, pick a week, show the flagged periods.
 
-**If asked "what is new here?"** -- *"The methods are standard. What we could not
-find published is anyone using I-BLEND's own occupancy stream to quantify, per
-building, how much of the campus's electricity is used while it is nearly empty,
-with a threshold-sensitivity curve and a controlled test of whether occupancy
-helps a detector."*
+**If asked "what is new here?"** -- *"The methods are standard. What we could
+not find published is anyone using I-BLEND's own occupancy stream to quantify,
+per building, how much of the campus's electricity is used while it is nearly
+empty, with a threshold-sensitivity curve and a controlled test of whether
+occupancy helps a detector."*
 
 **If asked about the null results** -- *"Two of our three questions came back
 weaker than we hoped. We report them because they agree with published work and

@@ -12,19 +12,15 @@
 
 **The campus-wide picture.** In every building the base load -- the power drawn
 whether or not anyone is present -- is the *larger* share of mean consumption,
-ranging from 51% down to
-18% of load that actually varies with
-occupancy. On the directly measured intensity ratio the most responsive building
-is Library
-(62% of average power when nearly empty) and
-the least is Lecture
-(85%).
+ranging from 51% down to 18% of load that actually varies with occupancy. On the
+directly measured intensity ratio the most responsive building is Library (62%
+of average power when nearly empty) and the least is Lecture (85%).
 
 **In context.** Applying the clock-based definition used by Masoso & Grobler
-(2010) to this data gives 55.2% for the Academic building and
-55.0% for the Library, against their published 56% for audited
-commercial buildings elsewhere. Our stricter occupancy-based figures are lower by
-construction and should be read as a conservative lower bound.
+(2010) to this data gives 55.2% for the Academic building and 55.0% for the
+Library, against their published 56% for audited commercial buildings elsewhere.
+Our stricter occupancy-based figures are lower by construction and should be
+read as a conservative lower bound.
 
 **The headline table**
 

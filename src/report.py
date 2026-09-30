@@ -121,6 +121,81 @@ def _fix_heading_levels(content: str, minimum: int = MIN_HEADING_LEVEL) -> str:
     return "\n".join(out)
 
 
+WRAP_WIDTH = 80
+
+# A paragraph is left exactly as written if any of its lines matches one of
+# these: tables, headings, bullet and numbered lists, quotes, code fences,
+# images and indented code all depend on their own line breaks.
+#
+# Note the bullet pattern requires a space after the marker. Matching a bare
+# "*" would also catch a paragraph that merely *starts* with bold text, which
+# is ordinary prose and should be re-wrapped like any other.
+_STRUCTURAL_RE = re.compile(
+    r"""^(?:
+          \|                 # table row
+        | \#{1,6}\s          # heading
+        | [-*+]\s            # bullet list (marker must be followed by a space)
+        | \d+\.\s            # numbered list
+        | >                  # block quote
+        | ```                # code fence
+        | !\[                # image
+        | \ {4}              # indented code
+    )""",
+    re.VERBOSE,
+)
+
+
+def _reflow(content: str, width: int = WRAP_WIDTH) -> str:
+    """Re-wrap plain prose paragraphs to a fixed width.
+
+    Generated prose is full of interpolated numbers, so a sentence written on one
+    line in the notebook comes out broken at odd places once the values are
+    substituted. Markdown joins those soft breaks when it renders, so the output
+    is correct either way -- but the raw file is also read directly, and ragged
+    paragraphs make it harder to follow.
+
+    Only genuine prose is touched. Tables, lists, headings, block quotes, images
+    and fenced code keep their own line structure.
+    """
+    import textwrap
+
+    out: list[str] = []
+    in_fence = False
+
+    for paragraph in content.split("\n\n"):
+        lines = paragraph.split("\n")
+        fences = sum(1 for line in lines if line.lstrip().startswith("```"))
+
+        if in_fence or fences:
+            out.append(paragraph)
+            if fences % 2 == 1:
+                in_fence = not in_fence
+            continue
+
+        stripped = [line.strip() for line in lines if line.strip()]
+        if not stripped:
+            out.append(paragraph)
+            continue
+
+        is_structural = any(_STRUCTURAL_RE.match(line) for line in stripped)
+        if is_structural:
+            out.append(paragraph)
+            continue
+
+        joined = " ".join(stripped)
+        joined = re.sub(r"\s+", " ", joined)
+        # break_on_hyphens=False keeps "matched-budget" and "low-occupancy"
+        # whole: markdown joins a soft line break with a space, so breaking at a
+        # hyphen would render as "matched- budget". break_long_words=False
+        # protects long URLs for the same reason.
+        wrapped = textwrap.wrap(
+            joined, width=width, break_on_hyphens=False, break_long_words=False
+        )
+        out.append("\n".join(wrapped) or paragraph)
+
+    return "\n\n".join(out)
+
+
 def update_block(name: str, content: str, *, report_path: Path | None = None) -> None:
     """Replace the text between <!-- BEGIN:name --> and <!-- END:name -->."""
     report_path = report_path or C.REPORT_PATH
@@ -141,7 +216,7 @@ def update_block(name: str, content: str, *, report_path: Path | None = None) ->
             f"Add {begin} ... {end} to the report skeleton first."
         )
 
-    body = _fix_heading_levels(content.strip())
+    body = _reflow(_fix_heading_levels(content.strip()))
     replacement = f"{begin}\n{body}\n{end}"
     report_path.write_text(pattern.sub(lambda _: replacement, text), encoding="utf-8")
     save_md(name, body)

@@ -1,7 +1,7 @@
 Phase 6 is set up as a controlled experiment, not a pipeline. Two detectors, the
 same data, the same procedure, one difference: **Detector T** scores the
-residuals of model B (time features only) and **Detector O** scores the residuals
-of model C (time and occupancy).
+residuals of model B (time features only) and **Detector O** scores the
+residuals of model C (time and occupancy).
 
 **Why anomalies are injected.** Nobody labelled the real faults on this campus,
 so there is no ground truth to score against. A **copy** of the test period is
@@ -28,9 +28,8 @@ count achieved, never the count requested**.
 deviation** rather than the mean and standard deviation, because the standard
 deviation is inflated by the very anomalies being hunted -- a few large events
 would raise the bar and hide themselves. The 1.4826 factor rescales the MAD so
-the thresholds of 2 and 3 keep their usual meaning. Bands are NORMAL below
-2, WARNING from 2 to 3, ANOMALY
-above 3, cross-checked against Tukey IQR fences.
+the thresholds of 2 and 3 keep their usual meaning. Bands are NORMAL below 2,
+WARNING from 2 to 3, ANOMALY above 3, cross-checked against Tukey IQR fences.
 
 **Three comparisons rather than one.** A fixed threshold turned out not to be a
 fair test (section 6.7), so the detectors are also compared at a **matched alert

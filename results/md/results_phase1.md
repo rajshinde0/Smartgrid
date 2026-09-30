@@ -2,8 +2,7 @@
 
 After cleaning, merging with occupancy and flagging dead meters, the proportion
 of 10-minute intervals that are actually usable -- meter alive, reading present,
-occupancy known -- varies from **18.9%** to
-**90.4%**:
+occupancy known -- varies from **18.9%** to **90.4%**:
 
 | building | rows | usable rows | pct usable | pct power missing | pct occupancy missing | hours meter off | total kwh |
 |---|---|---|---|---|---|---|---|
@@ -31,9 +30,8 @@ Three observations matter for everything that follows.
 **The pipeline was independently cross-checked.** Our per-building mean power,
 computed from the individual meter files through chunked ingestion, was compared
 against `all_buildings_power.csv`, which holds every meter side by side. All
-seven agree to within
-**0.122%** (largest disagreement), which rules out
-a whole class of silent error in timestamp handling, unit conversion and chunk
+seven agree to within **0.122%** (largest disagreement), which rules out a whole
+class of silent error in timestamp handling, unit conversion and chunk
 boundaries:
 
 | building | mean power from wide file w | mean power from our cache w | difference pct | agrees |
@@ -48,31 +46,32 @@ boundaries:
 
 **The approximate academic calendar was validated against the data.** If the
 vacation windows were roughly right, dormitory occupancy should collapse inside
-them -- and it does. Boys hostel median occupancy in vacation is
-**42%** of its semester median, Girls
-hostel **53%**. The Academic building
-falls much less, which is what you would expect when staff keep working through
-the summer.
+them -- and it does. Boys hostel median occupancy in vacation is **42%** of its
+semester median, Girls hostel **53%**. The Academic building falls much less,
+which is what you would expect when staff keep working through the summer.
 
 ![Median occupancy by month, with the approximated vacation months shaded](../figures/fig_01_semester_validation.png)
 
-*The dip is centred on June and July exactly where the approximation puts it, and it is much deeper in the two dormitories than in the Academic building.*
+*The dip is centred on June and July exactly where the approximation puts it,
+and it is much deeper in the two dormitories than in the Academic building.*
 
 **Dead-meter detection.**
 
 ![Lecture building in a partly-dead month, with flagged meter-off periods shaded](../figures/fig_01_dead_meter_lecture.png)
 
-*Everything shaded is excluded from the energy accounting rather than counted as zero consumption.*
+*Everything shaded is excluded from the energy accounting rather than counted as
+zero consumption.*
 
 **A limitation of this rule, stated openly.** In the month shown the meter
 alternates between about 4 kW by day and exactly zero every night -- which looks
 less like a broken meter than like a building switched off at the mains. Both
-report exactly 0 W, and no rule based on the power value alone can separate them.
-Checking the length of every zero run shows two distinct populations:
+report exactly 0 W, and no rule based on the power value alone can separate
+them. Checking the length of every zero run shows two distinct populations:
 
 ![How long the Lecture building's zero-power stretches last](../figures/fig_01_zero_run_lengths_lecture.png)
 
-*Two populations: many short runs near half a day (the nightly switch-off, 34.5% of all zero hours) and a few very long runs that account for 65.5% of them.*
+*Two populations: many short runs near half a day (the nightly switch-off, 34.5%
+of all zero hours) and a few very long runs that account for 65.5% of them.*
 
 | hours | runs | total hours | share of zero hours % |
 |---|---|---|---|
@@ -92,14 +91,20 @@ ambiguity with a 24-hour sensitivity check in Phase 5 (decision D01-07).
 
 ![Academic building: distribution with IQR fences, and two weeks with flagged points](../figures/fig_01_outlier_flags_academic.png)
 
-*The flagged points are mostly ordinary working-day peaks. An automatic 'remove outliers' step would have deleted every busy afternoon -- which is why this project flags instead of deletes.*
+*The flagged points are mostly ordinary working-day peaks. An automatic 'remove
+outliers' step would have deleted every busy afternoon -- which is why this
+project flags instead of deletes.*
 
 **Transformation and scaling.**
 
 ![Academic power before and after a log transform](../figures/fig_01_log_transform_power.png)
 
-*The log transform cuts skew from 1.16 to 0.02, but the distribution stays bimodal -- a night cluster and a day cluster -- because that is a real physical feature, not a distortion.*
+*The log transform cuts skew from 1.16 to 0.02, but the distribution stays
+bimodal -- a night cluster and a day cluster -- because that is a real physical
+feature, not a distortion.*
 
 ![The same power data: original, Min-Max scaled, and standardised](../figures/fig_01_scaling_comparison.png)
 
-*Scaling moves and stretches an axis; it does not change the shape of the distribution. What changes is which features dominate a distance or a regression coefficient.*
+*Scaling moves and stretches an axis; it does not change the shape of the
+distribution. What changes is which features dominate a distance or a regression
+coefficient.*

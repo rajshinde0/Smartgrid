@@ -7,20 +7,17 @@ whether an occupancy-aware anomaly detector beats a time-only one.
 #### What we found
 
 **1. Nearly-empty buildings still draw most of their average power.** Between
-62% and
-85% of it, depending on the building. In
-every one of the seven, the base load -- the part drawn whether or not anyone is
-present -- is the larger share of consumption. Applying the published literature's
-own clock-based definition to our data reproduces its headline figure to within a
-percentage point, which is strong evidence the measurement is sound.
+62% and 85% of it, depending on the building. In every one of the seven, the
+base load -- the part drawn whether or not anyone is present -- is the larger
+share of consumption. Applying the published literature's own clock-based
+definition to our data reproduces its headline figure to within a percentage
+point, which is strong evidence the measurement is sound.
 
-**2. Occupancy is a weak predictor of power.** It explains between
-8% and
-44% of the variation, and adds only
-+0.107 to validation R-squared over a time-only model. This arrived
-independently from three different directions -- correlation analysis, regression,
-and the flat daily profiles PCA produced -- and it agrees with the published LBNL
-result.
+**2. Occupancy is a weak predictor of power.** It explains between 8% and 44% of
+the variation, and adds only +0.107 to validation R-squared over a time-only
+model. This arrived independently from three different directions -- correlation
+analysis, regression, and the flat daily profiles PCA produced -- and it agrees
+with the published LBNL result.
 
 **3. An occupancy-aware detector is better, but only just.** All five fair
 comparisons favour it, by one to three percentage points each, with the largest
@@ -28,11 +25,10 @@ gains on exactly the anomaly type where occupancy ought to help. A detector
 cannot exploit information that is not there, and finding (2) explains finding
 (3).
 
-**4. Two things we did not go looking for.** Campus consumption grew
-32-48% in four years. And the most
-extreme "anomalies" in the real data turned out to be a single recurring schedule
-change being re-reported every morning -- a reminder that a detector on a fixed
-historical baseline decays.
+**4. Two things we did not go looking for.** Campus consumption grew 32-48% in
+four years. And the most extreme "anomalies" in the real data turned out to be a
+single recurring schedule change being re-reported every morning -- a reminder
+that a detector on a fixed historical baseline decays.
 
 #### What it means
 
@@ -41,12 +37,12 @@ turned out to add little that the clock does not already provide on this campus.
 The implication is that **the fixed part of these buildings' load is where the
 opportunity is**. A building that draws 74% of its average power with nobody in
 it is not failing to respond to occupancy -- it is running equipment on a
-schedule that ignores occupancy entirely, and that is a controls and commissioning
-problem rather than a sensing problem.
+schedule that ignores occupancy entirely, and that is a controls and
+commissioning problem rather than a sensing problem.
 
 The Library is the proof that it need not be so: it drops 65% at weekends and
-runs at 62% when nearly empty, the best on campus. Whatever the Library does, the
-others could do.
+runs at 62% when nearly empty, the best on campus. Whatever the Library does,
+the others could do.
 
 #### Future scope
 

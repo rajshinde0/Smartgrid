@@ -7,15 +7,15 @@ python -m pip install -r requirements.txt
 python -m ipykernel install --user --name python3
 ```
 
-Built and tested on **Python 3.14.3**, Windows 11. The pinned
-versions in `requirements.txt` were read from the environment the notebooks were
-actually executed in, not typed by hand.
+Built and tested on **Python 3.14.3**, Windows 11. The pinned versions in
+`requirements.txt` were read from the environment the notebooks were actually
+executed in, not typed by hand.
 
 #### 2. Get the data
 
 The I-BLEND dataset is about 1.6 GB and is **deliberately not in this
-repository**. Download it from
-<https://doi.org/10.6084/m9.figshare.c.3893581> and unzip so that these exist:
+repository**. Download it from <https://doi.org/10.6084/m9.figshare.c.3893581>
+and unzip so that these exist:
 
 ```
 Dataset/energy_dataset/            (16 CSVs + Readme.txt)
@@ -49,8 +49,8 @@ python -m nbconvert --to notebook --execute --inplace notebooks/00_explore.ipynb
 **Order matters.** Phase 1 builds the parquet cache every later phase reads;
 Phase 4 writes the model-A coefficients Phase 5 needs; Phase 5 writes the
 headline table the dashboard shows. Phase 1 takes a few minutes on first run
-because it reads all 1.6 GB once; after that everything reads the cache.
-Phase 4 is the slowest at roughly four minutes.
+because it reads all 1.6 GB once; after that everything reads the cache. Phase 4
+is the slowest at roughly four minutes.
 
 #### 4. Run the dashboard
 
@@ -58,8 +58,8 @@ Phase 4 is the slowest at roughly four minutes.
 streamlit run dashboard/app.py
 ```
 
-It reads the parquet files and the CSVs in `results/`, and trains nothing. If the
-parquet files are missing, run notebook 07 first, or:
+It reads the parquet files and the CSVs in `results/`, and trains nothing. If
+the parquet files are missing, run notebook 07 first, or:
 
 ```bash
 python -c "import sys; sys.path.insert(0, '.'); from src import dashboard; dashboard.export_all()"

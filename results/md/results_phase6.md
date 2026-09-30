@@ -14,17 +14,21 @@ Spikes are short and can go anywhere, so nearly all 200 are placed. Waste events
 run 2-6 hours and must start inside a low-occupancy period, and those are only
 6% of the Academic building's record -- there is no room for 200 non-overlapping
 multi-hour events inside them, so placement saturates. That is a property of the
-campus, not a fault in the method, and every score below uses the achieved count.
+campus, not a fault in the method, and every score below uses the achieved
+count.
 
 ![A single injected waste event, with occupancy below  [SYNTHETIC]](../figures/fig_06_injected_waste_example.png)
 
-*Deliberately subtle: a modest lift sustained for hours while the building is nearly empty. A spike stands out against any baseline; slow waste looks like a slightly busier night unless the detector knows nobody was there.*
+*Deliberately subtle: a modest lift sustained for hours while the building is
+nearly empty. A spike stands out against any baseline; slow waste looks like a
+slightly busier night unless the detector knows nobody was there.*
 
 #### The fixed threshold specified in the plan
 
 ![Confusion matrices for both detectors, Academic building  [SYNTHETIC]](../figures/fig_06_confusion_matrices.png)
 
-*At a fixed |z| > 3 threshold Detector O has higher recall and lower precision than Detector T.*
+*At a fixed |z| > 3 threshold Detector O has higher recall and lower precision
+than Detector T.*
 
 | detector | anomaly type | n anomaly intervals | true positives | false positives | false negatives | precision | recall | f1 | accuracy |
 |---|---|---|---|---|---|---|---|---|---|
@@ -59,8 +63,8 @@ often -- buying recall and losing precision for reasons that have nothing to do
 with occupancy. Comparing the two at that threshold measures the calibration of
 the scale, not the usefulness of the information.
 
-So the detectors are also compared two fairer ways: at a **matched alert budget**
-(same number of alerts each -- which 500 intervals should an operator
+So the detectors are also compared two fairer ways: at a **matched alert
+budget** (same number of alerts each -- which 500 intervals should an operator
 investigate?) and with **threshold-free** measures.
 
 | building | detector | alert budget | precision | recall | f1 |
@@ -99,7 +103,8 @@ investigate?) and with **threshold-free** measures.
 
 ![Detector T against Detector O at a matched budget and threshold-free  [SYNTHETIC]](../figures/fig_06_detector_comparison.png)
 
-*Once the comparison is made fairly, the two detectors perform almost identically.*
+*Once the comparison is made fairly, the two detectors perform almost
+identically.*
 
 #### The answer to research question 3
 
@@ -112,10 +117,10 @@ investigate?) and with **threshold-free** measures.
 | waste anomalies only, matched budget | 0.14 | 0.17 | mean F1 | 0.02 |
 | waste events noticed at all | 0.22 | 0.25 | event recall | 0.03 |
 
-**Detector o is consistently but modestly better once the comparison is made fairly.** At the fixed threshold the mean F1 is 0.293
-for T against 0.288 for O -- but that gap is the calibration artefact
-described above and should be disregarded. On the 5 **fair** comparisons,
-5 favour Detector O:
+**Detector o is consistently but modestly better once the comparison is made
+fairly.** At the fixed threshold the mean F1 is 0.293 for T against 0.288 for O
+-- but that gap is the calibration artefact described above and should be
+disregarded. On the 5 **fair** comparisons, 5 favour Detector O:
 
 - matched alert budget: mean F1 0.285 -> 0.294 (+0.009)
 - average precision: 0.426 -> 0.446 (+0.020)
@@ -127,18 +132,18 @@ described above and should be disregarded. On the 5 **fair** comparisons,
 but the size is small.** Every individual margin is between one and three
 percentage points. What makes them worth believing is that they all point the
 same way, and that **the largest gains are on the waste anomalies** -- the case
-designed to favour occupancy, because a sustained modest lift only looks wrong if
-you know the building was empty. Occupancy adds nothing to catching spikes, which
-stand out against any baseline, and it adds most to catching exactly the
+designed to favour occupancy, because a sustained modest lift only looks wrong
+if you know the building was empty. Occupancy adds nothing to catching spikes,
+which stand out against any baseline, and it adds most to catching exactly the
 behaviour Phase 5 measured.
 
 **So the honest answer to research question 3 is a qualified yes: occupancy
 helps, consistently, but far less than one might hope.** That is consistent with
 everything else the project found by different routes -- occupancy explains only
 7-45% of power variation (Phase 2), adds +0.107 to validation R-squared on
-average (Phase 4), and several buildings have nearly flat daily profiles
-(Phase 3). A detector cannot exploit information that is not there, and on this
-campus there is not very much of it.
+average (Phase 4), and several buildings have nearly flat daily profiles (Phase
+3). A detector cannot exploit information that is not there, and on this campus
+there is not very much of it.
 
 The practical reading: if you are building an anomaly detector for a campus like
 this one, a WiFi occupancy feed will improve it slightly and will not transform
@@ -181,4 +186,5 @@ Phase 2 established that these residuals are heavy-tailed.
 
 ![The most unusual real pattern found, with occupancy below](../figures/fig_06_top_real_pattern.png)
 
-*Worth inspecting, NOT a confirmed fault. With no weather data the model cannot distinguish a genuine fault from a hot day.*
+*Worth inspecting, NOT a confirmed fault. With no weather data the model cannot
+distinguish a genuine fault from a hot day.*

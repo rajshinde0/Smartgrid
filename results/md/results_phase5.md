@@ -10,11 +10,11 @@
 | Lecture | commercial | 298 | 14.90 | 36,930 | 8,270 | 22.39 | True |
 | Facilities | commercial | 18 | 0.90 | 149,353 | 0 | 0 | False |
 
-Facilities is the exception predicted in Phase 0: its occupancy runs 1 to 47 with
-a 95th percentile of 18, so the threshold is **0.9** -- below its own minimum
-observed count -- and **no interval qualifies**. The rule is kept identical for
-every building rather than bent for one; its behaviour is read off the
-sensitivity curve instead.
+Facilities is the exception predicted in Phase 0: its occupancy runs 1 to 47
+with a 95th percentile of 18, so the threshold is **0.9** -- below its own
+minimum observed count -- and **no interval qualifies**. The rule is kept
+identical for every building rather than bent for one; its behaviour is read off
+the sensitivity curve instead.
 
 #### The headline table
 
@@ -30,23 +30,26 @@ sensitivity curve instead.
 
 ![Low-occupancy energy share and intensity ratio, per building](../figures/fig_05_headline.png)
 
-*The right-hand panel is the one to read: when nearly empty, these buildings still draw between 62% and 85% of their average power.*
+*The right-hand panel is the one to read: when nearly empty, these buildings
+still draw between 62% and 85% of their average power.*
 
 #### Sensitivity to the threshold
 
 ![Low-occupancy energy share against threshold, 0% to 20% of p95](../figures/fig_05_sensitivity_curve.png)
 
-*Six of seven curves rise smoothly and the ranking of buildings barely changes across the range, so the finding does not depend on the exact threshold. Facilities is a staircase because its occupancy is a small integer.*
+*Six of seven curves rise smoothly and the ranking of buildings barely changes
+across the range, so the finding does not depend on the exact threshold.
+Facilities is a staircase because its occupancy is a small integer.*
 
-Six of the seven curves rise smoothly with no jumps, and the ranking of buildings
-is stable across the whole range, so the headline does not rest on the choice of
-5%. **Facilities is the exception, and the shape of its curve is diagnostic**: it
-is a staircase, jumping at roughly 6%, 12% and 17% and flat in between. Occupancy
-there is a small integer running from 1 to 47, so a sliding threshold only ever
-crosses whole numbers, and between crossings nothing changes. That is the same
-fact that made the standard threshold unreachable for this building, seen from
-another angle -- a relative threshold assumes occupancy is effectively
-continuous, and in a building this small it is not.
+Six of the seven curves rise smoothly with no jumps, and the ranking of
+buildings is stable across the whole range, so the headline does not rest on the
+choice of 5%. **Facilities is the exception, and the shape of its curve is
+diagnostic**: it is a staircase, jumping at roughly 6%, 12% and 17% and flat in
+between. Occupancy there is a small integer running from 1 to 47, so a sliding
+threshold only ever crosses whole numbers, and between crossings nothing
+changes. That is the same fact that made the standard threshold unreachable for
+this building, seen from another angle -- a relative threshold assumes occupancy
+is effectively continuous, and in a building this small it is not.
 
 #### Comparison with the published literature
 
@@ -62,14 +65,15 @@ continuous, and in a building this small it is not.
 
 ![Clock-based and occupancy-based definitions against the published figures](../figures/fig_05_published_comparison.png)
 
-*Applying Masoso & Grobler's own clock-based definition to this data gives the Academic building 55.2% and the Library 55.0%, against their published 56%.*
+*Applying Masoso & Grobler's own clock-based definition to this data gives the
+Academic building 55.2% and the Library 55.0%, against their published 56%.*
 
 **This is the strongest external check in the project.** Applying Masoso &
 Grobler's clock-based definition to our data gives the Academic building
-**55.2%** and the Library **55.0%** -- against their published
-**56%**, from different buildings on a different continent fifteen years earlier.
-Landing within a percentage point is good evidence that the pipeline measures
-what it claims to.
+**55.2%** and the Library **55.0%** -- against their published **56%**, from
+different buildings on a different continent fifteen years earlier. Landing
+within a percentage point is good evidence that the pipeline measures what it
+claims to.
 
 It also shows that the two definitions are **not measuring the same thing**. A
 clock rule calls 3 p.m. on a vacation Tuesday "occupied" when the building is
@@ -94,7 +98,9 @@ independently confirms.
 
 ![Model A intercept against the directly measured night-time median](../figures/fig_05_base_load_vs_night.png)
 
-*A regression intercept and a raw night-time median are computed in completely different ways; that they track each other is real corroboration that the base load is not an artefact of the fit.*
+*A regression intercept and a raw night-time median are computed in completely
+different ways; that they track each other is real corroboration that the base
+load is not an artefact of the fit.*
 
 Where the two disagree, the direction is informative. The Boys hostel's night
 median sits far *above* its model intercept -- exactly right for a dormitory,
@@ -117,19 +123,17 @@ unoccupied and been wrong.
 
 ![How much of each building's load actually follows its occupants](../figures/fig_05_responsiveness.png)
 
-*In every building the base load -- the part drawn whether or not anyone is present -- is the larger share.*
+*In every building the base load -- the part drawn whether or not anyone is
+present -- is the larger share.*
 
 **The two metrics disagree, and the disagreement is informative.** Ranked by the
-*measured* intensity ratio, the most responsive building is
-**Library**
-(62% of average power when nearly empty) and
-the least is **Lecture**
-(85%). Ranked by the *modelled*
-non-base-load share the order differs, because that version extrapolates model A
-down to zero occupancy -- and for the two dormitories and the Lecture building
-that point lies far outside the occupancy range ever observed. In the worst case
-the extrapolated intercept sits 52% away from the directly
-measured night-time median.
+*measured* intensity ratio, the most responsive building is **Library** (62% of
+average power when nearly empty) and the least is **Lecture** (85%). Ranked by
+the *modelled* non-base-load share the order differs, because that version
+extrapolates model A down to zero occupancy -- and for the two dormitories and
+the Lecture building that point lies far outside the occupancy range ever
+observed. In the worst case the extrapolated intercept sits 52% away from the
+directly measured night-time median.
 
 Where the two disagree we rank on the measured ratio and flag the modelled value
 as unreliable. The conclusion survives either way: **even the best performer has
@@ -150,7 +154,8 @@ fixed share is larger than the modelled figure, not smaller.
 
 ![Low-occupancy share and mean power, semester against vacation](../figures/fig_05_semester_vacation.png)
 
-*Holding the threshold fixed across both periods so the comparison measures behaviour rather than the definition.*
+*Holding the threshold fixed across both periods so the comparison measures
+behaviour rather than the definition.*
 
 #### Hostel mains against UPS
 
@@ -163,7 +168,8 @@ fixed share is larger than the modelled figure, not smaller.
 
 ![Low-occupancy share and mean power by supply, for the two dormitories](../figures/fig_05_mains_vs_ups.png)
 
-*Only I-BLEND meters the mains and backup supplies separately, so this comparison is not available in other campus datasets.*
+*Only I-BLEND meters the mains and backup supplies separately, so this
+comparison is not available in other campus datasets.*
 
 #### Commercial against residential
 
@@ -182,9 +188,9 @@ fixed share is larger than the modelled figure, not smaller.
 Phase 1 established that a building switched off at the mains overnight and a
 meter that has stopped reporting both read exactly 0 W, and that the specified
 6-hour rule cannot separate them (D01-07). Relaxing the rule to 24 hours more
-than doubles the usable intervals and moves the headline share by
-**1.30 percentage
-points**. The ambiguity is real but small, and the Lecture figure survives it.
+than doubles the usable intervals and moves the headline share by **1.30
+percentage points**. The ambiguity is real but small, and the Lecture figure
+survives it.
 
 #### Sensitivity check 2: corrected occupancy
 
@@ -198,10 +204,10 @@ points**. The ambiguity is real but small, and the Lecture figure survives it.
 | Lecture | 20 | 14.90 | 13.90 | 19.06 | 28.71 | 9.65 | 22.39 | 33.85 |
 | Facilities | 20 | 0.90 | 0 | 0 | 97.63 | 97.63 | 0 | 97.94 |
 
-Subtracting the documented idle-device baseline makes every building look emptier
-more often, so the low-occupancy share rises everywhere. This **confirms that the
-raw-count headline is a conservative lower bound**. For Facilities the correction
-is drastic -- subtracting 20 from a building whose 95th percentile is 18 pushes
-nearly every interval to zero -- which is not a credible description of the
-building and illustrates why the headline was not built on this adjustment
-(D00-06).
+Subtracting the documented idle-device baseline makes every building look
+emptier more often, so the low-occupancy share rises everywhere. This **confirms
+that the raw-count headline is a conservative lower bound**. For Facilities the
+correction is drastic -- subtracting 20 from a building whose 95th percentile is
+18 pushes nearly every interval to zero -- which is not a credible description
+of the building and illustrates why the headline was not built on this
+adjustment (D00-06).

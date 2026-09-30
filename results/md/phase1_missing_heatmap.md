@@ -1,6 +1,8 @@
 ![Percent of 1-minute readings present, by month and building](../figures/fig_01_missing_heatmap.png)
 
-*Built from the authors' own data_present_status_buildings.csv. The Girls mains meter loses most of a year across 2015-16, the Boys meters several months in the same period, and the Library a long stretch in 2014-15.*
+*Built from the authors' own data_present_status_buildings.csv. The Girls mains
+meter loses most of a year across 2015-16, the Boys meters several months in the
+same period, and the Library a long stretch in 2014-15.*
 
 | building | month | pct present |
 |---|---|---|
