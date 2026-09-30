@@ -30,8 +30,8 @@ the Library, against their published 56%.
 
 Two secondary results, both modest and both reported honestly:
 
-- **Occupancy is a weak predictor of power.** It explains 7%–45% of the
-  variation and adds only +0.11 validation R² over a time-only model.
+- **Occupancy is a weak predictor of power.** It explains 8%–44% of the
+  variation and adds only +0.10 validation R² over a time-only model.
 - **An occupancy-aware anomaly detector is better, but only just** — ahead on
   all five fair comparisons by one to three percentage points each, with the
   gains concentrated on sustained waste rather than spikes.

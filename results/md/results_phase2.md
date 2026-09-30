@@ -62,13 +62,13 @@ alongside RMSE, since RMSE is dominated by the tail.
 
 | building | n semester | n vacation | mean semester (W) | mean vacation (W) | difference in means | percent difference | cohens d | effect size label | t-test p | Mann-Whitney p |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Academic | 129,756 | 46,974 | 28,538.30 | 29,688 | -1,149.70 | -3.90 | -0.08 | negligible | 4.15e-55 | 1.38e-140 |
-| Boys_Hostel | 94,438 | 24,586 | 34,970.30 | 24,552.40 | 10,417.90 | 42.40 | 0.89 | large | < 1e-300 | < 1e-300 |
-| Girls_Hostel | 94,691 | 22,495 | 15,209.30 | 14,138.10 | 1,071.30 | 7.60 | 0.25 | small | 3.19e-297 | 5.08e-193 |
-| Mess | 122,966 | 34,300 | 23,698.20 | 22,894.80 | 803.40 | 3.50 | 0.09 | negligible | 4.00e-46 | 3.41e-105 |
-| Library | 92,804 | 25,916 | 10,519.40 | 8,879.40 | 1,640 | 18.50 | 0.23 | small | 4.21e-272 | < 1e-300 |
-| Lecture | 26,923 | 10,007 | 3,553.10 | 1,582 | 1,971.10 | 124.60 | 1.24 | large | < 1e-300 | < 1e-300 |
-| Facilities | 109,432 | 39,921 | 10,724.10 | 12,877.60 | -2,153.50 | -16.70 | -0.45 | small | < 1e-300 | < 1e-300 |
+| Academic | 76,494 | 100,236 | 32,843.90 | 25,791.30 | 7,052.50 | 27.30 | 0.51 | medium | < 1e-300 | < 1e-300 |
+| Boys_Hostel | 56,112 | 62,912 | 37,595.50 | 28,557.50 | 9,038.10 | 31.60 | 0.78 | medium | < 1e-300 | < 1e-300 |
+| Girls_Hostel | 57,428 | 59,758 | 16,084.90 | 13,964.60 | 2,120.30 | 15.20 | 0.51 | medium | < 1e-300 | < 1e-300 |
+| Mess | 73,770 | 83,496 | 25,268.40 | 21,980.90 | 3,287.50 | 15 | 0.38 | small | < 1e-300 | < 1e-300 |
+| Library | 55,934 | 62,786 | 12,435.70 | 8,135.20 | 4,300.50 | 52.90 | 0.64 | medium | < 1e-300 | < 1e-300 |
+| Lecture | 22,272 | 14,658 | 3,772.90 | 1,873.50 | 1,899.30 | 101.40 | 1.21 | large | < 1e-300 | < 1e-300 |
+| Facilities | 64,564 | 84,789 | 11,076 | 11,470.10 | -394.10 | -3.40 | -0.08 | negligible | 2.21e-56 | 5.68e-91 |
 
 **Weekday versus weekend:**
 
@@ -87,13 +87,12 @@ naive "p < 0.05" reading every difference is significant and the p-values tell
 us nothing beyond the fact that we have a lot of data. The **Cohen's d** column
 carries the finding, and it is **not uniform across the campus**.
 
-*Semester versus vacation* splits the buildings in two. The **Boys Hostel** (d =
-0.89) and **Lecture** (d = 1.24) show large effects -- buildings whose purpose
-empties out when term ends. But the **Academic** (d = -0.08) and **Mess** (d =
-0.09) barely move, and **Facilities** (d = -0.45) actually consumes **more**
-power during vacation, because the Indian summer vacation coincides with Delhi's
-hottest months: cooling load rises exactly as occupation falls. That is the
-no-weather-data limitation made visible.
+*Semester versus vacation* splits the buildings in two. The **Lecture** (d =
+1.21) show large effects -- buildings whose purpose empties out when term ends.
+But the **Facilities** (d = -0.08) barely move, and no buildings actually
+consumes **more** power during vacation, because the Indian summer vacation
+coincides with Delhi's hottest months: cooling load rises exactly as occupation
+falls. That is the no-weather-data limitation made visible.
 
 *Weekday versus weekend* splits them the other way. The **Academic** (d = 0.73)
 and **Library** (d = 0.66) fall substantially at weekends, while both hostels

@@ -14,7 +14,7 @@ definition to our data reproduces its headline figure to within a percentage
 point, which is strong evidence the measurement is sound.
 
 **2. Occupancy is a weak predictor of power.** It explains between 8% and 44% of
-the variation, and adds only +0.107 to validation R-squared over a time-only
+the variation, and adds only +0.099 to validation R-squared over a time-only
 model. This arrived independently from three different directions -- correlation
 analysis, regression, and the flat daily profiles PCA produced -- and it agrees
 with the published LBNL result.
@@ -46,7 +46,9 @@ the others could do.
 
 #### Future scope
 
-1. **Add weather data.** The single highest-value addition. It would separate
+1. **Add weather data for 2014-2017.** The single highest-value addition. The
+   record shipped with I-BLEND covers only March-June 2018, so this means an
+   external source such as a Delhi airport METAR archive. It would separate
    cooling load from occupancy-driven load and turn "some of this is air
    conditioning an empty building" from a caveat into a number.
 2. **Sub-metering.** One meter per building can say *how much* is wasted but never

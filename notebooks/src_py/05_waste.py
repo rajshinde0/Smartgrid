@@ -1110,8 +1110,8 @@ print("figures referenced but missing:", report.check_figures())
 # definition to our data reproduces their headline figure to within a percentage
 # point.
 #
-# **What it does not show.** We have no weather data, so we cannot separate air
-# conditioning from occupancy-driven load -- and Phase 2 showed vacation power
+# **What it does not show.** We have no *usable* weather data -- the weather record shipped with I-BLEND covers March-June 2018 only, which does not overlap the 2014-2017 analysis window at all
+# -- so we cannot separate air conditioning from occupancy-driven load -- and Phase 2 showed vacation power
 # rising in some buildings precisely because Delhi's summer break is its hottest
 # season. Some of what we are calling low-occupancy consumption is cooling an
 # empty building, which is still waste, but of a kind that needs a different

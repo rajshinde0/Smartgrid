@@ -198,11 +198,28 @@ WIDE_COL_TO_METER = {
 # ---------------------------------------------------------------------------
 # Academic calendar (Phase 1)
 # ---------------------------------------------------------------------------
-# The I-BLEND project site (github.com/i-blend/i-blend.github.io) does NOT
-# publish a calendar file -- verified during planning, the repo holds only
-# css/js/img/py_scripts/r_scripts. So these month-day windows are an
-# APPROXIMATION of the IIIT-Delhi academic year, validated in Phase 1 against
-# the observed collapse in dormitory occupancy. Logged in the Decision log.
+# The dataset authors publish the real IIIT-Delhi calendar as part of the same
+# figshare collection as the energy and occupancy data -- one CSV per year,
+# 2013 to 2017, covering our analysis window exactly. Columns:
+#
+#   Date          the day
+#   working_day   1 = a working day, 0 = not
+#   activity      "H" = high-activity (term-time working day)
+#                 "L" = low-activity  (vacation, weekend or holiday)
+#
+# This is ground truth and it is what the pipeline uses. `tools/get_data.py`
+# downloads it alongside the energy and occupancy data.
+CALENDAR_GLOB = "calender_year_*.csv"
+
+
+def calendar_files() -> list[Path]:
+    """The per-year calendar CSVs shipped with I-BLEND, if they are present."""
+    return sorted(DATASET_DIR.glob(CALENDAR_GLOB))
+
+
+# Fallback only. If the calendar files are missing, Phase 1 falls back to these
+# approximate windows and says so loudly. They agree with the real calendar on
+# only about 67% of days, which is why they are a fallback and not the default.
 #
 # Each window is ((start_month, start_day), (end_month, end_day)), inclusive.
 VACATION_WINDOWS = [
@@ -212,9 +229,15 @@ VACATION_WINDOWS = [
 ]
 
 SEMESTER_NOTE = (
-    "Monsoon semester approx. 1 Aug - 15 Dec; Winter semester approx. 2 Jan - 15 May; "
-    "vacations approx. 16 May - 31 Jul and 16 - 31 Dec. Approximated from the "
-    "IIIT-Delhi academic year and validated against observed dormitory occupancy."
+    "Semester and vacation flags come from the official IIIT-Delhi calendar "
+    "published with I-BLEND on figshare (one CSV per year, 2013-2017), which "
+    "marks each day as a working day or not and as high- or low-activity."
+)
+
+SEMESTER_NOTE_FALLBACK = (
+    "FALLBACK IN USE: the official calendar files were not found, so semester "
+    "and vacation are approximated as 16 May - 31 Jul and 16 - 31 Dec. Run "
+    "tools/get_data.py to fetch the real calendar."
 )
 
 

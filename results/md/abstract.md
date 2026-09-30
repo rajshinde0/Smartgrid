@@ -23,11 +23,11 @@ data reproduces their published 56% to within a percentage point (55.2% for the
 Academic building, 55.0% for the Library).
 
 Two further results emerged. Occupancy is a **weak predictor**: it raises
-validation R-squared by only +0.107 on average over a time-only model, and
+validation R-squared by only +0.099 on average over a time-only model, and
 explains between 8% and 44% of the variation in power. And a controlled
 experiment on synthetic anomalies shows an occupancy-aware detector is
 **consistently but only marginally** better than a time-only one --
-matched-budget F1 0.285 against 0.294, average precision 0.426 against 0.446 --
+matched-budget F1 0.292 against 0.296, average precision 0.426 against 0.443 --
 with the gains concentrated, as theory predicts, on sustained waste rather than
 on spikes.
 
@@ -35,6 +35,8 @@ Separately, campus consumption **grew 32% to 48% between 2014 and 2017**, which
 required explicit handling of concept drift and which reappears in the anomaly
 results as a recurring false alarm.
 
-The main limitation is the absence of weather data: Delhi's summer vacation is
-also its hottest season, so cooling an empty building is counted as
-low-occupancy consumption without being separable from it.
+The main limitation is the absence of weather data *for this period*: the
+weather record shipped with I-BLEND covers March-June 2018 and does not overlap
+the analysis window at all. Delhi's summer vacation is also its hottest season,
+so cooling an empty building is counted as low-occupancy consumption without
+being separable from it.

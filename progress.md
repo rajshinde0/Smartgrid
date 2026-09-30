@@ -176,8 +176,8 @@ residual analysis. Six decisions logged. Seven figures. Runtime ~4 min.
   test) and both corrected and uncorrected metrics reported. Decision D04-02.
 - **The power-occupancy correlation itself weakened over time** in the Academic
   building: r fell from 0.71 (2014) to 0.45 (2017).
-- **RQ2 answered: occupancy helps in 5 of 7 buildings, mean +0.107 validation
-  R2, range -0.063 to +0.444.** Helps most where people drive the load (Girls
+- **RQ2 answered: occupancy helps in 6 of 7 buildings, mean +0.099
+  validation R2** (recomputed after the official calendar was adopted).** Helps most where people drive the load (Girls
   hostel +0.444, Library +0.205); slightly hurts where equipment schedules and
   weather do (Mess -0.007, Facilities -0.063). Matches the published LBNL result.
 - **Base load is 52%-86% of mean power in every building** (Facilities 85.7%,
@@ -255,7 +255,7 @@ logged (D06-01..05). Four figures.
 **Found.**
 - **RQ3 answered: a qualified yes.** Occupancy helps consistently but only a
   little. All 5 fair comparisons favour Detector O: matched-budget F1
-  0.285->0.294, average precision 0.426->0.446, ROC AUC 0.685->0.703,
+  0.292->0.296, average precision 0.426->0.443, ROC AUC 0.682->0.702,
   waste-only F1 0.141->0.165, waste-event recall 21.8%->24.7%. Every margin is
   1-3 percentage points, but they all point the same way and **the largest
   gains land on the waste anomalies**, exactly where theory predicts.
@@ -316,3 +316,46 @@ Two decisions logged (D07-01/02). 40 decisions total.
 
 **Nothing left outstanding.** All three research questions answered, all
 sensitivity checks owed by earlier decisions discharged (D00-06, D01-07).
+
+---
+
+## Post-completion correction — the official calendar and the weather file
+
+**Trigger.** While writing `tools/get_data.py` (a one-command downloader, so the
+1.6 GB dataset need not — and cannot — live in git: five files exceed GitHub's
+100 MB hard limit), querying the figshare API revealed the collection holds
+**four** articles, not two.
+
+**What was wrong.**
+- **The IIIT-Delhi semester calendar is published with the dataset.** Phase 1
+  approximated it, having searched the project GitHub site — which hosts only
+  website assets and reading scripts — and wrongly concluded none existed. The
+  brief said to use the real calendar "if reachable, else approximate"; it was
+  reachable, just on figshare.
+- **A weather file exists**, contradicting the report's claim that "I-BLEND
+  contains no temperature or humidity".
+
+**What was done.**
+- Adopted the official calendar (`calender_year_2013..2017_.csv`, 1,614 days
+  covering our window exactly): `working_day` 0/1 and `activity` H/L. Added
+  `is_working_day` as a model feature — it knows about public holidays, which a
+  weekend flag cannot see. The approximation survives as a documented fallback.
+- Measured the damage: the approximation agreed with the published calendar on
+  only **68.5%** of days, marking 26.5% of days as vacation against the official
+  57.4% low-activity, because the official definition includes weekends and
+  holidays. D01-03 rewritten.
+- Corrected the weather claim rather than deleting it. The file
+  (`IIITD_and_airport_data.csv`) covers **1 Mar – 29 Jun 2018** and has **zero
+  rows** overlapping our Feb 2014 – Nov 2017 window — it is a sensor-comparison
+  record, not a weather history. The limitation stands, now stated precisely.
+- Re-ran all eight notebooks.
+
+**Effect on results.** The headline is **unchanged** — it never depended on the
+calendar. Model B improved (Academic val R2 0.473 → 0.509) because the official
+calendar is a better feature, so occupancy's marginal contribution fell slightly
+(+0.107 → +0.099). RQ3 conclusions hold: all five fair comparisons still favour
+Detector O, and waste-event recall improved (+0.029 → +0.041).
+
+**Lesson.** "We checked and it does not exist" was true of the place we looked
+and false of the dataset. Worth checking the data repository itself, not just
+the project website.

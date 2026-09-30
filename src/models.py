@@ -43,14 +43,16 @@ from . import config as C
 
 # Which columns feed which model
 TIME_CATEGORICAL = ["hour", "weekday", "month"]
-TIME_BINARY = ["is_weekend", "is_semester"]
+# is_working_day comes from the official IIIT-Delhi calendar, so it knows
+# about public holidays that is_weekend cannot see.
+TIME_BINARY = ["is_weekend", "is_semester", "is_working_day"]
 OCCUPANCY = ["occupancy"]
 
 
 def usable_frame(df: pd.DataFrame) -> pd.DataFrame:
     """Rows a model may legitimately learn from."""
     needed = ["power_w", "occupancy", "hour", "weekday", "month", "is_weekend",
-              "is_semester"]
+              "is_semester", "is_working_day"]
     out = df.loc[df["usable"], needed].dropna()
     out = out.copy()
     out["weekday"] = out["weekday"].astype(str)   # one-hot wants plain labels

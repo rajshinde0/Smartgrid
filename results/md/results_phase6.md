@@ -32,12 +32,12 @@ than Detector T.*
 
 | detector | anomaly type | n anomaly intervals | true positives | false positives | false negatives | precision | recall | f1 | accuracy |
 |---|---|---|---|---|---|---|---|---|---|
-| T | all | 1,733 | 558 | 1,800 | 1,175 | 0.24 | 0.32 | 0.27 | 0.89 |
-| T | spike | 324 | 108 | 1,800 | 216 | 0.06 | 0.33 | 0.10 | 0.92 |
-| T | waste | 1,409 | 450 | 1,800 | 959 | 0.20 | 0.32 | 0.25 | 0.89 |
-| O | all | 1,733 | 631 | 2,910 | 1,102 | 0.18 | 0.36 | 0.24 | 0.85 |
-| O | spike | 324 | 124 | 2,910 | 200 | 0.04 | 0.38 | 0.07 | 0.88 |
-| O | waste | 1,409 | 507 | 2,910 | 902 | 0.15 | 0.36 | 0.21 | 0.85 |
+| T | all | 1,733 | 541 | 1,523 | 1,192 | 0.26 | 0.31 | 0.28 | 0.90 |
+| T | spike | 324 | 105 | 1,523 | 219 | 0.06 | 0.32 | 0.11 | 0.93 |
+| T | waste | 1,409 | 436 | 1,523 | 973 | 0.22 | 0.31 | 0.26 | 0.90 |
+| O | all | 1,733 | 632 | 2,873 | 1,101 | 0.18 | 0.36 | 0.24 | 0.85 |
+| O | spike | 324 | 123 | 2,873 | 201 | 0.04 | 0.38 | 0.07 | 0.88 |
+| O | waste | 1,409 | 509 | 2,873 | 900 | 0.15 | 0.36 | 0.21 | 0.86 |
 
 A note on **accuracy**: it is reported because the plan asks for it, but it is
 the least useful number here. Anomalies are a few percent of the intervals, so a
@@ -47,13 +47,13 @@ detector that flags nothing at all still scores above 90%.
 
 | building | T residual sd (kW) | T MAD scale (kW) | T alerts at z>3 | O residual sd (kW) | O MAD scale (kW) | O alerts at z>3 | extra alerts from O |
 |---|---|---|---|---|---|---|---|
-| Academic | 16.48 | 10.87 | 2,358 | 17.17 | 8.68 | 3,541 | 1,183 |
-| Boys_Hostel | 12.14 | 8.73 | 797 | 12.34 | 8.84 | 755 | -42 |
-| Girls_Hostel | 4.63 | 4.33 | 182 | 4.71 | 4.55 | 165 | -17 |
-| Mess | 10.30 | 9.58 | 324 | 10.33 | 9.54 | 338 | 14 |
-| Library | 9.24 | 6.03 | 1,812 | 9.70 | 6.03 | 1,898 | 86 |
-| Lecture | 1.50 | 1.14 | 233 | 1.53 | 1.30 | 128 | -105 |
-| Facilities | 3.08 | 2.57 | 502 | 3.11 | 2.57 | 557 | 55 |
+| Academic | 16.32 | 11.31 | 2,064 | 17.09 | 8.70 | 3,505 | 1,441 |
+| Boys_Hostel | 11.81 | 8.62 | 734 | 12.30 | 8.84 | 753 | 19 |
+| Girls_Hostel | 4.55 | 4.24 | 195 | 4.64 | 4.43 | 173 | -22 |
+| Mess | 10.26 | 9.38 | 357 | 10.29 | 9.38 | 359 | 2 |
+| Library | 9.10 | 6.19 | 1,629 | 9.64 | 6.21 | 1,756 | 127 |
+| Lecture | 1.52 | 1.24 | 170 | 1.54 | 1.30 | 136 | -34 |
+| Facilities | 3.06 | 2.54 | 507 | 3.10 | 2.52 | 615 | 108 |
 
 **Detector O raises far more alerts than Detector T at the same threshold, and
 that is an artefact of the threshold.** Model C is the better model, so its
@@ -69,37 +69,37 @@ investigate?) and with **threshold-free** measures.
 
 | building | detector | alert budget | precision | recall | f1 |
 |---|---|---|---|---|---|
-| Academic | T | 2,358 | 0.24 | 0.32 | 0.27 |
-| Academic | O | 2,358 | 0.23 | 0.31 | 0.26 |
-| Boys_Hostel | T | 755 | 0.31 | 0.26 | 0.28 |
-| Boys_Hostel | O | 755 | 0.40 | 0.35 | 0.37 |
-| Girls_Hostel | T | 165 | 1 | 0.19 | 0.31 |
-| Girls_Hostel | O | 165 | 0.99 | 0.19 | 0.31 |
-| Mess | T | 324 | 0.88 | 0.10 | 0.18 |
-| Mess | O | 324 | 0.90 | 0.10 | 0.18 |
-| Library | T | 1,812 | 0.58 | 0.23 | 0.33 |
-| Library | O | 1,812 | 0.55 | 0.22 | 0.31 |
-| Lecture | T | 128 | 0.40 | 0.02 | 0.04 |
-| Lecture | O | 128 | 0.43 | 0.02 | 0.04 |
-| Facilities | T | 502 | 0.48 | 0.74 | 0.58 |
-| Facilities | O | 502 | 0.47 | 0.73 | 0.58 |
+| Academic | T | 2,064 | 0.26 | 0.31 | 0.28 |
+| Academic | O | 2,064 | 0.25 | 0.29 | 0.27 |
+| Boys_Hostel | T | 734 | 0.33 | 0.27 | 0.30 |
+| Boys_Hostel | O | 734 | 0.41 | 0.34 | 0.37 |
+| Girls_Hostel | T | 173 | 0.98 | 0.19 | 0.32 |
+| Girls_Hostel | O | 173 | 1 | 0.20 | 0.33 |
+| Mess | T | 357 | 0.84 | 0.10 | 0.18 |
+| Mess | O | 357 | 0.87 | 0.11 | 0.19 |
+| Library | T | 1,629 | 0.64 | 0.23 | 0.33 |
+| Library | O | 1,629 | 0.59 | 0.21 | 0.31 |
+| Lecture | T | 136 | 0.39 | 0.02 | 0.04 |
+| Lecture | O | 136 | 0.37 | 0.02 | 0.04 |
+| Facilities | T | 507 | 0.49 | 0.76 | 0.59 |
+| Facilities | O | 507 | 0.47 | 0.73 | 0.57 |
 
 | building | detector | roc auc | average precision | baseline precision |
 |---|---|---|---|---|
-| Academic | T | 0.66 | 0.29 | 0.07 |
+| Academic | T | 0.67 | 0.30 | 0.07 |
 | Academic | O | 0.69 | 0.30 | 0.07 |
-| Boys_Hostel | T | 0.70 | 0.25 | 0.05 |
-| Boys_Hostel | O | 0.83 | 0.38 | 0.05 |
-| Girls_Hostel | T | 0.70 | 0.40 | 0.05 |
-| Girls_Hostel | O | 0.76 | 0.45 | 0.05 |
+| Boys_Hostel | T | 0.69 | 0.25 | 0.05 |
+| Boys_Hostel | O | 0.82 | 0.38 | 0.05 |
+| Girls_Hostel | T | 0.69 | 0.40 | 0.05 |
+| Girls_Hostel | O | 0.75 | 0.44 | 0.05 |
 | Mess | T | 0.56 | 0.29 | 0.12 |
-| Mess | O | 0.57 | 0.31 | 0.12 |
-| Library | T | 0.56 | 0.43 | 0.26 |
-| Library | O | 0.50 | 0.40 | 0.26 |
-| Lecture | T | 0.64 | 0.56 | 0.49 |
-| Lecture | O | 0.60 | 0.54 | 0.49 |
+| Mess | O | 0.56 | 0.31 | 0.12 |
+| Library | T | 0.55 | 0.43 | 0.26 |
+| Library | O | 0.50 | 0.41 | 0.26 |
+| Lecture | T | 0.64 | 0.55 | 0.49 |
+| Lecture | O | 0.61 | 0.54 | 0.49 |
 | Facilities | T | 0.97 | 0.75 | 0.01 |
-| Facilities | O | 0.97 | 0.74 | 0.01 |
+| Facilities | O | 0.98 | 0.74 | 0.01 |
 
 ![Detector T against Detector O at a matched budget and threshold-free  [SYNTHETIC]](../figures/fig_06_detector_comparison.png)
 
@@ -110,23 +110,23 @@ identically.*
 
 | comparison | detector T | detector O | metric | difference (O - T) |
 |---|---|---|---|---|
-| fixed threshold \|z\| > 3 (as specified) | 0.29 | 0.29 | mean F1 | -0.01 |
-| matched alert budget | 0.28 | 0.29 | mean F1 | 0.01 |
-| threshold-free ranking | 0.43 | 0.45 | mean average precision | 0.02 |
+| fixed threshold \|z\| > 3 (as specified) | 0.30 | 0.29 | mean F1 | -0.01 |
+| matched alert budget | 0.29 | 0.30 | mean F1 | 0.00 |
+| threshold-free ranking | 0.43 | 0.44 | mean average precision | 0.02 |
 | threshold-free ranking | 0.68 | 0.70 | mean ROC AUC | 0.02 |
-| waste anomalies only, matched budget | 0.14 | 0.17 | mean F1 | 0.02 |
-| waste events noticed at all | 0.22 | 0.25 | event recall | 0.03 |
+| waste anomalies only, matched budget | 0.15 | 0.17 | mean F1 | 0.02 |
+| waste events noticed at all | 0.20 | 0.24 | event recall | 0.04 |
 
 **Detector o is consistently but modestly better once the comparison is made
-fairly.** At the fixed threshold the mean F1 is 0.293 for T against 0.288 for O
+fairly.** At the fixed threshold the mean F1 is 0.298 for T against 0.286 for O
 -- but that gap is the calibration artefact described above and should be
 disregarded. On the 5 **fair** comparisons, 5 favour Detector O:
 
-- matched alert budget: mean F1 0.285 -> 0.294 (+0.009)
-- average precision: 0.426 -> 0.446 (+0.020)
-- ROC AUC: 0.685 -> 0.703 (+0.018)
-- waste anomalies only, F1: 0.141 -> 0.165
-- waste events noticed at all: 21.8% -> 24.7%
+- matched alert budget: mean F1 0.292 -> 0.296 (+0.003)
+- average precision: 0.426 -> 0.443 (+0.018)
+- ROC AUC: 0.682 -> 0.702 (+0.021)
+- waste anomalies only, F1: 0.145 -> 0.168
+- waste events noticed at all: 20.2% -> 24.4%
 
 **The direction is consistent and the pattern is exactly what theory predicts,
 but the size is small.** Every individual margin is between one and three
@@ -154,12 +154,12 @@ and extends it from prediction to detection.
 
 | rule | detector | alerts | precision | recall | f1 |
 |---|---|---|---|---|---|
-| IQR fences (cross-check) | O | 858.43 | 0.58 | 0.28 | 0.29 |
-| IQR fences (cross-check) | T | 704.43 | 0.59 | 0.26 | 0.28 |
-| one-sided z > 3 (positive only) | O | 982 | 0.64 | 0.28 | 0.29 |
-| one-sided z > 3 (positive only) | T | 849.43 | 0.65 | 0.27 | 0.29 |
-| two-sided \|z\| > 3 (as specified) | O | 1,054.57 | 0.55 | 0.28 | 0.29 |
-| two-sided \|z\| > 3 (as specified) | T | 886.86 | 0.56 | 0.27 | 0.29 |
+| IQR fences (cross-check) | O | 854.29 | 0.57 | 0.28 | 0.28 |
+| IQR fences (cross-check) | T | 654.29 | 0.57 | 0.26 | 0.27 |
+| one-sided z > 3 (positive only) | O | 972.86 | 0.64 | 0.29 | 0.29 |
+| one-sided z > 3 (positive only) | T | 789.57 | 0.65 | 0.27 | 0.30 |
+| two-sided \|z\| > 3 (as specified) | O | 1,042.43 | 0.54 | 0.29 | 0.29 |
+| two-sided \|z\| > 3 (as specified) | T | 808 | 0.56 | 0.27 | 0.30 |
 
 **One-sided detection is a clear improvement.** Every injected anomaly is
 additive, and real waste is too -- lights left on add power, they never subtract
@@ -176,15 +176,15 @@ Phase 2 established that these residuals are heavy-tailed.
 
 | building | test intervals | NORMAL | WARNING | ANOMALY | % flagged |
 |---|---|---|---|---|---|
-| Academic | 26,511 | 20,769 | 2,163 | 3,579 | 11.97 |
-| Boys_Hostel | 17,855 | 15,515 | 1,701 | 639 | 3.30 |
-| Girls_Hostel | 17,579 | 17,240 | 336 | 3 | 0.02 |
-| Mess | 23,591 | 22,456 | 1,017 | 118 | 0.50 |
-| Library | 17,809 | 14,048 | 1,922 | 1,839 | 10.03 |
-| Lecture | 5,540 | 4,726 | 376 | 438 | 0.52 |
-| Facilities | 22,404 | 20,491 | 1,520 | 393 | 1.72 |
+| Academic | 26,511 | 20,799 | 2,168 | 3,544 | 11.89 |
+| Boys_Hostel | 17,855 | 15,524 | 1,697 | 634 | 3.27 |
+| Girls_Hostel | 17,579 | 17,187 | 390 | 2 | 0.01 |
+| Mess | 23,591 | 22,395 | 1,060 | 136 | 0.58 |
+| Library | 17,809 | 14,339 | 1,843 | 1,627 | 8.96 |
+| Lecture | 5,540 | 4,620 | 457 | 463 | 0.67 |
+| Facilities | 22,404 | 20,389 | 1,554 | 461 | 2.03 |
 
 ![The most unusual real pattern found, with occupancy below](../figures/fig_06_top_real_pattern.png)
 
-*Worth inspecting, NOT a confirmed fault. With no weather data the model cannot
-distinguish a genuine fault from a hot day.*
+*Worth inspecting, NOT a confirmed fault. With no weather data covering this
+period, the model cannot distinguish a genuine fault from a hot day.*

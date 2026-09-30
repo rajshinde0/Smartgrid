@@ -44,11 +44,20 @@ boundaries:
 | Lecture | 641.70 | 642 | 0.05 | True |
 | Facilities | 10,458.90 | 10,471.70 | 0.12 | True |
 
-**The approximate academic calendar was validated against the data.** If the
-vacation windows were roughly right, dormitory occupancy should collapse inside
-them -- and it does. Boys hostel median occupancy in vacation is **42%** of its
-semester median, Girls hostel **53%**. The Academic building falls much less,
-which is what you would expect when staff keep working through the summer.
+**The semester flag comes from the official IIIT-Delhi calendar** published with
+I-BLEND on figshare -- one CSV per year, 2013-2017, marking each day as working
+or not and as high- or low-activity. Cross-checking it against the data confirms
+it behaves as it should: dormitory median occupancy on low-activity days is
+**42%** of the high-activity median for the Boys hostel and **53%** for the
+Girls hostel, while the Academic building falls much less -- exactly what you
+would expect when staff keep working through the breaks.
+
+An earlier version of this analysis approximated the calendar, having looked for
+it on the project GitHub site rather than on figshare. That approximation agreed
+with the published calendar on only **68.5%** of days, chiefly because the
+official definition of low activity includes every weekend and public holiday.
+The approximation survives in the code as a fallback for anyone who cannot
+download the calendar files.
 
 ![Median occupancy by month, with the approximated vacation months shaded](../figures/fig_01_semester_validation.png)
 

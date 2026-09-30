@@ -144,13 +144,13 @@ fixed share is larger than the modelled figure, not smaller.
 
 | building | semester | vacation | change (pp) |
 |---|---|---|---|
-| Academic | 4.13 | 6.60 | 2.47 |
-| Boys_Hostel | 3.19 | 11.33 | 8.14 |
+| Academic | 2.47 | 7.08 | 4.61 |
+| Boys_Hostel | 2.02 | 7.29 | 5.27 |
 | Facilities | 0 | 0 | 0 |
-| Girls_Hostel | 3.89 | 9.90 | 6.01 |
-| Lecture | 18.05 | 25.14 | 7.09 |
-| Library | 14.13 | 31.45 | 17.32 |
-| Mess | 6.71 | 19.08 | 12.37 |
+| Girls_Hostel | 2.16 | 8.09 | 5.93 |
+| Lecture | 16.31 | 27.47 | 11.16 |
+| Library | 9.33 | 28.46 | 19.13 |
+| Mess | 3.43 | 15.34 | 11.91 |
 
 ![Low-occupancy share and mean power, semester against vacation](../figures/fig_05_semester_vacation.png)
 

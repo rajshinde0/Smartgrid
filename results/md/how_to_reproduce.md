@@ -14,15 +14,29 @@ executed in, not typed by hand.
 #### 2. Get the data
 
 The I-BLEND dataset is about 1.6 GB and is **deliberately not in this
-repository**. Download it from <https://doi.org/10.6084/m9.figshare.c.3893581>
-and unzip so that these exist:
+repository** -- five of its files exceed GitHub's hard 100 MB per-file limit,
+and figshare already hosts it under a DOI. One command fetches it:
+
+```bash
+python tools/get_data.py            # energy, occupancy and the semester calendar
+python tools/get_data.py --list     # show what the collection holds, download nothing
+python tools/get_data.py --all      # also the weather record (March-June 2018 only)
+```
+
+The script asks the figshare API which articles the collection contains, so it
+keeps working if the record is reorganised. Afterwards these should exist:
 
 ```
 Dataset/energy_dataset/            (16 CSVs + Readme.txt)
 Dataset/IIITD_occupancy_dataset/   (7 CSVs + Readme.txt)
+Dataset/calender_year_2013..2017_.csv
 ```
 
-`Dataset/` is read-only throughout: nothing in this project ever writes to it.
+To download by hand instead, take the archives from
+<https://doi.org/10.6084/m9.figshare.c.3893581> and unzip them into `Dataset/`.
+
+Apart from this one script placing the files, `Dataset/` is read-only: no
+notebook ever writes to it.
 
 #### 3. Run the notebooks in order
 

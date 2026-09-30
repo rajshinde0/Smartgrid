@@ -122,9 +122,11 @@ Separately, campus consumption **grew {growth_series.min():.0f}% to
 handling of concept drift and which reappears in the anomaly results as a
 recurring false alarm.
 
-The main limitation is the absence of weather data: Delhi's summer vacation is
-also its hottest season, so cooling an empty building is counted as
-low-occupancy consumption without being separable from it.
+The main limitation is the absence of weather data *for this period*: the weather
+record shipped with I-BLEND covers March-June 2018 and does not overlap the
+analysis window at all. Delhi's summer vacation is also its hottest season, so
+cooling an empty building is counted as low-occupancy consumption without being
+separable from it.
 """
 
 print(blocks["abstract"][:700], "...")
@@ -156,20 +158,28 @@ Section 6.6's corrected-occupancy check shows that subtracting the documented
 baseline raises the low-occupancy share in every building, which means **our
 headline figures are a conservative lower bound** rather than an overstatement.
 
-### 2. No weather data -- cooling is mixed into the result
+### 2. No weather data covering the analysis period
 
-I-BLEND contains no temperature or humidity. In Delhi this matters more than it
-would almost anywhere else, because the long summer vacation coincides with the
-hottest months. Phase 2 found that Facilities uses **17% more** power during
-vacation than during semester, and the Academic building slightly more, which is
-almost certainly air conditioning rather than people.
+I-BLEND *does* ship a weather record -- `IIITD_and_airport_data.csv`, with
+temperature and humidity measured both at IIIT-Delhi and at Delhi airport. It is
+unusable here for one decisive reason: **it covers 1 March to 29 June 2018, and
+our analysis window is February 2014 to November 2017.** The overlap is exactly
+**zero rows**. It was published to quantify how well a campus sensor agrees with
+the airport station, not as a weather history for the energy record.
+
+So the limitation stands, but in a sharper form than "there is no weather data".
+In Delhi this matters more than it would almost anywhere else, because the long
+summer vacation coincides with the hottest months. Phase 2 found that Facilities
+uses **17% more** power during vacation than during term, and the Academic
+building slightly more, which is almost certainly air conditioning rather than
+people.
 
 So some of what we call low-occupancy consumption is **cooling an empty
-building**. That is still waste, but it is a different kind with a different
-remedy -- setback temperatures rather than switching off lights -- and we cannot
-separate the two. A weather feed would let the regression models attribute load
-between the two causes, and it is the single most valuable addition this project
-could receive.
+building**. That is still waste, but a different kind with a different remedy --
+setback temperatures rather than switching off lights -- and we cannot separate
+the two. Weather for 2014-2017 would have to come from an external source such
+as a Delhi airport METAR archive; it remains the single most valuable addition
+this project could receive.
 
 ### 3. The injected anomalies are synthetic
 
@@ -205,14 +215,26 @@ stretches around 13 hours and outages lasting up to 46 days -- and the specified
 worth about 1.3 percentage points on the Lecture figure. Real: small, and
 quantified rather than hidden.
 
-### 6. The academic calendar is approximated
+### 6. The semester calendar is now official, but it is a daily flag
 
-The I-BLEND project publishes no calendar file -- we checked the repository. The
-semester and vacation windows are approximated from a typical IIIT-Delhi year and
-then validated against the data: dormitory occupancy in the inferred vacation
-windows falls to 42% (Boys) and 53% (Girls) of its semester median, confirming
-the windows are roughly right. They are accurate to within days, not hours, which
-is adequate for the coarse comparisons we use them for and no finer.
+Semester and vacation come from the **official IIIT-Delhi calendar published
+with I-BLEND**, one CSV per year covering 2013-2017. This is ground truth rather
+than an estimate, and it also supplies an `is_working_day` flag that knows about
+public holidays.
+
+Two caveats remain. First, it is a **daily** label: a day is high- or
+low-activity as a whole, so a detector cannot use it to distinguish 9 a.m. from
+9 p.m. on the same day -- that job falls to the hour features. Second, the
+official `L` (low activity) label bundles vacations, weekends and public
+holidays together, so "vacation" in this report means "low-activity day" rather
+than "inside a vacation window"; the two are not identical.
+
+*A correction worth recording:* an earlier version of this project approximated
+the calendar, having searched the project GitHub site -- which hosts only the
+website assets and the reading scripts -- and wrongly concluded no calendar
+existed. It is published on figshare alongside the data. The approximation
+agreed with the real calendar on only about two-thirds of days. Everything in
+this report now uses the published calendar (decision D01-03).
 
 ### 7. The base load is partly an extrapolation
 
@@ -310,7 +332,9 @@ others could do.
 
 ### Future scope
 
-1. **Add weather data.** The single highest-value addition. It would separate
+1. **Add weather data for 2014-2017.** The single highest-value addition. The
+   record shipped with I-BLEND covers only March-June 2018, so this means an
+   external source such as a Delhi airport METAR archive. It would separate
    cooling load from occupancy-driven load and turn "some of this is air
    conditioning an empty building" from a caveat into a number.
 2. **Sub-metering.** One meter per building can say *how much* is wasted but never
@@ -471,15 +495,29 @@ actually executed in, not typed by hand.
 ### 2. Get the data
 
 The I-BLEND dataset is about 1.6 GB and is **deliberately not in this
-repository**. Download it from
-<https://doi.org/10.6084/m9.figshare.c.3893581> and unzip so that these exist:
+repository** -- five of its files exceed GitHub's hard 100 MB per-file limit, and
+figshare already hosts it under a DOI. One command fetches it:
+
+```bash
+python tools/get_data.py            # energy, occupancy and the semester calendar
+python tools/get_data.py --list     # show what the collection holds, download nothing
+python tools/get_data.py --all      # also the weather record (March-June 2018 only)
+```
+
+The script asks the figshare API which articles the collection contains, so it
+keeps working if the record is reorganised. Afterwards these should exist:
 
 ```
 Dataset/energy_dataset/            (16 CSVs + Readme.txt)
 Dataset/IIITD_occupancy_dataset/   (7 CSVs + Readme.txt)
+Dataset/calender_year_2013..2017_.csv
 ```
 
-`Dataset/` is read-only throughout: nothing in this project ever writes to it.
+To download by hand instead, take the archives from
+<https://doi.org/10.6084/m9.figshare.c.3893581> and unzip them into `Dataset/`.
+
+Apart from this one script placing the files, `Dataset/` is read-only: no
+notebook ever writes to it.
 
 ### 3. Run the notebooks in order
 

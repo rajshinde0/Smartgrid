@@ -26,12 +26,12 @@ identical.
 
 | detector | anomaly type | n anomaly intervals | true positives | false positives | false negatives | true negatives | precision | recall | f1 | accuracy |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T | all | 1,733 | 558 | 1,800 | 1,175 | 22,978 | 0.24 | 0.32 | 0.27 | 0.89 |
-| T | spike | 324 | 108 | 1,800 | 216 | 22,978 | 0.06 | 0.33 | 0.10 | 0.92 |
-| T | waste | 1,409 | 450 | 1,800 | 959 | 22,978 | 0.20 | 0.32 | 0.25 | 0.89 |
-| O | all | 1,733 | 631 | 2,910 | 1,102 | 21,868 | 0.18 | 0.36 | 0.24 | 0.85 |
-| O | spike | 324 | 124 | 2,910 | 200 | 21,868 | 0.04 | 0.38 | 0.07 | 0.88 |
-| O | waste | 1,409 | 507 | 2,910 | 902 | 21,868 | 0.15 | 0.36 | 0.21 | 0.85 |
+| T | all | 1,733 | 541 | 1,523 | 1,192 | 23,255 | 0.26 | 0.31 | 0.28 | 0.90 |
+| T | spike | 324 | 105 | 1,523 | 219 | 23,255 | 0.06 | 0.32 | 0.11 | 0.93 |
+| T | waste | 1,409 | 436 | 1,523 | 973 | 23,255 | 0.22 | 0.31 | 0.26 | 0.90 |
+| O | all | 1,733 | 632 | 2,873 | 1,101 | 21,905 | 0.18 | 0.36 | 0.24 | 0.85 |
+| O | spike | 324 | 123 | 2,873 | 201 | 21,905 | 0.04 | 0.38 | 0.07 | 0.88 |
+| O | waste | 1,409 | 509 | 2,873 | 900 | 21,905 | 0.15 | 0.36 | 0.21 | 0.86 |
 
 ![Confusion matrices for both detectors, Academic building  [SYNTHETIC]](../figures/fig_06_confusion_matrices.png)
 
@@ -48,12 +48,12 @@ information.
 
 | comparison | detector T | detector O | metric | difference (O - T) |
 |---|---|---|---|---|
-| fixed threshold \|z\| > 3 (as specified) | 0.29 | 0.29 | mean F1 | -0.01 |
-| matched alert budget | 0.28 | 0.29 | mean F1 | 0.01 |
-| threshold-free ranking | 0.43 | 0.45 | mean average precision | 0.02 |
+| fixed threshold \|z\| > 3 (as specified) | 0.30 | 0.29 | mean F1 | -0.01 |
+| matched alert budget | 0.29 | 0.30 | mean F1 | 0.00 |
+| threshold-free ranking | 0.43 | 0.44 | mean average precision | 0.02 |
 | threshold-free ranking | 0.68 | 0.70 | mean ROC AUC | 0.02 |
-| waste anomalies only, matched budget | 0.14 | 0.17 | mean F1 | 0.02 |
-| waste events noticed at all | 0.22 | 0.25 | event recall | 0.03 |
+| waste anomalies only, matched budget | 0.15 | 0.17 | mean F1 | 0.02 |
+| waste events noticed at all | 0.20 | 0.24 | event recall | 0.04 |
 
 ![Detector T against Detector O at a matched budget and threshold-free  [SYNTHETIC]](../figures/fig_06_detector_comparison.png)
 
@@ -62,8 +62,8 @@ information.
 **Answer to research question 3: a qualified yes -- occupancy helps
 consistently, but only a little.** The fixed-threshold comparison is discarded
 as a calibration artefact. On the 5 fair comparisons, 5 favour Detector O:
-matched-budget F1 0.285 -> 0.294, average precision 0.426 -> 0.446, ROC AUC
-0.685 -> 0.703, and waste-event recall 21.8% -> 24.7%.
+matched-budget F1 0.292 -> 0.296, average precision 0.426 -> 0.443, ROC AUC
+0.682 -> 0.702, and waste-event recall 20.2% -> 24.4%.
 
 Every margin is one to three percentage points. What makes them credible is that
 they all point the same way and that **the largest gains fall on the waste
@@ -81,12 +81,12 @@ not there**, and on this campus there is not very much of it.
 
 | rule | detector | alerts | precision | recall | f1 |
 |---|---|---|---|---|---|
-| IQR fences (cross-check) | O | 858.43 | 0.58 | 0.28 | 0.29 |
-| IQR fences (cross-check) | T | 704.43 | 0.59 | 0.26 | 0.28 |
-| one-sided z > 3 (positive only) | O | 982 | 0.64 | 0.28 | 0.29 |
-| one-sided z > 3 (positive only) | T | 849.43 | 0.65 | 0.27 | 0.29 |
-| two-sided \|z\| > 3 (as specified) | O | 1,054.57 | 0.55 | 0.28 | 0.29 |
-| two-sided \|z\| > 3 (as specified) | T | 886.86 | 0.56 | 0.27 | 0.29 |
+| IQR fences (cross-check) | O | 854.29 | 0.57 | 0.28 | 0.28 |
+| IQR fences (cross-check) | T | 654.29 | 0.57 | 0.26 | 0.27 |
+| one-sided z > 3 (positive only) | O | 972.86 | 0.64 | 0.29 | 0.29 |
+| one-sided z > 3 (positive only) | T | 789.57 | 0.65 | 0.27 | 0.30 |
+| two-sided \|z\| > 3 (as specified) | O | 1,042.43 | 0.54 | 0.29 | 0.29 |
+| two-sided \|z\| > 3 (as specified) | T | 808 | 0.56 | 0.27 | 0.30 |
 
 One-sided detection -- flagging only *excess* consumption -- improves precision
 substantially at almost no cost in recall, because every real or injected waste
@@ -99,22 +99,24 @@ scores worse, as expected for heavy-tailed residuals.
 where a building drew considerably more power than a model of time and occupancy
 expected. Ordinary explanations are available for all of them -- an event in the
 building, a maintenance test, a commissioning run, or simply a hot day, and the
-project has **no weather data** with which to rule the last one out. Consecutive
+project has **no weather data covering this period** with which to rule the last
+one out (the weather record shipped with I-BLEND covers March-June 2018 only,
+which does not overlap the 2014-2017 analysis window at all). Consecutive
 flagged intervals are grouped into episodes, so a four-hour deviation appears
 once rather than twenty-four times.
 
 | # | building | start | end | duration hours | peak z | mean excess kW | total excess kWh |
 |---|---|---|---|---|---|---|---|
-| 1 | Academic | 2017-09-14 03:30:00+05:30 | 2017-09-14 10:30:00+05:30 | 7 | 8.45 | 37.36 | 261.55 |
-| 2 | Academic | 2017-09-15 03:20:00+05:30 | 2017-09-15 11:10:00+05:30 | 8 | 7.83 | 34.43 | 275.47 |
-| 3 | Academic | 2017-10-09 03:20:00+05:30 | 2017-10-09 10:20:00+05:30 | 7.17 | 7.32 | 38.64 | 276.92 |
-| 4 | Academic | 2017-10-04 03:20:00+05:30 | 2017-10-04 11:10:00+05:30 | 7.50 | 7.23 | 37.17 | 278.80 |
-| 5 | Academic | 2017-09-25 03:10:00+05:30 | 2017-09-25 09:50:00+05:30 | 6.83 | 7 | 34.18 | 233.53 |
-| 6 | Academic | 2017-10-03 03:30:00+05:30 | 2017-10-03 11:20:00+05:30 | 8 | 7 | 37.11 | 296.87 |
-| 7 | Academic | 2017-10-06 03:20:00+05:30 | 2017-10-06 11:20:00+05:30 | 8.17 | 6.99 | 37.40 | 305.46 |
-| 8 | Academic | 2017-08-17 03:40:00+05:30 | 2017-08-17 10:40:00+05:30 | 6.83 | 6.98 | 35.82 | 244.75 |
-| 9 | Academic | 2017-08-18 03:30:00+05:30 | 2017-08-18 11:10:00+05:30 | 7.67 | 6.94 | 35.24 | 270.15 |
-| 10 | Boys_Hostel | 2017-10-10 14:00:00+05:30 | 2017-10-10 18:50:00+05:30 | 4.83 | 6.93 | 39.51 | 190.97 |
+| 1 | Academic | 2017-09-14 03:30:00+05:30 | 2017-09-14 10:30:00+05:30 | 7 | 8.41 | 37.38 | 261.69 |
+| 2 | Academic | 2017-09-15 03:20:00+05:30 | 2017-09-15 11:10:00+05:30 | 8 | 7.78 | 34.41 | 275.28 |
+| 3 | Academic | 2017-10-09 03:20:00+05:30 | 2017-10-09 10:10:00+05:30 | 7 | 7.23 | 38.72 | 271.05 |
+| 4 | Academic | 2017-10-04 03:20:00+05:30 | 2017-10-04 11:10:00+05:30 | 7.50 | 7.15 | 36.85 | 276.41 |
+| 5 | Academic | 2017-09-25 03:20:00+05:30 | 2017-09-25 09:50:00+05:30 | 6.33 | 6.97 | 35.43 | 224.41 |
+| 6 | Academic | 2017-08-17 03:40:00+05:30 | 2017-08-17 10:40:00+05:30 | 6.83 | 6.94 | 35.80 | 244.63 |
+| 7 | Academic | 2017-10-03 03:30:00+05:30 | 2017-10-03 11:10:00+05:30 | 7.83 | 6.93 | 37.19 | 291.28 |
+| 8 | Boys_Hostel | 2017-10-10 14:00:00+05:30 | 2017-10-10 18:50:00+05:30 | 4.83 | 6.90 | 39.37 | 190.27 |
+| 9 | Academic | 2017-10-06 03:20:00+05:30 | 2017-10-06 11:20:00+05:30 | 8.17 | 6.89 | 36.98 | 302.03 |
+| 10 | Academic | 2017-09-12 03:20:00+05:30 | 2017-09-12 11:10:00+05:30 | 7.67 | 6.88 | 34.12 | 261.56 |
 
 **Read that table with care: it is not ten findings, it is one finding ten
 times.** Almost every one of the most extreme episodes on the campus is the
@@ -137,10 +139,10 @@ recurring pattern occupies one row:
 
 | building | start | duration hours | peak z | mean excess kW | total excess kWh | total episodes |
 |---|---|---|---|---|---|---|
-| Academic | 2017-09-14 03:30:00+05:30 | 7 | 8.45 | 37.36 | 261.55 | 102 |
-| Boys_Hostel | 2017-10-10 14:00:00+05:30 | 4.83 | 6.93 | 39.51 | 190.97 | 60 |
-| Library | 2017-10-06 04:20:00+05:30 | 4.83 | 5.32 | 22.67 | 109.58 | 91 |
-| Lecture | 2017-08-14 04:50:00+05:30 | 0.17 | 4.91 | 3.28 | 0.55 | 7 |
-| Facilities | 2017-06-05 15:00:00+05:30 | 1.33 | 4.51 | 8.89 | 11.86 | 99 |
-| Mess | 2017-07-25 07:50:00+05:30 | 1.83 | 4.17 | 32.10 | 58.85 | 40 |
-| Girls_Hostel | 2017-10-10 17:40:00+05:30 | 0.17 | 3.21 | 13.55 | 2.26 | 3 |
+| Academic | 2017-09-14 03:30:00+05:30 | 7 | 8.41 | 37.38 | 261.69 | 103 |
+| Boys_Hostel | 2017-10-10 14:00:00+05:30 | 4.83 | 6.90 | 39.37 | 190.27 | 61 |
+| Library | 2017-10-06 04:30:00+05:30 | 4.67 | 5.03 | 22.44 | 104.74 | 86 |
+| Lecture | 2017-08-14 04:50:00+05:30 | 0.17 | 4.67 | 3.06 | 0.51 | 8 |
+| Facilities | 2017-06-05 15:00:00+05:30 | 1.33 | 4.53 | 8.84 | 11.78 | 117 |
+| Mess | 2017-07-25 07:50:00+05:30 | 1.83 | 4.29 | 32.48 | 59.54 | 43 |
+| Girls_Hostel | 2017-10-10 17:40:00+05:30 | 0.17 | 3.07 | 12.44 | 2.07 | 2 |

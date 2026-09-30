@@ -36,9 +36,12 @@ categorical so Monday sorts before Tuesday), `is_weekend`, `is_semester` /
 deviation (computed with `closed="left"` so the current block is excluded and no
 future information leaks), and `kwh = watts / 1000 x 10/60`.
 
-**Semester flag.** The I-BLEND project site publishes no academic calendar -- we
-verified that the repository holds only the website assets and reading scripts
--- so the windows are an approximation of a typical IIIT-Delhi year, validated
-against observed dormitory occupancy (decision D01-03).
+**Semester flag.** Taken from the **official IIIT-Delhi calendar published with
+I-BLEND** (one CSV per year, 2013-2017, in the same figshare collection as the
+data), which marks each day as a working day or not and as high- or
+low-activity. This replaced an approximation used in an earlier version of the
+project, which agreed with the published calendar on only about two-thirds of
+days (decision D01-03). It also supplies an `is_working_day` model feature that
+knows about public holidays, which a weekend flag cannot see.
 
 **Notebook:** `notebooks/01_data_prep.ipynb`.

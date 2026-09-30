@@ -1,7 +1,7 @@
 comparison,detector T,detector O,metric,difference (O - T)
-fixed threshold |z| > 3 (as specified),0.2929,0.2877,mean F1,-0.0052
-matched alert budget,0.2849,0.2939,mean F1,0.009
-threshold-free ranking,0.4261,0.4461,mean average precision,0.02
-threshold-free ranking,0.6846,0.7028,mean ROC AUC,0.0182
-"waste anomalies only, matched budget",0.1411,0.1651,mean F1,0.024
-waste events noticed at all,0.2175,0.2469,event recall,0.0294
+fixed threshold |z| > 3 (as specified),0.2979,0.286,mean F1,-0.0119
+matched alert budget,0.2925,0.2956,mean F1,0.0031
+threshold-free ranking,0.4257,0.4432,mean average precision,0.0175
+threshold-free ranking,0.6818,0.7023,mean ROC AUC,0.0205
+"waste anomalies only, matched budget",0.1452,0.1676,mean F1,0.0224
+waste events noticed at all,0.2025,0.2436,event recall,0.0411

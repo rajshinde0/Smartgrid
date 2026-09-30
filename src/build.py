@@ -154,7 +154,8 @@ def build_all(force: bool = False) -> dict[str, dict]:
 LONG_COLUMNS = [
     "building", "building_kind", "power_w", "occupancy", "kwh", "date", "hour",
     "weekday", "month", "year", "is_weekend", "is_vacation", "is_semester",
-    "period", "meter_off", "is_missing", "usable", "outlier_iqr",
+    "period", "is_working_day", "calendar_source",
+    "meter_off", "is_missing", "usable", "outlier_iqr",
     "outlier_zscore", "power_lag_1h", "power_lag_1d", "power_roll24h_mean",
     "power_roll24h_std", "voltage", "power_factor",
 ]

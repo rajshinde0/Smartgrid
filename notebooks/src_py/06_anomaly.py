@@ -534,8 +534,9 @@ pooled.to_csv(C.RESULTS_DIR / "phase6_pooled_answer.csv", index=False)
 # > **These are not confirmed faults.** They are intervals where a building drew
 # > much more power than a model of time and occupancy expected. Every one could
 # > have an ordinary explanation: an event in the building, a maintenance test, a
-# > commissioning run, or simply a hot day -- and we have **no weather data**, so
-# > the model has no way of knowing about the last of those. They are candidates
+# > commissioning run, or simply a hot day -- and we have **no usable weather
+# > data** (the weather record shipped with I-BLEND covers March-June 2018 only, which does not overlap the 2014-2017 analysis window at all), so the model has no way
+# > of knowing about the last of those. They are candidates
 # > for a human to look at, and nothing more than that.
 
 # %%
@@ -884,8 +885,9 @@ Phase 2 established that these residuals are heavy-tailed.
 
 {report.figure("fig_06_top_real_pattern",
                "The most unusual real pattern found, with occupancy below",
-               "Worth inspecting, NOT a confirmed fault. With no weather data "
-               "the model cannot distinguish a genuine fault from a hot day.")}
+               "Worth inspecting, NOT a confirmed fault. With no weather "
+               "data covering this period, the model cannot distinguish a "
+               "genuine fault from a hot day.")}
 """
 
 blocks["anomaly_results"] = f"""
@@ -964,7 +966,8 @@ scores worse, as expected for heavy-tailed residuals.
 where a building drew considerably more power than a model of time and occupancy
 expected. Ordinary explanations are available for all of them -- an event in the
 building, a maintenance test, a commissioning run, or simply a hot day, and the
-project has **no weather data** with which to rule the last one out. Consecutive
+project has **no weather data covering this period** with which to rule the
+last one out (the weather record shipped with I-BLEND covers March-June 2018 only, which does not overlap the 2014-2017 analysis window at all). Consecutive
 flagged intervals are grouped into episodes, so a four-hour deviation appears
 once rather than twenty-four times.
 

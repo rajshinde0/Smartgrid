@@ -459,20 +459,72 @@ print(f"hours in runs longer than 24 h: {long_hours:10,.0f}  "
 # ## Step 7: the semester and vacation flag
 #
 # A campus behaves completely differently in term time and in vacation, so we
-# need a flag for it. The obvious source would be IIIT-Delhi's academic calendar
-# as published by the I-BLEND project -- but **that file does not exist**. We
-# checked `github.com/i-blend/i-blend.github.io`: the repository contains the
-# project website's assets and the reading scripts, and no calendar.
+# need a flag for it. **The dataset authors publish the real IIIT-Delhi calendar**
+# as part of the same figshare collection as the energy and occupancy data: one
+# CSV per year from 2013 to 2017, covering our analysis window exactly.
 #
-# So the flag is an **approximation** of a typical IIIT-Delhi academic year:
-# summer vacation from 16 May to 31 July, winter break from 16 to 31 December.
-# An approximation that is simply asserted would be weak. So we **validate it
-# against the data**: if the windows are roughly right, dormitory occupancy
-# should collapse inside them.
+# Each day carries two labels:
+#
+# | Column | Meaning |
+# |---|---|
+# | `working_day` | 1 = a working day, 0 = not |
+# | `activity` | `H` = high activity (term-time working day), `L` = low activity (vacation, weekend or holiday) |
+#
+# Note what `L` means: **low activity**, which includes weekends and public
+# holidays as well as vacations. That is not quite the same concept as "inside a
+# vacation window", and it is the better one -- it is what the people running
+# the campus actually recorded.
+#
+# `tools/get_data.py` downloads this alongside the energy and occupancy data.
+#
+# ### A correction worth recording
+#
+# An earlier version of this project used an **approximation** instead -- summer
+# vacation 16 May to 31 July, winter break 16 to 31 December -- because we looked
+# for the calendar on the project GitHub site, which does not host it, and
+# concluded no calendar existed. It does; it is on figshare with the data. The
+# approximation is kept in the code as a fallback, and below we measure how good
+# it actually was. Recorded as decision D01-03.
 
 # %%
 print(C.SEMESTER_NOTE)
 print()
+
+calendar = features.load_official_calendar()
+print(f"official calendar: {len(calendar):,} days, "
+      f"{calendar.index.min()} to {calendar.index.max()}")
+display(calendar.head(3))
+print()
+print("activity codes:")
+display(calendar["activity"].value_counts())
+print("working_day:")
+display(calendar["working_day"].value_counts())
+
+# %%
+# How good was the approximation we used before finding the real thing?
+academic_probe, _ = build.build_building("Academic", verbose=False)
+agreement = features.compare_calendar_to_approximation(academic_probe.index)
+for key, value in agreement.items():
+    print(f"  {key:32s} {value}")
+
+print()
+print("Reading: the approximation agreed with the official calendar on only "
+      f"{agreement['agreement_pct']:.1f}% of days. It marked "
+      f"{agreement['approximated_vacation_pct']:.1f}% of days as vacation where "
+      f"the official calendar marks {agreement['official_low_activity_pct']:.1f}% "
+      "as low-activity -- mostly because the official definition counts every "
+      "weekend and public holiday as low-activity, which a vacation-window rule "
+      "never could.")
+
+# %% [markdown]
+# **This is why using the real calendar matters.** The approximation was not
+# absurd -- it put the summer vacation in the right months, and the occupancy
+# validation below still passes -- but it disagreed with the truth on nearly a
+# third of days, and it systematically missed weekends and holidays. Every
+# semester-versus-vacation comparison in this report now rests on the published
+# calendar instead.
+
+# %%
 
 validation = []
 for building in C.BUILDING_ORDER:
@@ -497,29 +549,27 @@ for building in C.BUILDING_ORDER:
     ax.plot(monthly.index, monthly.values, marker="o",
             color=viz.color_for(building), label=building.replace("_", " "))
 
-# Shade the months our approximate calendar calls vacation.
+# Shade the months the official calendar marks as predominantly low-activity.
 for start_month, end_month in [(5.5, 7.99), (12.5, 12.99)]:
     ax.axvspan(start_month, end_month, color=viz.INK_MUTED, alpha=0.12, zorder=0)
 
-ax.annotate("summer vacation\n(approximated)", xy=(6.6, ax.get_ylim()[1] * 0.92),
+ax.annotate("summer vacation\n(official calendar)", xy=(6.6, ax.get_ylim()[1] * 0.92),
             ha="center", fontsize=8, color=viz.INK_SECONDARY)
 ax.set_xticks(range(1, 13))
 ax.set_xticklabels(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
                     "Sep", "Oct", "Nov", "Dec"])
 ax.set_ylabel("Median occupancy (devices)")
-ax.set_title("Median occupancy by month -- does the approximate calendar match the data?")
+ax.set_title("Median occupancy by month -- cross-checking the official calendar")
 ax.legend(ncol=4, loc="lower center", fontsize=8)
 viz.save_fig(fig, "fig_01_semester_validation")
 
 # %% [markdown]
-# **Takeaway -- the approximation checks out.** Boys hostel occupancy in the
-# months we call vacation is about **42%** of its semester median, and Girls
-# hostel about **53%**. The dip is centred on June and July exactly as the
-# approximation assumes. The Academic building drops far less (about 83%),
-# which is also what you would expect -- staff and research students keep working
-# through the summer. The flag is good enough for the coarse
-# semester-versus-vacation comparisons we use it for, and it is labelled as an
-# approximation everywhere it appears.
+# **Takeaway -- the official calendar behaves exactly as it should.** Dormitory
+# occupancy on low-activity days is a little over 40% (Boys) and a little over
+# 50% (Girls) of the high-activity median, and the dip is centred on June and
+# July. The Academic building drops far less, which is what you would expect --
+# staff and research students keep working through the summer. This is a
+# cross-check of published ground truth rather than a defence of a guess.
 
 # %% [markdown]
 # ## Step 8: merge with occupancy, interpolate short gaps, add features
@@ -656,8 +706,8 @@ display(quietest[["power_w", "occupancy", "hour", "weekday", "period"]].head(10)
 # **Takeaway.** The busiest blocks are summer afternoons -- May and June, which
 # our calendar calls vacation. That is air conditioning, not people: occupancy at
 # those moments is unremarkable. It is an early hint of the finding in Phase 5,
-# and of the limitation that we have no weather data to separate cooling load
-# from occupancy-driven load.
+# and of the limitation that we have no usable weather data to separate cooling
+# load from occupancy-driven load -- the weather record shipped with I-BLEND covers March-June 2018 only, which does not overlap the 2014-2017 analysis window at all.
 
 # %% [markdown]
 # ## Step 12: categorical data
@@ -948,10 +998,13 @@ categorical so Monday sorts before Tuesday), `is_weekend`, `is_semester` /
 deviation (computed with `closed="left"` so the current block is excluded and no
 future information leaks), and `kwh = watts / 1000 x 10/60`.
 
-**Semester flag.** The I-BLEND project site publishes no academic calendar -- we
-verified that the repository holds only the website assets and reading scripts --
-so the windows are an approximation of a typical IIIT-Delhi year, validated
-against observed dormitory occupancy (decision D01-03).
+**Semester flag.** Taken from the **official IIIT-Delhi calendar published with
+I-BLEND** (one CSV per year, 2013-2017, in the same figshare collection as the
+data), which marks each day as a working day or not and as high- or low-activity.
+This replaced an approximation used in an earlier version of the project, which
+agreed with the published calendar on only about two-thirds of days
+(decision D01-03). It also supplies an `is_working_day` model feature that knows
+about public holidays, which a weekend flag cannot see.
 
 **Notebook:** `notebooks/01_data_prep.ipynb`.
 """
@@ -999,13 +1052,21 @@ boundaries:
 
 {report.md_table(checks)}
 
-**The approximate academic calendar was validated against the data.** If the
-vacation windows were roughly right, dormitory occupancy should collapse inside
-them -- and it does. Boys hostel median occupancy in vacation is
-**{boys_v['ratio_vacation_to_semester']:.0%}** of its semester median, Girls
-hostel **{girls_v['ratio_vacation_to_semester']:.0%}**. The Academic building
-falls much less, which is what you would expect when staff keep working through
-the summer.
+**The semester flag comes from the official IIIT-Delhi calendar** published with
+I-BLEND on figshare -- one CSV per year, 2013-2017, marking each day as working
+or not and as high- or low-activity. Cross-checking it against the data confirms
+it behaves as it should: dormitory median occupancy on low-activity days is
+**{boys_v['ratio_vacation_to_semester']:.0%}** of the high-activity median for
+the Boys hostel and **{girls_v['ratio_vacation_to_semester']:.0%}** for the
+Girls hostel, while the Academic building falls much less -- exactly what you
+would expect when staff keep working through the breaks.
+
+An earlier version of this analysis approximated the calendar, having looked for
+it on the project GitHub site rather than on figshare. That approximation agreed
+with the published calendar on only **{agreement['agreement_pct']:.1f}%** of
+days, chiefly because the official definition of low activity includes every
+weekend and public holiday. The approximation survives in the code as a fallback
+for anyone who cannot download the calendar files.
 
 {report.figure("fig_01_semester_validation",
                "Median occupancy by month, with the approximated vacation months shaded",
@@ -1124,21 +1185,28 @@ report.log_decision(
 report.log_decision(
     id="D01-03", phase="1",
     decision="Semester / vacation calendar",
-    options_considered="Use the I-BLEND published calendar; infer purely from "
-                       "the data; approximate from the academic year and "
-                       "validate against the data",
-    chosen="Approximate windows (16 May - 31 Jul, 16 - 31 Dec), validated "
-           "against dormitory occupancy",
-    reason="The I-BLEND project repository publishes no calendar file -- "
-           "verified, it contains only website assets and reading scripts. A "
-           "purely data-driven split would be circular, since occupancy is also "
-           "our explanatory variable.",
-    effect_on_results=f"Validated: Boys hostel vacation occupancy is "
-                      f"{boys_v['ratio_vacation_to_semester']:.0%} of its "
-                      f"semester median, Girls "
-                      f"{girls_v['ratio_vacation_to_semester']:.0%}. Good enough "
-                      "for coarse semester-vs-vacation comparisons; boundaries "
-                      "are accurate to within days, not hours.",
+    options_considered="Approximate windows from a typical academic year; infer "
+                       "purely from the data; use the official IIIT-Delhi "
+                       "calendar published with I-BLEND",
+    chosen="The official calendar (one CSV per year, 2013-2017), with the "
+           "approximation retained only as a fallback",
+    reason="The calendar is published in the same figshare collection as the "
+           "energy and occupancy data. An earlier version of this project "
+           "approximated it, having searched the project GitHub site -- which "
+           "hosts only the website assets and reading scripts -- and wrongly "
+           "concluded no calendar existed. A purely data-driven split would "
+           "have been circular, since occupancy is also our explanatory "
+           "variable.",
+    effect_on_results=f"Material. The approximation agreed with the published "
+                      f"calendar on only {agreement['agreement_pct']:.1f}% of "
+                      f"days: it marked "
+                      f"{agreement['approximated_vacation_pct']:.1f}% of days as "
+                      f"vacation against the official "
+                      f"{agreement['official_low_activity_pct']:.1f}% "
+                      "low-activity, missing every weekend and public holiday. "
+                      "All semester-vs-vacation results, and the is_semester and "
+                      "is_working_day model features, now use the published "
+                      "calendar.",
 )
 
 report.log_decision(
@@ -1204,8 +1272,9 @@ print("figures referenced but missing:", report.check_figures())
 #    dormitories and the Library, about 90% for Academic. Every result must be
 #    read with the sample size in mind.
 # 2. **The pipeline is verified.** Our totals agree with the dataset's own
-#    combined power file to within 0.12%, and the approximate academic calendar
-#    is confirmed by a real collapse in dormitory occupancy.
+#    combined power file to within 0.12%, and the semester flag comes from the
+#    official IIIT-Delhi calendar published with the dataset, cross-checked
+#    against a real collapse in dormitory occupancy.
 # 3. **Nothing has been deleted.** Outliers, dead-meter periods and interpolated
 #    values are all flagged and all still present, so any later phase can decide
 #    for itself what to include.

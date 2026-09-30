@@ -48,8 +48,38 @@ def is_vacation(index: pd.DatetimeIndex) -> np.ndarray:
     return flag
 
 
+def load_official_calendar() -> pd.DataFrame | None:
+    """The real IIIT-Delhi calendar shipped with I-BLEND, or None if absent.
+
+    One CSV per year, 2013-2017, indexed by date with two columns:
+
+        working_day   1 = a working day, 0 = not
+        activity      "H" = high-activity (term-time working day)
+                      "L" = low-activity  (vacation, weekend or holiday)
+
+    Note what "L" means: it is *low activity*, which includes weekends and
+    public holidays as well as vacations. It is not the same concept as "inside
+    a vacation window", and it is the better one -- it is what the people who
+    ran the campus actually recorded.
+    """
+    files = C.calendar_files()
+    if not files:
+        return None
+
+    frames = [pd.read_csv(path, parse_dates=["Date"]) for path in files]
+    calendar = pd.concat(frames, ignore_index=True)
+    calendar = calendar.drop_duplicates(subset="Date").set_index("Date").sort_index()
+    calendar.index = calendar.index.date
+    return calendar
+
+
 def add_calendar_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Add hour, weekday, month, weekend and semester/vacation columns."""
+    """Add hour, weekday, month, weekend and activity/working-day columns.
+
+    Semester and vacation come from the **official calendar** when it is
+    present. If it is missing the approximate windows are used instead and the
+    frame is marked so the notebooks can say so.
+    """
     out = df.copy()
     idx = out.index
 
@@ -67,14 +97,63 @@ def add_calendar_features(df: pd.DataFrame) -> pd.DataFrame:
     )
     out["is_weekend"] = idx.dayofweek >= 5
 
-    vacation = is_vacation(idx)
-    out["is_vacation"] = vacation
-    out["is_semester"] = ~vacation
+    calendar = load_official_calendar()
+    if calendar is not None:
+        dates = pd.Index(out["date"])
+        activity = calendar["activity"].reindex(dates)
+        working = calendar["working_day"].reindex(dates)
+
+        # Days outside the published calendar fall back to the approximation
+        # rather than becoming NaN, so no row is silently lost.
+        approx = is_vacation(idx)
+        low = activity.to_numpy() == "L"
+        low = np.where(pd.isna(activity.to_numpy()), approx, low)
+
+        out["is_vacation"] = low
+        out["is_semester"] = ~low
+        out["is_working_day"] = np.where(
+            pd.isna(working.to_numpy()), ~out["is_weekend"].to_numpy(),
+            working.to_numpy() == 1,
+        )
+        out["calendar_source"] = "official"
+    else:
+        vacation = is_vacation(idx)
+        out["is_vacation"] = vacation
+        out["is_semester"] = ~vacation
+        out["is_working_day"] = ~out["is_weekend"]
+        out["calendar_source"] = "approximated"
+
     out["period"] = pd.Categorical(
-        np.where(vacation, "vacation", "semester"),
+        np.where(out["is_vacation"], "vacation", "semester"),
         categories=["semester", "vacation"],
     )
     return out
+
+
+def compare_calendar_to_approximation(index: pd.DatetimeIndex) -> dict:
+    """How well the fallback approximation matches the official calendar.
+
+    Worth reporting rather than hiding: the approximation used before the
+    official calendar was located agrees on only about two-thirds of days.
+    """
+    calendar = load_official_calendar()
+    if calendar is None:
+        return {"official_calendar_available": False}
+
+    days = pd.DatetimeIndex(sorted(set(index.normalize())))
+    activity = calendar["activity"].reindex(days.date)
+    known = ~pd.isna(activity.to_numpy())
+
+    official_low = (activity.to_numpy() == "L")[known]
+    approximate_low = is_vacation(days)[known]
+
+    return {
+        "official_calendar_available": True,
+        "days_compared": int(known.sum()),
+        "agreement_pct": round(100 * float((official_low == approximate_low).mean()), 1),
+        "official_low_activity_pct": round(100 * float(official_low.mean()), 1),
+        "approximated_vacation_pct": round(100 * float(approximate_low.mean()), 1),
+    }
 
 
 def add_energy_column(df: pd.DataFrame, power_col: str = "power_w") -> pd.DataFrame:

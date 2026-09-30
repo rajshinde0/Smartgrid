@@ -40,7 +40,7 @@ Applying Masoso & Grobler's own clock-based definition to our data gives 55.2%
 and 55.0% against their published 56%. Different continent, fifteen years apart.
 **This is the credibility slide.**
 
-**9. Can we predict it? (RQ2)** Occupancy adds only +0.107 to validation
+**9. Can we predict it? (RQ2)** Occupancy adds only +0.099 to validation
 R-squared. Say the negative result plainly -- it matches published work, and
 three different analyses in this project reached it independently. *Figure:*
 `fig_04_model_comparison.png`.
