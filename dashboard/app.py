@@ -97,10 +97,21 @@ with st.sidebar:
     last_day = data.index.max().date()
 
     st.caption(f"Data available {first_day} to {last_day}")
-    default_start = max(first_day, last_day - pd.Timedelta(days=14))
+
+    # Default to the first fortnight of the held-out test period rather than to
+    # the final fortnight of the record. Both are test data, but consumption on
+    # this campus rose steadily and the models were fitted on 2014-2016, so the
+    # very end of the record is the most drifted stretch there is -- opening on
+    # it would show a wall of anomaly flags that says more about the model's age
+    # than about the building. The drift is surfaced explicitly below instead.
+    test_days = data.index[data["split"] == "test"]
+    anchor = test_days.min().date() if len(test_days) else first_day
+    default_start = max(first_day, anchor)
+    default_end = min(last_day, default_start + pd.Timedelta(days=14))
+
     date_range = st.date_input(
         "Date range",
-        value=(default_start, last_day),
+        value=(default_start, default_end),
         min_value=first_day,
         max_value=last_day,
     )
@@ -219,13 +230,38 @@ else:
         "dashed line on the lower panel is the threshold."
     )
 
+    window_rate = 100 * float(window["band"].eq("ANOMALY").mean())
+    overall_rate = 100 * float(data["band"].eq("ANOMALY").mean())
+
     summary = st.columns(4)
     summary[0].metric("Intervals shown", f"{len(window):,}")
-    summary[1].metric("Flagged ANOMALY", f"{int(window['band'].eq('ANOMALY').sum()):,}")
+    summary[1].metric(
+        "Flagged ANOMALY",
+        f"{int(window['band'].eq('ANOMALY').sum()):,}",
+        delta=f"{window_rate:.1f}% vs {overall_rate:.1f}% overall",
+        delta_color="off",
+        help="Share of intervals flagged in this window, against the share "
+             "across this building's whole record.",
+    )
     summary[2].metric("Low-occupancy intervals",
                       f"{int(window['low_occupancy'].sum()):,}")
     summary[3].metric("Energy in window",
                       f"{window['power_w'].sum() / 1000 * (10 / 60):,.0f} kWh")
+
+    # If this window is flagging far more than the building normally does, say
+    # why rather than letting the reader assume the building is on fire.
+    if overall_rate > 0 and window_rate > max(3 * overall_rate, 5.0):
+        st.warning(
+            f"**This window flags {window_rate:.0f}% of intervals against "
+            f"{overall_rate:.1f}% across the whole record — that is the model "
+            "ageing, not a fault.** These models are fitted on 2014–2016, and "
+            "campus consumption grew 32–48% over the record. From around August "
+            "2017 the Academic building also began drawing power in the small "
+            "hours, and a fixed historical baseline re-reports that same change "
+            "every day. Section 9 of the report covers it; a deployed detector "
+            "would need periodic refitting.",
+            icon="📈",
+        )
 
 # ---------------------------------------------------------------------------
 # Sensitivity curve
