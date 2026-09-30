@@ -1,5 +1,4 @@
-
-### The campus grew by a third to a half
+#### The campus grew by a third to a half
 
 Before any model result can be read, one thing has to be established:
 
@@ -27,7 +26,7 @@ relationship the models depend on weakened over time. Test-set numbers below
 should be read with that in mind, which is why model selection uses the
 validation split.
 
-### Model scores
+#### Model scores
 
 | building | model | train R2 | val R2 | test R2 | test R2 (drift-corrected) | val MAE kW | test MAE kW | test RMSE kW |
 |---|---|---|---|---|---|---|---|---|
@@ -60,7 +59,7 @@ validation split.
 | Facilities | C: time + occupancy | 0.28 | 0.21 | 0.05 | 0.14 | 2.07 | 2.21 | 2.98 |
 | Facilities | D: random forest (time + occupancy) | 0.46 | 0.29 | -0.05 | 0.03 | 1.94 | 2.28 | 3.13 |
 
-### Does occupancy help? (Research question 2)
+#### Does occupancy help? (Research question 2)
 
 | building | B val R2 | C val R2 | R2 gain from occupancy | B val MAE kW | C val MAE kW | MAE improvement % | D (forest) val R2 |
 |---|---|---|---|---|---|---|---|
@@ -107,7 +106,7 @@ and the Library
 and helps least, or slightly hurts, in the Mess and Facilities, whose loads are
 driven by equipment schedules and weather rather than by headcount.
 
-### Cross-validation with TimeSeriesSplit
+#### Cross-validation with TimeSeriesSplit
 
 | building | model | CV MAE kW (mean) | CV MAE kW (sd) | folds |
 |---|---|---|---|---|
@@ -126,7 +125,7 @@ driven by equipment schedules and weather rather than by headcount.
 | Facilities | B: time only | 2.87 | 0.50 | 5 |
 | Facilities | C: time + occupancy | 2.79 | 0.56 | 5 |
 
-### Base load and responsiveness -- the numbers Phase 5 uses
+#### Base load and responsiveness -- the numbers Phase 5 uses
 
 | building | kind | a: base load (kW) | b: watts per occupant | mean power (kW) | base load as % of mean | night 02-06 median (kW) | R2 in sample |
 |---|---|---|---|---|---|---|---|
@@ -147,7 +146,7 @@ power a building draws with nobody in it -- and the night-time median column is
 an independent check on it from a completely different calculation. Phase 5 takes
 these two coefficients and turns them into the headline ranking.
 
-### Predictions against reality
+#### Predictions against reality
 
 ![Academic building: actual and predicted power over one test week, with occupancy below](../figures/fig_04_actual_vs_predicted_academic.png)
 
@@ -157,7 +156,7 @@ Note the chart uses two stacked panels rather than two y-axes. Watts and people
 are different quantities, and putting them on one axis would invent a visual
 relationship that does not exist.
 
-### Overfitting
+#### Overfitting
 
 | max depth | train MAE w | val MAE w |
 |---|---|---|
@@ -174,13 +173,13 @@ relationship that does not exist.
 
 *The forest shows the textbook picture: at unlimited depth its training error is 2.71 kW but its validation error is 6.47 kW, a gap of 2.4x. That gap is overfitting made visible.*
 
-### What the forest uses
+#### What the forest uses
 
 ![Random-forest feature importances for Academic power](../figures/fig_04_feature_importance.png)
 
 *Occupancy is the strongest single input, ahead of every hour-of-day indicator -- which is reassuring for a project built around it.*
 
-### Residuals
+#### Residuals
 
 | detector | mean residual kW | sd residual kW | median kW |
 |---|---|---|---|

@@ -74,6 +74,53 @@ def save_md(name: str, text: str) -> Path:
     return path
 
 
+MIN_HEADING_LEVEL = 4      # blocks sit under "## N." or "### N.x" sections
+
+
+def _fix_heading_levels(content: str, minimum: int = MIN_HEADING_LEVEL) -> str:
+    """Push a block's own headings below the section heading it sits under.
+
+    Every block is a fragment inserted underneath a numbered section, so a
+    heading written as `###` inside a block would render at the same level as
+    the section containing it and flatten the document outline. This shifts a
+    block's headings down so its shallowest one sits at `minimum`, preserving
+    the relative structure within the block.
+
+    Lines inside fenced code blocks are left alone -- a `#` there is a comment,
+    not a heading.
+    """
+    lines = content.split("\n")
+    in_fence = False
+    levels = []
+    for line in lines:
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if not in_fence:
+            match = re.match(r"^(#{1,6})\s+\S", line)
+            if match:
+                levels.append(len(match.group(1)))
+
+    if not levels or min(levels) >= minimum:
+        return content
+
+    shift = minimum - min(levels)
+    out = []
+    in_fence = False
+    for line in lines:
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            out.append(line)
+            continue
+        match = re.match(r"^(#{1,6})(\s+\S.*)$", line)
+        if match and not in_fence:
+            level = min(len(match.group(1)) + shift, 6)
+            out.append("#" * level + match.group(2))
+        else:
+            out.append(line)
+    return "\n".join(out)
+
+
 def update_block(name: str, content: str, *, report_path: Path | None = None) -> None:
     """Replace the text between <!-- BEGIN:name --> and <!-- END:name -->."""
     report_path = report_path or C.REPORT_PATH
@@ -94,9 +141,10 @@ def update_block(name: str, content: str, *, report_path: Path | None = None) ->
             f"Add {begin} ... {end} to the report skeleton first."
         )
 
-    replacement = f"{begin}\n{content.strip()}\n{end}"
+    body = _fix_heading_levels(content.strip())
+    replacement = f"{begin}\n{body}\n{end}"
     report_path.write_text(pattern.sub(lambda _: replacement, text), encoding="utf-8")
-    save_md(name, content)
+    save_md(name, body)
     print(f"report: updated block {name!r} ({len(content.splitlines())} lines)")
 
 
@@ -183,7 +231,11 @@ def pending_blocks(report_path: Path | None = None) -> list[str]:
     for match in re.finditer(
         r"<!-- BEGIN:(.*?) -->(.*?)<!-- END:\1 -->", text, flags=re.DOTALL
     ):
-        if "pending Phase" in match.group(2):
+        # A block counts as unfilled only if it *starts* with the placeholder.
+        # Matching the phrase anywhere in the block is too loose: a filled
+        # section that explains how the placeholder mechanism works would flag
+        # itself, which is exactly what happened to the Phase 7 methodology.
+        if match.group(2).strip().startswith("pending Phase"):
             out.append(match.group(1))
     return out
 

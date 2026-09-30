@@ -1,4 +1,3 @@
-
 > **All anomalies used to score the detectors in this section are SYNTHETIC.**
 > They were injected into a copy of the test data with a recorded seed
 > (42) purely so that the two detectors could be compared against known
@@ -7,7 +6,7 @@
 > separate, and its entries are **candidates for inspection, not confirmed
 > faults**.
 
-### The experiment
+#### The experiment
 
 Detector **T** scores the residuals of a time-only model; Detector **O** scores
 the residuals of a time-and-occupancy model. Everything else about them is
@@ -23,7 +22,7 @@ identical.
 | Lecture | 5,540 | 196 | 132 | 320 | 2,403 | 49.15 | 2,735 |
 | Facilities | 22,404 | 198 | 0 | 325 | 0 | 1.45 | 0 |
 
-### Confusion matrices and scores, at the specified |z| > 3 threshold
+#### Confusion matrices and scores, at the specified |z| > 3 threshold
 
 | detector | anomaly type | n anomaly intervals | true positives | false positives | false negatives | true negatives | precision | recall | f1 | accuracy |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -38,7 +37,7 @@ identical.
 
 *Detector O has higher recall and lower precision at this threshold -- but see the fairness correction below.*
 
-### The fair comparison
+#### The fair comparison
 
 A fixed threshold does not put the two detectors on equal terms: model C fits
 better, so its residuals are tighter, so its MAD is smaller, so the same
@@ -77,7 +76,7 @@ validation R-squared on average (Phase 4), and several buildings have a nearly
 flat daily profile (Phase 3). **A detector cannot exploit information that is not
 there**, and on this campus there is not very much of it.
 
-### Rule variants
+#### Rule variants
 
 | rule | detector | alerts | precision | recall | f1 |
 |---|---|---|---|---|---|
@@ -93,7 +92,7 @@ substantially at almost no cost in recall, because every real or injected waste
 event adds power rather than removing it. The IQR cross-check flags far more and
 scores worse, as expected for heavy-tailed residuals.
 
-### Top 10 unusual patterns in the real data
+#### Top 10 unusual patterns in the real data
 
 **These are candidates for inspection, not confirmed faults.** Each is a period
 where a building drew considerably more power than a model of time and occupancy

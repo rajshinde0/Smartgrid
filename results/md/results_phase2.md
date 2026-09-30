@@ -1,5 +1,4 @@
-
-### Descriptive statistics
+#### Descriptive statistics
 
 | building | n | mean | median | mode (1 kW bins) | min | max | range | variance | std | Q1 | Q3 | IQR | skew |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -19,7 +18,7 @@ is the extreme case with a skew of
 10.6 -- its maximum
 is more than ten times its median, pointing to a large intermittent load.
 
-### Manual calculation checked against pandas
+#### Manual calculation checked against pandas
 
 Every statistic above was recomputed from its definition with NumPy and asserted
 equal to the pandas result. The largest relative difference across all eleven
@@ -28,7 +27,7 @@ statistics was
 -- floating-point noise. The check runs as an assertion, so the notebook fails if
 they ever diverge.
 
-### Population versus sample
+#### Population versus sample
 
 ![Means of 1,000 random 30-day samples against the true population mean](../figures/fig_02_sampling_distribution.png)
 
@@ -39,7 +38,7 @@ because the days are drawn at random across the whole year**. An audit that
 happened to run in June would measure the air-conditioning season instead. This
 is why the project uses the full 3.7-year record rather than a sample.
 
-### What distribution does power follow?
+#### What distribution does power follow?
 
 | distribution | KS statistic (lower is better) | KS p-value |
 |---|---|---|
@@ -58,7 +57,7 @@ cluster -- and no unimodal distribution can describe two clusters.
 This shapes Phase 4: because power is not normally distributed, MAE is reported
 alongside RMSE, since RMSE is dominated by the tail.
 
-### Hypothesis tests
+#### Hypothesis tests
 
 **Semester versus vacation:**
 
@@ -108,7 +107,7 @@ whether people are present -- the Library drops
 weekends, so it is clearly possible. Buildings that do not respond are therefore
 making a choice, not obeying a physical necessity.
 
-### The chart set
+#### The chart set
 
 ![Share of total measured campus energy by building](../figures/fig_02_pie_energy_share.png)
 
@@ -134,7 +133,7 @@ making a choice, not obeying a physical necessity.
 
 *Every cloud slopes upward, and every cloud has a floor well above zero on the left: even at minimum occupancy the building draws a substantial load.*
 
-### Power-occupancy correlation
+#### Power-occupancy correlation
 
 | building | kind | n | pearson r | pearson p | spearman r | spearman p | r squared |
 |---|---|---|---|---|---|---|---|

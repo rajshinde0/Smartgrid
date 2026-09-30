@@ -1,4 +1,3 @@
-
 Energy recording runs from **2013-08-10** to
 **2017-12-31**, but occupancy only exists from
 **2014-02-16** to **2017-11-03**.

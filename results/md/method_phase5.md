@@ -1,4 +1,3 @@
-
 **The definition.** I-BLEND occupancy never reads zero -- the minimum in every
 building is 1, because WiFi counts idle devices -- so "energy used while empty"
 is not a quantity this dataset can report. The question is asked about *low*

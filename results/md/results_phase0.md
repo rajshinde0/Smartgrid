@@ -1,4 +1,3 @@
-
 Exploration produced four findings that shaped everything after it.
 
 1. **The working period is set by occupancy, not energy.** Energy covers

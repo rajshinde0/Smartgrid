@@ -1,5 +1,4 @@
-
-### How many shapes does a day have?
+#### How many shapes does a day have?
 
 | component | variance explained % | cumulative % |
 |---|---|---|
@@ -18,7 +17,7 @@ Academic-building day is therefore well described by three numbers instead of 24
 
 *PC1 explains 55.0% and the first three together 86.9% -- a real reduction in dimensionality, not a cosmetic one.*
 
-### What the components mean
+#### What the components mean
 
 ![The three main shapes of a day, Academic building](../figures/fig_03_components_academic.png)
 
@@ -31,7 +30,7 @@ day. **PC3 is the timing of the peak.** This is the usual pattern in building
 energy data, which is itself a check that the matrix and the arithmetic are
 behaving.
 
-### Do days separate by calendar without being told the calendar?
+#### Do days separate by calendar without being told the calendar?
 
 ![Days in PC1-PC2 space, coloured by weekend and by vacation](../figures/fig_03_pc_scatter_academic.png)
 
@@ -48,7 +47,7 @@ instead, and less cleanly, because vacation days are not uniformly quieter --
 some are among the highest-consuming days in the record, which is the summer
 cooling load again.
 
-### Day types
+#### Day types
 
 | cluster | name | days | mean power (kW) | night floor (kW) | midday (kW) | % weekend | % vacation |
 |---|---|---|---|---|---|---|---|
@@ -61,19 +60,19 @@ cooling load again.
 
 *The clusters correspond to recognisable kinds of day rather than arbitrary groupings -- their weekend and vacation shares differ sharply even though k-means never saw the calendar.*
 
-### Which days are unusual?
+#### Which days are unusual?
 
 ![Reconstruction error per day, and the most and least typical days](../figures/fig_03_reconstruction_error_academic.png)
 
 *A day the three main components cannot reproduce is an unusual day. This whole-day score cross-checks the interval-level detector built in Phase 6.*
 
-### The same analysis on a dormitory
+#### The same analysis on a dormitory
 
 ![Boys Hostel: scree plot, component shapes and days in component space](../figures/fig_03_pca_boys_hostel.png)
 
 *The first three components explain 93.0% here, and the component shapes differ from the Academic building's -- the structure is a property of each building, not a universal.*
 
-### Every building's daily shape, side by side
+#### Every building's daily shape, side by side
 
 ![The shape of an average day, each building scaled to its own mean](../figures/fig_03_day_shapes_all_buildings.png)
 

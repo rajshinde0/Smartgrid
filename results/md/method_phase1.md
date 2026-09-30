@@ -1,4 +1,3 @@
-
 Phase 1 turns the raw CSVs into one clean, merged, 10-minute table per building.
 
 **Invalid values.** Three rules are applied while reading, and every fix is

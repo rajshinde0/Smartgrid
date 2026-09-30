@@ -1,5 +1,4 @@
-
-### Thresholds
+#### Thresholds
 
 | building | kind | p95 occupancy | threshold (5% of p95) | usable intervals | intervals at/below threshold | % of intervals | threshold reachable |
 |---|---|---|---|---|---|---|---|
@@ -17,7 +16,7 @@ observed count -- and **no interval qualifies**. The rule is kept identical for
 every building rather than bent for one; its behaviour is read off the
 sensitivity curve instead.
 
-### The headline table
+#### The headline table
 
 | building | kind | threshold | coverage % | total kWh measured | low-occupancy kWh | low-occupancy energy share % | % of intervals low | mean power overall (kW) | mean power when low (kW) | intensity ratio | base load a (kW) | watts per occupant b |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -33,7 +32,7 @@ sensitivity curve instead.
 
 *The right-hand panel is the one to read: when nearly empty, these buildings still draw between 62% and 85% of their average power.*
 
-### Sensitivity to the threshold
+#### Sensitivity to the threshold
 
 ![Low-occupancy energy share against threshold, 0% to 20% of p95](../figures/fig_05_sensitivity_curve.png)
 
@@ -49,7 +48,7 @@ fact that made the standard threshold unreachable for this building, seen from
 another angle -- a relative threshold assumes occupancy is effectively
 continuous, and in a building this small it is not.
 
-### Comparison with the published literature
+#### Comparison with the published literature
 
 | building | kind | out-of-hours share % (clock rule) | % intervals out of hours | low-occupancy share % (occupancy rule) | % intervals low occupancy |
 |---|---|---|---|---|---|
@@ -81,7 +80,7 @@ counts. The truth lies between them, and **our occupancy-based figure is a
 conservative lower bound** -- a conclusion the corrected-occupancy check below
 independently confirms.
 
-### Base load: two independent routes to the same number
+#### Base load: two independent routes to the same number
 
 | building | base load a from model A (kW) | night 02:00-06:00 median (kW) | difference (kW) | difference % | mean power (kW) | base load as % of mean |
 |---|---|---|---|---|---|---|
@@ -104,7 +103,7 @@ low-occupancy period there, which is precisely why an occupancy-based definition
 is worth the trouble: a clock-based rule would have called those hours
 unoccupied and been wrong.
 
-### Responsiveness ranking
+#### Responsiveness ranking
 
 | building | base load kw | mean power kw | variable share pct | responsiveness rank | intensity ratio | watts per occupant b | model A vs night median % | model A reliable? | measured rank |
 |---|---|---|---|---|---|---|---|---|---|
@@ -137,7 +136,7 @@ as unreliable. The conclusion survives either way: **even the best performer has
 the majority of its consumption fixed**, and for the flagged buildings the true
 fixed share is larger than the modelled figure, not smaller.
 
-### Semester against vacation
+#### Semester against vacation
 
 | building | semester | vacation | change (pp) |
 |---|---|---|---|
@@ -153,7 +152,7 @@ fixed share is larger than the modelled figure, not smaller.
 
 *Holding the threshold fixed across both periods so the comparison measures behaviour rather than the definition.*
 
-### Hostel mains against UPS
+#### Hostel mains against UPS
 
 | building | supply | total kwh | low occ kwh | share pct | mean power w | mean power low occ w |
 |---|---|---|---|---|---|---|
@@ -166,14 +165,14 @@ fixed share is larger than the modelled figure, not smaller.
 
 *Only I-BLEND meters the mains and backup supplies separately, so this comparison is not available in other campus datasets.*
 
-### Commercial against residential
+#### Commercial against residential
 
 | kind | buildings | mean low occ share | mean intensity ratio | mean base load kw | total kwh |
 |---|---|---|---|---|---|
 | commercial | 5 | 10.13 | 0.74 | 10.89 | 1,967,073.80 |
 | residential | 2 | 4.71 | 0.77 | 13.27 | 944,065.20 |
 
-### Sensitivity check 1: Lecture under a 24-hour dead-meter rule
+#### Sensitivity check 1: Lecture under a 24-hour dead-meter rule
 
 | dead-meter rule | usable intervals | total kWh | low-occupancy share % |
 |---|---|---|---|
@@ -187,7 +186,7 @@ than doubles the usable intervals and moves the headline share by
 **1.30 percentage
 points**. The ambiguity is real but small, and the Lecture figure survives it.
 
-### Sensitivity check 2: corrected occupancy
+#### Sensitivity check 2: corrected occupancy
 
 | building | idle devices subtracted | raw threshold | corrected threshold | raw share % | corrected share % | change (pp) | raw % intervals low | corrected % intervals low |
 |---|---|---|---|---|---|---|---|---|

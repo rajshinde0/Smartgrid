@@ -1,0 +1,10 @@
+| Tutorial | Topic | Where it is implemented |
+|---|---|---|
+| 1 | Population vs sample; identifying data types | 02_stats_eda.ipynb, Steps 1-2 and 5 (1,000 samples of 30 days; the attribute-type table) |
+| 2 | Central tendency and dispersion by hand; checking the distribution | 02_stats_eda.ipynb, Steps 3-4 and 6 (NumPy formulas asserted equal to pandas; Normal vs Log-normal) |
+| 3 | Classifying attributes | 02_stats_eda.ipynb, Step 2 (includes asymmetric binary flags) |
+| 4 | Data cleaning and pre-processing | 01_data_prep.ipynb, Steps 3-8 |
+| 5 | Vectors, matrices, arrays and DataFrames | 03_pca.ipynb, Steps 1-2; 01_data_prep.ipynb, Steps 11-12 |
+| 6 | Lists, functions and control structures | 00_explore.ipynb, Step 4 (loop over the meter registry with conditions); 01_data_prep.ipynb, Step 15 (lists and dictionaries); the whole src/ package is the functions component |
+| 7 | Data visualization | 02_stats_eda.ipynb, Step 8; 03_pca.ipynb, Steps 5-9; dashboard/app.py |
+| 8 | Linear regression and predictive analytics | 04_regression.ipynb, all steps |

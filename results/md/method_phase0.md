@@ -1,4 +1,3 @@
-
 Exploration was done before any cleaning, to find out what the data actually
 contains rather than what the documentation promises.
 

@@ -1,4 +1,3 @@
-
 Phase 6 is set up as a controlled experiment, not a pipeline. Two detectors, the
 same data, the same procedure, one difference: **Detector T** scores the
 residuals of model B (time features only) and **Detector O** scores the residuals

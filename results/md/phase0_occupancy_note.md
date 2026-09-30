@@ -1,4 +1,3 @@
-
 **The single most important finding in exploration: occupancy never reaches zero.**
 The minimum count in every one of the seven buildings is **1**, not 0. This is the
 WiFi over-counting the dataset authors warn about -- idle phones and laptops stay

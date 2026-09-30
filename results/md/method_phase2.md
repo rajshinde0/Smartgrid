@@ -1,4 +1,3 @@
-
 Phase 2 describes the data before any model is fitted.
 
 **Attribute classification.** Every column is classified as nominal, ordinal,

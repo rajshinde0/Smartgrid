@@ -18,6 +18,27 @@ buildings with WiFi-derived occupancy counts, and ask three questions:
 > That file is designed to be read on its own — you do not need to open the
 > notebooks to follow it.
 
+## What we found
+
+**When these buildings are at their emptiest, they still draw 62%–85% of their
+average power.** In every one of the seven, the base load — the part drawn
+whether or not anyone is present — is the larger share of consumption.
+
+As an external check, applying the clock-based definition used by Masoso &
+Grobler (2010) to this data gives 55.2% for the Academic building and 55.0% for
+the Library, against their published 56%.
+
+Two secondary results, both modest and both reported honestly:
+
+- **Occupancy is a weak predictor of power.** It explains 7%–45% of the
+  variation and adds only +0.11 validation R² over a time-only model.
+- **An occupancy-aware anomaly detector is better, but only just** — ahead on
+  all five fair comparisons by one to three percentage points each, with the
+  gains concentrated on sustained waste rather than spikes.
+
+We also found, without looking for it, that **campus consumption grew 32%–48%
+between 2014 and 2017**.
+
 ---
 
 ## Repository layout

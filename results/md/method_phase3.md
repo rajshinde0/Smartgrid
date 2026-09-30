@@ -1,4 +1,3 @@
-
 Phase 3 stops treating the data as one long time series and treats it as a
 collection of days.
 
@@ -13,7 +12,7 @@ or any interval flagged `meter_off`, are excluded: 1,302 of
 along the last axis -- a vectorized operation. The same calculation written as
 three nested Python loops gives identical numbers
 (largest difference 0.0e+00) and is
-73x slower, which is the practical argument for
+79x slower, which is the practical argument for
 vectorisation throughout the project.
 
 **Standardisation.** Each hour column is centred and scaled to unit variance.

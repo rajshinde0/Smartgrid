@@ -1,4 +1,3 @@
-
 Phase 4 builds a baseline of *expected* consumption, not a forecast.
 
 **Models.** **A** is `power = a + b x occupancy`, fitted unscaled so its two

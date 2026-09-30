@@ -1,5 +1,4 @@
-
-### What was injected
+#### What was injected
 
 | building | test intervals | spike events | waste events | spike intervals | waste intervals | % of intervals contaminated | low-occ intervals available |
 |---|---|---|---|---|---|---|---|
@@ -21,7 +20,7 @@ campus, not a fault in the method, and every score below uses the achieved count
 
 *Deliberately subtle: a modest lift sustained for hours while the building is nearly empty. A spike stands out against any baseline; slow waste looks like a slightly busier night unless the detector knows nobody was there.*
 
-### The fixed threshold specified in the plan
+#### The fixed threshold specified in the plan
 
 ![Confusion matrices for both detectors, Academic building  [SYNTHETIC]](../figures/fig_06_confusion_matrices.png)
 
@@ -40,7 +39,7 @@ A note on **accuracy**: it is reported because the plan asks for it, but it is
 the least useful number here. Anomalies are a few percent of the intervals, so a
 detector that flags nothing at all still scores above 90%.
 
-### Why the fixed threshold is not a fair comparison
+#### Why the fixed threshold is not a fair comparison
 
 | building | T residual sd (kW) | T MAD scale (kW) | T alerts at z>3 | O residual sd (kW) | O MAD scale (kW) | O alerts at z>3 | extra alerts from O |
 |---|---|---|---|---|---|---|---|
@@ -102,7 +101,7 @@ investigate?) and with **threshold-free** measures.
 
 *Once the comparison is made fairly, the two detectors perform almost identically.*
 
-### The answer to research question 3
+#### The answer to research question 3
 
 | comparison | detector T | detector O | metric | difference (O - T) |
 |---|---|---|---|---|
@@ -146,7 +145,7 @@ this one, a WiFi occupancy feed will improve it slightly and will not transform
 it. That sits comfortably with the published LBNL finding for baseline models,
 and extends it from prediction to detection.
 
-### Two variants worth reporting
+#### Two variants worth reporting
 
 | rule | detector | alerts | precision | recall | f1 |
 |---|---|---|---|---|---|
@@ -168,7 +167,7 @@ cost in recall.
 much lower precision. Tukey fences assume a roughly symmetric distribution, and
 Phase 2 established that these residuals are heavy-tailed.
 
-### Detector O on the real data
+#### Detector O on the real data
 
 | building | test intervals | NORMAL | WARNING | ANOMALY | % flagged |
 |---|---|---|---|---|---|

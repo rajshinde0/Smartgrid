@@ -1,4 +1,3 @@
-
 **Seven clean tables, and a very uneven amount of usable data.**
 
 After cleaning, merging with occupancy and flagging dead meters, the proportion

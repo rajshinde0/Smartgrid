@@ -287,4 +287,32 @@ finalise PROJECT_REPORT.md: rewrite the abstract with real findings, limitations
 conclusion & future scope, full syllabus coverage table (Units I-VI, Tutorials
 1-8), how to reproduce, and the presentation outline appendix.
 
-## Phase 7 — Delivery — not started
+## Phase 7 — Delivery — done  —  PROJECT COMPLETE
+
+**Done.** `notebooks/07_final.ipynb` plus `src/dashboard.py` and
+`dashboard/app.py`. Exported per-building scored parquet for the dashboard;
+wrote the remaining report sections (abstract rewritten with real findings,
+limitations, conclusion & future scope, syllabus coverage for Units I-VI and
+Tutorials 1-8, how to reproduce, presentation outline); ran the final checks.
+Two decisions logged (D07-01/02). 40 decisions total.
+
+**Final state.**
+- 8 notebooks, all executing end to end from a cold start (verified)
+- 44 figures, 46 result tables, 15 src modules
+- `docs/PROJECT_REPORT.md`: 27,383 words, 0 sections pending, 0 broken figure
+  links
+- dashboard verified by executing every code path with a stubbed Streamlit:
+  8 metrics, 2 charts, 4 tables, and the Facilities unreachable-threshold branch
+  correctly warns
+
+**Found while finishing.**
+- The report checker had two false positives, both caught by the assertions:
+  `pending_blocks()` matched any block *mentioning* the placeholder phrase (now
+  matches only blocks that *start* with it), and `check_figures()` matched the
+  text documenting the figure-link format. Both fixed.
+- Generated sub-headings sat at the same level as the sections containing them,
+  flattening a 27k-word outline. `report._fix_heading_levels()` now demotes each
+  block's headings to sit below its section, skipping fenced code.
+
+**Nothing left outstanding.** All three research questions answered, all
+sensitivity checks owed by earlier decisions discharged (D00-06, D01-07).

@@ -1,4 +1,3 @@
-
 > **When these seven campus buildings are at their emptiest, they still draw
 > between 62% and
 > 85% of their average power.**
