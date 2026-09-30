@@ -243,6 +243,48 @@ the test data with seed 42, confusion matrices and precision/recall/F1 per
 detector x anomaly type, then Detector O on real data for the top 10 unusual
 patterns.
 
-## Phase 6 — Anomaly experiment — not started
+## Phase 6 — Anomaly experiment — done
+
+**Done.** `notebooks/06_anomaly.ipynb` plus new module `src/anomaly.py`.
+Detector T (model B residuals) vs Detector O (model C residuals), synthetic
+anomaly injection on a copy of the test data with seed 42, confusion matrices,
+precision/recall/F1/accuracy per detector x anomaly type, event-level recall,
+one-sided and IQR variants, and Detector O on the real data. Five decisions
+logged (D06-01..05). Four figures.
+
+**Found.**
+- **RQ3 answered: a qualified yes.** Occupancy helps consistently but only a
+  little. All 5 fair comparisons favour Detector O: matched-budget F1
+  0.285->0.294, average precision 0.426->0.446, ROC AUC 0.685->0.703,
+  waste-only F1 0.141->0.165, waste-event recall 21.8%->24.7%. Every margin is
+  1-3 percentage points, but they all point the same way and **the largest
+  gains land on the waste anomalies**, exactly where theory predicts.
+- **The specified fixed |z|>3 threshold is NOT a fair test** (D06-02). Model C
+  fits better, so its residuals are tighter, so its MAD is smaller, so the same
+  deviation in watts scores a larger Z and it simply fires more often. At that
+  threshold O looked *worse* (F1 0.288 vs 0.293). Reporting only the planned
+  comparison would have drawn a conclusion about scale calibration and called it
+  a finding about occupancy. Added matched-alert-budget and threshold-free
+  (ROC AUC, average precision) comparisons.
+- **Robust z-scores (median/MAD) instead of mean/SD** (D06-01): the SD is
+  inflated by the anomalies being hunted, so they raise the bar and hide
+  themselves.
+- **One-sided detection is a clear win** (D06-05): all injected and all real
+  waste is additive, so the two-sided rule spends ~half its alerts on
+  under-consumption, which cannot be a true positive.
+- **Fewer waste events land than requested** (D06-04): they run 2-6 h and must
+  fit inside low-occupancy periods. Academic fits 65 of 200; Facilities fits
+  **0** because its threshold is unreachable. All scores use achieved counts.
+- **Real-data finding: the top 10 is one finding ten times.** 29 of the 30 most
+  extreme real episodes are the Academic building starting ~03:20, lasting 7-8 h,
+  Aug-Nov 2017, ~35-38 kW excess, repeating daily. That is a **change of
+  operating schedule** the 2014-16 model keeps re-reporting — concept drift
+  returning as false alarms. Added a deduplicated per-building view, and the
+  lesson that a fixed historical baseline needs periodic refitting.
+
+**Next.** Phase 7 — Streamlit dashboard reading saved outputs only, then
+finalise PROJECT_REPORT.md: rewrite the abstract with real findings, limitations,
+conclusion & future scope, full syllabus coverage table (Units I-VI, Tutorials
+1-8), how to reproduce, and the presentation outline appendix.
 
 ## Phase 7 — Delivery — not started
