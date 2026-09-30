@@ -220,7 +220,7 @@ else:
         ax_o.axhline(threshold_row, color=viz.INK_MUTED, linestyle="--",
                      linewidth=1)
     plt.setp(ax_o.get_xticklabels(), rotation=20, ha="right")
-    st.pyplot(fig, use_container_width=True)
+    st.pyplot(fig, width="stretch")
     plt.close(fig)
 
     st.caption(
@@ -290,7 +290,7 @@ if sensitivity is not None:
     ax.set_ylabel("% of energy used at or below the threshold")
     ax.set_title(f"{building.replace('_', ' ')} highlighted against the other buildings")
     ax.legend(loc="upper left", fontsize=9)
-    st.pyplot(fig, use_container_width=True)
+    st.pyplot(fig, width="stretch")
     plt.close(fig)
     st.caption(
         "The headline uses 5%. This curve shows what every other threshold from "
@@ -303,12 +303,12 @@ if sensitivity is not None:
 # ---------------------------------------------------------------------------
 with st.expander("Headline table -- all buildings"):
     if not headline.empty:
-        st.dataframe(headline, use_container_width=True, hide_index=True)
+        st.dataframe(headline, width="stretch", hide_index=True)
 
 with st.expander("Does occupancy help an anomaly detector?"):
     detectors = results.get("detectors")
     if detectors is not None:
-        st.dataframe(detectors, use_container_width=True, hide_index=True)
+        st.dataframe(detectors, width="stretch", hide_index=True)
         st.caption(
             "Detector T uses time only; Detector O adds occupancy. All five fair "
             "comparisons favour O, by one to three percentage points each, with "
@@ -320,7 +320,7 @@ with st.expander("Does occupancy help an anomaly detector?"):
 with st.expander("Comparison with published figures"):
     published = results.get("published")
     if published is not None:
-        st.dataframe(published, use_container_width=True, hide_index=True)
+        st.dataframe(published, width="stretch", hide_index=True)
         st.caption(
             "Applying Masoso & Grobler's clock-based definition to this data "
             "gives 55.2% for the Academic building and 55.0% for the Library, "
@@ -330,7 +330,7 @@ with st.expander("Comparison with published figures"):
 with st.expander("Data quality"):
     quality = results.get("quality")
     if quality is not None:
-        st.dataframe(quality, use_container_width=True, hide_index=True)
+        st.dataframe(quality, width="stretch", hide_index=True)
 
 st.divider()
 st.caption(
