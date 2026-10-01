@@ -2,17 +2,17 @@
 
 After cleaning, merging with occupancy and flagging dead meters, the proportion
 of 10-minute intervals that are actually usable -- meter alive, reading present,
-occupancy known -- varies from **18.9%** to **90.4%**:
+occupancy known -- varies from **18.9%** to **90.5%**:
 
 | building | rows | usable rows | pct usable | pct power missing | pct occupancy missing | hours meter off | total kwh |
 |---|---|---|---|---|---|---|---|
-| Academic | 195,406 | 176,730 | 90.44 | 1.94 | 8.04 | 10.50 | 849,596.90 |
-| Boys_Hostel | 195,407 | 119,024 | 60.91 | 31.21 | 7.96 | 0 | 651,028.10 |
-| Girls_Hostel | 195,406 | 117,186 | 59.97 | 32.45 | 8.05 | 0 | 293,037.10 |
-| Mess | 195,405 | 157,266 | 80.48 | 11.24 | 8.69 | 0 | 616,561.30 |
-| Library | 195,406 | 118,720 | 60.76 | 30.42 | 11.46 | 0 | 201,059.60 |
-| Lecture | 195,397 | 36,930 | 18.90 | 1.94 | 22.46 | 25,487.50 | 18,581.90 |
-| Facilities | 174,600 | 149,353 | 85.54 | 4.82 | 9.71 | 0 | 281,274.10 |
+| Academic | 195,406 | 176,807 | 90.48 | 1.93 | 8.04 | 10.50 | 849,996.20 |
+| Boys_Hostel | 195,407 | 120,915 | 61.88 | 30.23 | 7.96 | 0 | 661,097.60 |
+| Girls_Hostel | 195,406 | 117,508 | 60.14 | 32.27 | 8.05 | 0 | 293,792.40 |
+| Mess | 195,405 | 157,526 | 80.62 | 11.10 | 8.69 | 0 | 617,587.90 |
+| Library | 195,406 | 118,872 | 60.83 | 30.34 | 11.46 | 0 | 201,337.20 |
+| Lecture | 195,397 | 36,978 | 18.92 | 79.04 | 22.46 | 25,487.50 | 18,588.80 |
+| Facilities | 174,600 | 149,883 | 85.84 | 4.51 | 9.71 | 0 | 282,436.20 |
 
 Three observations matter for everything that follows.
 
@@ -24,7 +24,7 @@ Three observations matter for everything that follows.
 2. **The Boys hostel, Girls hostel and Library sit near 60%** because of
    multi-month meter outages visible in section 4.9. That is a smaller sample,
    not a worse measurement.
-3. **Academic is the most complete** at 90.4%, which is why
+3. **Academic is the most complete** at 90.5%, which is why
    it is used as the worked example throughout the notebooks.
 
 **The pipeline was independently cross-checked.** Our per-building mean power,

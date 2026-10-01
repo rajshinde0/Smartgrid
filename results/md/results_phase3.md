@@ -2,20 +2,20 @@
 
 | component | variance explained % | cumulative % |
 |---|---|---|
-| PC1 | 55 | 55 |
+| PC1 | 54.90 | 54.90 |
 | PC2 | 21 | 75.90 |
-| PC3 | 10.90 | 86.90 |
-| PC4 | 4.30 | 91.20 |
+| PC3 | 11 | 86.80 |
+| PC4 | 4.30 | 91.10 |
 | PC5 | 3 | 94.10 |
 | PC6 | 1.30 | 95.40 |
 
-The first component alone accounts for **55.0%** of the variation between days,
-and the first three for **86.9%**. An Academic-building day is therefore well
+The first component alone accounts for **54.9%** of the variation between days,
+and the first three for **86.8%**. An Academic-building day is therefore well
 described by three numbers instead of 24.
 
 ![Scree plot for Academic building daily load profiles](../figures/fig_03_scree_academic.png)
 
-*PC1 explains 55.0% and the first three together 86.9% -- a real reduction in
+*PC1 explains 54.9% and the first three together 86.8% -- a real reduction in
 dimensionality, not a cosmetic one.*
 
 #### What the components mean
@@ -55,10 +55,10 @@ summer cooling load again.
 
 | cluster | name | days | mean power (kW) | night floor (kW) | midday (kW) | % weekend | % vacation |
 |---|---|---|---|---|---|---|---|
-| 0 | high load, daytime peak | 450 | 35.40 | 22.10 | 54.10 | 4.40 | 36.70 |
-| 1 | lowest load, flat all day | 284 | 18.10 | 17.30 | 19.90 | 63.40 | 19 |
-| 2 | highest load, morning peak | 80 | 41.20 | 36.20 | 59 | 7.50 | 18.80 |
-| 3 | low load, morning peak | 488 | 26.10 | 20.10 | 35.50 | 33.40 | 22.10 |
+| 0 | low load, morning peak | 488 | 26.10 | 20.10 | 35.60 | 32.80 | 21.70 |
+| 1 | highest load, morning peak | 81 | 41.20 | 36.10 | 59 | 7.40 | 19.80 |
+| 2 | high load, daytime peak | 452 | 35.40 | 22.10 | 54.10 | 4.40 | 36.50 |
+| 3 | lowest load, flat all day | 291 | 18.10 | 17.40 | 19.90 | 63.90 | 19.60 |
 
 ![k-means day types: average profile of each cluster, and the clusters in component space](../figures/fig_03_day_types_academic.png)
 
@@ -77,7 +77,7 @@ whole-day score cross-checks the interval-level detector built in Phase 6.*
 
 ![Boys Hostel: scree plot, component shapes and days in component space](../figures/fig_03_pca_boys_hostel.png)
 
-*The first three components explain 93.0% here, and the component shapes differ
+*The first three components explain 93.1% here, and the component shapes differ
 from the Academic building's -- the structure is a property of each building,
 not a universal.*
 
@@ -95,12 +95,12 @@ that run midnight to midnight with a live meter throughout.
 
 | building | complete days available |
 |---|---|
-| Academic | 1,302 |
-| Facilities | 1,119 |
-| Mess | 1,105 |
-| Library | 915 |
-| Boys_Hostel | 828 |
-| Girls_Hostel | 808 |
+| Academic | 1,312 |
+| Mess | 1,157 |
+| Facilities | 1,134 |
+| Library | 923 |
+| Boys_Hostel | 866 |
+| Girls_Hostel | 854 |
 | Lecture | 1 |
 
 **The Facilities line is the most important thing in this chart.** A building

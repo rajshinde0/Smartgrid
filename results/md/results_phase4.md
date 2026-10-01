@@ -4,13 +4,13 @@ Before any model result can be read, one thing has to be established:
 
 | building | mean kW 2014 | mean kW 2015 | mean kW 2016 | mean kW 2017 | growth 2014-2017 % | r(power,occ) 2014 | r(power,occ) 2017 |
 |---|---|---|---|---|---|---|---|
-| Academic | 23.90 | 27.70 | 29.80 | 34 | 42.40 | 0.71 | 0.45 |
-| Boys_Hostel | 27.20 | 32.30 | 32.90 | 40.10 | 47.30 | 0.62 | 0.62 |
-| Girls_Hostel | 12.90 | 14.10 | 15.70 | 16.90 | 31.60 | 0.41 | 0.50 |
+| Academic | 23.90 | 27.70 | 29.80 | 34.10 | 42.40 | 0.71 | 0.45 |
+| Boys_Hostel | 27.20 | 32.30 | 32.90 | 39.60 | 45.70 | 0.61 | 0.62 |
+| Girls_Hostel | 12.90 | 14.10 | 15.70 | 16.90 | 31.70 | 0.41 | 0.50 |
 | Mess | 19.70 | 21.80 | 25.50 | 26.80 | 35.70 | 0.36 | 0.47 |
-| Library | 7.50 | 11 | 10.60 | 10.20 | 36.80 | 0.54 | 0.39 |
+| Library | 7.50 | 11 | 10.60 | 10.30 | 36.80 | 0.54 | 0.39 |
 | Lecture | 3.40 | 2.40 | 3.20 | 3.10 | -6.70 | 0.38 | 0.13 |
-| Facilities | 8.80 | 10.30 | 11.80 | 13.10 | 48.40 | 0.04 | 0.41 |
+| Facilities | 8.80 | 10.30 | 11.80 | 13.10 | 48.50 | 0.04 | 0.40 |
 
 ![Mean power by year, indexed to 2014, and total growth per building](../figures/fig_04_drift_by_year.png)
 
@@ -29,57 +29,57 @@ which is why model selection uses the validation split.
 
 | building | model | train R2 | val R2 | test R2 | test R2 (drift-corrected) | val MAE kW | test MAE kW | test RMSE kW |
 |---|---|---|---|---|---|---|---|---|
-| Academic | A: power ~ occupancy | 0.56 | - | -0.17 | - | - | 11.66 | 18.07 |
+| Academic | A: power ~ occupancy | 0.56 | - | -0.17 | - | - | 11.67 | 18.07 |
 | Academic | B: time only | 0.62 | 0.51 | 0.09 | 0.17 | 7.57 | 11.18 | 15.94 |
-| Academic | C: time + occupancy | 0.73 | 0.52 | 0.01 | 0.07 | 7.71 | 10.73 | 16.59 |
-| Academic | D: random forest (time + occupancy) | 0.84 | 0.59 | 0.01 | 0.11 | 6.52 | 10.35 | 16.59 |
-| Boys_Hostel | A: power ~ occupancy | 0.42 | - | 0.10 | - | - | 8.67 | 12.11 |
-| Boys_Hostel | B: time only | 0.68 | 0.24 | 0.03 | 0.29 | 9.13 | 9.55 | 12.63 |
-| Boys_Hostel | C: time + occupancy | 0.79 | 0.38 | 0.08 | 0.26 | 8.65 | 9.32 | 12.28 |
-| Boys_Hostel | D: random forest (time + occupancy) | 0.75 | 0.50 | 0.14 | 0.23 | 7.16 | 8.69 | 11.89 |
+| Academic | C: time + occupancy | 0.73 | 0.52 | 0.01 | 0.07 | 7.71 | 10.74 | 16.59 |
+| Academic | D: random forest (time + occupancy) | 0.84 | 0.59 | 0.01 | 0.11 | 6.50 | 10.37 | 16.61 |
+| Boys_Hostel | A: power ~ occupancy | 0.40 | - | 0.10 | - | - | 8.56 | 12.01 |
+| Boys_Hostel | B: time only | 0.68 | 0.23 | -0.01 | 0.29 | 9.14 | 9.77 | 12.73 |
+| Boys_Hostel | C: time + occupancy | 0.77 | 0.45 | 0.07 | 0.28 | 8 | 9.38 | 12.22 |
+| Boys_Hostel | D: random forest (time + occupancy) | 0.74 | 0.59 | 0.18 | 0.22 | 6.63 | 8.47 | 11.50 |
 | Girls_Hostel | A: power ~ occupancy | 0.21 | - | -0.88 | - | - | 3.62 | 4.52 |
-| Girls_Hostel | B: time only | 0.69 | -0.63 | -0.84 | -0.65 | 3.46 | 3.62 | 4.47 |
-| Girls_Hostel | C: time + occupancy | 0.73 | -0.23 | -0.86 | -0.57 | 2.96 | 3.68 | 4.50 |
-| Girls_Hostel | D: random forest (time + occupancy) | 0.69 | -0.43 | -0.71 | -0.51 | 3.22 | 3.46 | 4.31 |
+| Girls_Hostel | B: time only | 0.69 | -0.63 | -0.84 | -0.65 | 3.47 | 3.62 | 4.47 |
+| Girls_Hostel | C: time + occupancy | 0.73 | -0.24 | -0.86 | -0.57 | 2.96 | 3.68 | 4.49 |
+| Girls_Hostel | D: random forest (time + occupancy) | 0.69 | -0.42 | -0.71 | -0.50 | 3.21 | 3.46 | 4.31 |
 | Mess | A: power ~ occupancy | 0.15 | - | -0.08 | - | - | 7.53 | 10.07 |
-| Mess | B: time only | 0.43 | 0.32 | -0.04 | 0.06 | 4.65 | 7.66 | 9.90 |
-| Mess | C: time + occupancy | 0.44 | 0.33 | -0.03 | 0.07 | 4.61 | 7.61 | 9.83 |
-| Mess | D: random forest (time + occupancy) | 0.54 | 0.22 | -0.05 | 0.00 | 4.85 | 7.65 | 9.92 |
-| Library | A: power ~ occupancy | 0.30 | - | -0.05 | - | - | 6.82 | 8.53 |
-| Library | B: time only | 0.36 | -0.26 | 0.04 | -0.03 | 4.49 | 6.73 | 8.17 |
-| Library | C: time + occupancy | 0.46 | -0.06 | -0.09 | -0.12 | 4.02 | 7.02 | 8.71 |
-| Library | D: random forest (time + occupancy) | 0.62 | 0.16 | -0.08 | -0.08 | 3.11 | 6.60 | 8.66 |
-| Lecture | A: power ~ occupancy | 0.17 | - | -0.30 | - | - | 1.36 | 1.58 |
-| Lecture | B: time only | 0.47 | -0.20 | 0.25 | -0.12 | 1.26 | 0.84 | 1.20 |
+| Mess | B: time only | 0.43 | 0.33 | -0.05 | 0.06 | 4.65 | 7.66 | 9.89 |
+| Mess | C: time + occupancy | 0.44 | 0.33 | -0.03 | 0.07 | 4.60 | 7.61 | 9.83 |
+| Mess | D: random forest (time + occupancy) | 0.54 | 0.22 | -0.05 | 0 | 4.86 | 7.65 | 9.92 |
+| Library | A: power ~ occupancy | 0.30 | - | -0.05 | - | - | 6.84 | 8.54 |
+| Library | B: time only | 0.36 | -0.26 | 0.04 | -0.03 | 4.48 | 6.75 | 8.19 |
+| Library | C: time + occupancy | 0.46 | -0.06 | -0.10 | -0.13 | 4.02 | 7.05 | 8.73 |
+| Library | D: random forest (time + occupancy) | 0.62 | 0.15 | -0.09 | -0.09 | 3.14 | 6.62 | 8.69 |
+| Lecture | A: power ~ occupancy | 0.17 | - | -0.30 | - | - | 1.36 | 1.59 |
+| Lecture | B: time only | 0.47 | -0.20 | 0.24 | -0.12 | 1.26 | 0.84 | 1.21 |
 | Lecture | C: time + occupancy | 0.48 | -0.19 | 0.24 | -0.12 | 1.27 | 0.87 | 1.21 |
-| Lecture | D: random forest (time + occupancy) | 0.70 | -0.04 | 0.24 | -0.03 | 1.23 | 0.81 | 1.20 |
-| Facilities | A: power ~ occupancy | 0.06 | - | -0.67 | - | - | 2.98 | 3.94 |
-| Facilities | B: time only | 0.27 | 0.30 | 0.03 | 0.20 | 1.92 | 2.24 | 3.01 |
-| Facilities | C: time + occupancy | 0.28 | 0.24 | 0.04 | 0.16 | 2.03 | 2.21 | 2.99 |
-| Facilities | D: random forest (time + occupancy) | 0.44 | 0.32 | -0.07 | 0.05 | 1.88 | 2.32 | 3.16 |
+| Lecture | D: random forest (time + occupancy) | 0.70 | -0.05 | 0.25 | -0.04 | 1.24 | 0.80 | 1.20 |
+| Facilities | A: power ~ occupancy | 0.06 | - | -0.67 | - | - | 2.96 | 3.92 |
+| Facilities | B: time only | 0.27 | 0.32 | 0.03 | 0.19 | 1.92 | 2.23 | 3 |
+| Facilities | C: time + occupancy | 0.28 | 0.25 | 0.04 | 0.15 | 2.04 | 2.21 | 2.98 |
+| Facilities | D: random forest (time + occupancy) | 0.44 | 0.34 | -0.08 | 0.04 | 1.88 | 2.32 | 3.16 |
 
 #### Does occupancy help? (Research question 2)
 
 | building | B val R2 | C val R2 | R2 gain from occupancy | B val MAE kW | C val MAE kW | MAE improvement % | D (forest) val R2 |
 |---|---|---|---|---|---|---|---|
 | Academic | 0.51 | 0.52 | 0.01 | 7.57 | 7.71 | -1.90 | 0.59 |
-| Boys_Hostel | 0.24 | 0.38 | 0.14 | 9.13 | 8.65 | 5.20 | 0.50 |
-| Girls_Hostel | -0.63 | -0.23 | 0.40 | 3.46 | 2.96 | 14.50 | -0.43 |
-| Mess | 0.32 | 0.33 | 0.01 | 4.65 | 4.61 | 0.90 | 0.22 |
-| Library | -0.26 | -0.06 | 0.20 | 4.49 | 4.02 | 10.50 | 0.16 |
-| Lecture | -0.20 | -0.19 | 0.01 | 1.26 | 1.27 | -0.60 | -0.04 |
-| Facilities | 0.30 | 0.24 | -0.06 | 1.92 | 2.03 | -5.70 | 0.32 |
+| Boys_Hostel | 0.23 | 0.45 | 0.22 | 9.14 | 8 | 12.40 | 0.59 |
+| Girls_Hostel | -0.63 | -0.24 | 0.39 | 3.47 | 2.96 | 14.50 | -0.42 |
+| Mess | 0.33 | 0.33 | 0.01 | 4.65 | 4.60 | 0.90 | 0.22 |
+| Library | -0.26 | -0.06 | 0.20 | 4.48 | 4.02 | 10.30 | 0.15 |
+| Lecture | -0.20 | -0.19 | 0.01 | 1.26 | 1.27 | -0.60 | -0.05 |
+| Facilities | 0.32 | 0.25 | -0.06 | 1.92 | 2.04 | -5.90 | 0.34 |
 
 ![Validation R-squared for models B and C, and the gain from adding occupancy](../figures/fig_04_model_comparison.png)
 
 *Occupancy improves validation R-squared in 6 of the 7 buildings, by a mean of
-+0.099, but the gain ranges from -0.061 to +0.397.*
++0.109, but the gain ranges from -0.062 to +0.394.*
 
 **Yes -- in most buildings, modestly, and very unevenly.** Adding occupancy
 raises validation R-squared in **6 of 7** buildings, with a mean gain of
-**+0.099**. But the spread is the real story: the largest gain is Girls Hostel
-at **+0.397**, while occupancy makes the model slightly *worse* in Facilities
-(-0.061 at worst). It improves MAE in 4 of 7.
+**+0.109**. But the spread is the real story: the largest gain is Girls Hostel
+at **+0.394**, while occupancy makes the model slightly *worse* in Facilities
+(-0.062 at worst). It improves MAE in 4 of 7.
 
 **A note on how to read these numbers.** Several validation R-squared values are
 negative, meaning the model does worse than simply predicting the validation
@@ -96,7 +96,7 @@ number of people in them.** The same conclusion arrives independently from the
 Phase 2 correlations and the Phase 3 flat daily profiles.
 
 The pattern across buildings is also readable. Occupancy helps most where people
-genuinely drive the load -- the Girls hostel (+0.397) and the Library (+0.198)
+genuinely drive the load -- the Girls hostel (+0.394) and the Library (+0.195)
 -- and helps least, or slightly hurts, in the Mess and Facilities, whose loads
 are driven by equipment schedules and weather rather than by headcount.
 
@@ -105,31 +105,31 @@ are driven by equipment schedules and weather rather than by headcount.
 | building | model | CV MAE kW (mean) | CV MAE kW (sd) | folds |
 |---|---|---|---|---|
 | Academic | B: time only | 6.82 | 0.85 | 5 |
-| Academic | C: time + occupancy | 5.77 | 0.35 | 5 |
-| Boys_Hostel | B: time only | 7.13 | 1.76 | 5 |
-| Boys_Hostel | C: time + occupancy | 4.95 | 0.40 | 5 |
+| Academic | C: time + occupancy | 5.76 | 0.35 | 5 |
+| Boys_Hostel | B: time only | 7.17 | 1.83 | 5 |
+| Boys_Hostel | C: time + occupancy | 5.09 | 0.20 | 5 |
 | Girls_Hostel | B: time only | 2.45 | 0.46 | 5 |
 | Girls_Hostel | C: time + occupancy | 2.48 | 0.66 | 5 |
-| Mess | B: time only | 5.65 | 1.60 | 5 |
+| Mess | B: time only | 5.65 | 1.61 | 5 |
 | Mess | C: time + occupancy | 5.58 | 1.66 | 5 |
-| Library | B: time only | 5.12 | 1.27 | 5 |
-| Library | C: time + occupancy | 4.55 | 1.45 | 5 |
+| Library | B: time only | 5.12 | 1.28 | 5 |
+| Library | C: time + occupancy | 4.54 | 1.46 | 5 |
 | Lecture | B: time only | 1.50 | 1.13 | 5 |
-| Lecture | C: time + occupancy | 1.41 | 0.95 | 5 |
-| Facilities | B: time only | 2.88 | 0.57 | 5 |
-| Facilities | C: time + occupancy | 2.81 | 0.64 | 5 |
+| Lecture | C: time + occupancy | 1.42 | 0.96 | 5 |
+| Facilities | B: time only | 2.88 | 0.58 | 5 |
+| Facilities | C: time + occupancy | 2.80 | 0.64 | 5 |
 
 #### Base load and responsiveness -- the numbers Phase 5 uses
 
 | building | kind | a: base load (kW) | b: watts per occupant | mean power (kW) | base load as % of mean | night 02-06 median (kW) | R2 in sample |
 |---|---|---|---|---|---|---|---|
 | Academic | commercial | 16.95 | 128.10 | 27.21 | 62.30 | 18.96 | 0.56 |
-| Boys_Hostel | residential | 15.94 | 68 | 30.88 | 51.60 | 32.76 | 0.42 |
-| Girls_Hostel | residential | 10.60 | 36.30 | 14.12 | 75.10 | 14.81 | 0.21 |
-| Mess | commercial | 18.85 | 61.70 | 22.67 | 83.20 | 16.12 | 0.15 |
-| Library | commercial | 7.24 | 68.50 | 10.31 | 70.30 | 5.84 | 0.30 |
-| Lecture | commercial | 2.13 | 7.40 | 2.95 | 72.50 | 1.07 | 0.17 |
-| Facilities | commercial | 9.27 | 231.70 | 10.82 | 85.70 | 9.75 | 0.06 |
+| Boys_Hostel | residential | 16.62 | 65.50 | 30.87 | 53.90 | 32.60 | 0.40 |
+| Girls_Hostel | residential | 10.60 | 36.30 | 14.12 | 75.10 | 14.82 | 0.21 |
+| Mess | commercial | 18.85 | 61.70 | 22.67 | 83.10 | 16.12 | 0.15 |
+| Library | commercial | 7.24 | 68.60 | 10.31 | 70.30 | 5.84 | 0.30 |
+| Lecture | commercial | 2.13 | 7.40 | 2.94 | 72.40 | 1.07 | 0.17 |
+| Facilities | commercial | 9.27 | 232.30 | 10.82 | 85.60 | 9.74 | 0.06 |
 
 ![Base load against responsiveness, one point per building](../figures/fig_04_base_load_vs_responsiveness.png)
 
@@ -157,14 +157,14 @@ relationship that does not exist.
 
 | max depth | train MAE w | val MAE w |
 |---|---|---|
-| 2 | 6,481.30 | 6,523.70 |
-| 4 | 5,634.60 | 6,202.80 |
-| 6 | 4,917.40 | 7,058.10 |
-| 8 | 4,418.30 | 6,705.30 |
-| 12 | 3,743.80 | 6,516.60 |
-| 16 | 3,323.20 | 6,415.20 |
-| 24 | 2,839.10 | 6,409.30 |
-| unlimited | 2,691 | 6,425.40 |
+| 2 | 6,482.60 | 6,519.20 |
+| 4 | 5,644.90 | 6,229 |
+| 6 | 4,926.90 | 7,123.90 |
+| 8 | 4,418.60 | 6,706.30 |
+| 12 | 3,747.30 | 6,499.80 |
+| 16 | 3,322.80 | 6,402 |
+| 24 | 2,840.50 | 6,412.90 |
+| unlimited | 2,689.80 | 6,431 |
 
 ![Training and validation error against model complexity](../figures/fig_04_overfitting_curves.png)
 
@@ -183,8 +183,8 @@ overfitting made visible.*
 
 | detector | mean residual kW | sd residual kW | median kW |
 |---|---|---|---|
-| T (model B, time only) | -0.21 | 15.18 | -4.68 |
-| O (model C, time + occupancy) | -2.10 | 15.93 | -6.36 |
+| T (model B, time only) | -0.21 | 15.18 | -4.67 |
+| O (model C, time + occupancy) | -2.09 | 15.93 | -6.36 |
 
 ![Residual distributions for models B and C, and residuals against prediction](../figures/fig_04_residuals_academic.png)
 

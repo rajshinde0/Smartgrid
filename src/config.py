@@ -209,12 +209,21 @@ WIDE_COL_TO_METER = {
 #
 # This is ground truth and it is what the pipeline uses. `tools/get_data.py`
 # downloads it alongside the energy and occupancy data.
-CALENDAR_GLOB = "calender_year_*.csv"
+# The dataset authors spell it "calender". We match that first because it is
+# what the archive actually contains, but also accept the standard spelling so
+# the pipeline does not silently fall back to approximation if a file is ever
+# renamed or re-published corrected.
+CALENDAR_GLOBS = ("calender_year_*.csv", "calendar_year_*.csv")
+CALENDAR_GLOB = CALENDAR_GLOBS[0]        # kept for backwards compatibility
 
 
 def calendar_files() -> list[Path]:
     """The per-year calendar CSVs shipped with I-BLEND, if they are present."""
-    return sorted(DATASET_DIR.glob(CALENDAR_GLOB))
+    found: list[Path] = []
+    for pattern in CALENDAR_GLOBS:
+        found.extend(DATASET_DIR.glob(pattern))
+    # Deduplicate in case both spellings somehow exist side by side.
+    return sorted(set(found))
 
 
 # Fallback only. If the calendar files are missing, Phase 1 falls back to these

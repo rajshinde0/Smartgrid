@@ -67,9 +67,16 @@ def build_building(
     combined = pd.concat(frames, axis=1).sort_index()
 
     roles = list(per_meter)
-    power_cols = [f"power_w_{r}" for r in roles]
 
-    # Total = sum of this building's meters, NaN if any one of them is missing.
+    # Sum the *gap-filled* series, not the raw one. `clean_meter` interpolates
+    # gaps of up to INTERPOLATE_LIMIT_MIN minutes into power_filled_w and marks
+    # each filled value in was_interpolated; summing the raw column instead
+    # would compute those fills and then discard them, leaving short gaps as
+    # missing even though the method says they are filled.
+    #
+    # power_filled_w is NaN wherever the meter was off, which is intended: those
+    # blocks are excluded by `usable` below rather than counted as consumption.
+    power_cols = [f"power_filled_w_{r}" for r in roles]
     combined["power_w"] = combined[power_cols].sum(axis=1, min_count=len(power_cols))
     combined["meter_off"] = combined[[f"meter_off_{r}" for r in roles]].any(axis=1)
     combined["is_missing"] = combined[[f"is_missing_{r}" for r in roles]].any(axis=1)

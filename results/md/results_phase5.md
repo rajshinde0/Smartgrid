@@ -2,13 +2,13 @@
 
 | building | kind | p95 occupancy | threshold (5% of p95) | usable intervals | intervals at/below threshold | % of intervals | threshold reachable |
 |---|---|---|---|---|---|---|---|
-| Academic | commercial | 258 | 12.90 | 176,730 | 11,529 | 6.52 | True |
-| Boys_Hostel | residential | 421 | 21.05 | 119,024 | 7,088 | 5.96 | True |
-| Girls_Hostel | residential | 180 | 9 | 117,186 | 7,345 | 6.27 | True |
-| Mess | commercial | 177 | 8.85 | 157,266 | 19,794 | 12.59 | True |
-| Library | commercial | 182 | 9.10 | 118,720 | 33,670 | 28.36 | True |
-| Lecture | commercial | 298 | 14.90 | 36,930 | 8,270 | 22.39 | True |
-| Facilities | commercial | 18 | 0.90 | 149,353 | 0 | 0 | False |
+| Academic | commercial | 258 | 12.90 | 176,807 | 11,533 | 6.52 | True |
+| Boys_Hostel | residential | 421 | 21.05 | 120,915 | 7,154 | 5.92 | True |
+| Girls_Hostel | residential | 180 | 9 | 117,508 | 7,371 | 6.27 | True |
+| Mess | commercial | 177 | 8.85 | 157,526 | 19,807 | 12.57 | True |
+| Library | commercial | 182 | 9.10 | 118,872 | 33,721 | 28.37 | True |
+| Lecture | commercial | 297 | 14.85 | 36,978 | 8,288 | 22.41 | True |
+| Facilities | commercial | 18 | 0.90 | 149,883 | 0 | 0 | False |
 
 Facilities is the exception predicted in Phase 0: its occupancy runs 1 to 47
 with a 95th percentile of 18, so the threshold is **0.9** -- below its own
@@ -20,13 +20,13 @@ the sensitivity curve instead.
 
 | building | kind | threshold | coverage % | total kWh measured | low-occupancy kWh | low-occupancy energy share % | % of intervals low | mean power overall (kW) | mean power when low (kW) | intensity ratio | base load a (kW) | watts per occupant b |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Academic | commercial | 12.90 | 90.40 | 849,596.90 | 40,832.10 | 4.81 | 6.52 | 28.84 | 21.25 | 0.74 | 16.95 | 128.10 |
-| Boys_Hostel | residential | 21.05 | 60.90 | 651,028.10 | 28,959.20 | 4.45 | 5.96 | 32.82 | 24.51 | 0.75 | 15.94 | 68 |
-| Girls_Hostel | residential | 9 | 60 | 293,037.10 | 14,587.80 | 4.98 | 6.27 | 15 | 11.92 | 0.79 | 10.60 | 36.30 |
-| Mess | commercial | 8.85 | 80.50 | 616,561.30 | 57,580.60 | 9.34 | 12.59 | 23.52 | 17.45 | 0.74 | 18.85 | 61.70 |
-| Library | commercial | 9.10 | 60.80 | 201,059.60 | 35,043.50 | 17.43 | 28.36 | 10.16 | 6.24 | 0.61 | 7.24 | 68.50 |
-| Lecture | commercial | 14.90 | 18.90 | 18,581.90 | 3,541.80 | 19.06 | 22.39 | 3.02 | 2.57 | 0.85 | 2.13 | 7.40 |
-| Facilities | commercial | 0.90 | 85.50 | 281,274.10 | 0 | 0 | 0 | 11.30 | - | - | 9.27 | 231.70 |
+| Academic | commercial | 12.90 | 90.50 | 849,996.20 | 40,846.90 | 4.81 | 6.52 | 28.84 | 21.25 | 0.74 | 16.95 | 128.10 |
+| Boys_Hostel | residential | 21.05 | 61.90 | 661,097.60 | 29,281.60 | 4.43 | 5.92 | 32.80 | 24.56 | 0.75 | 16.62 | 65.50 |
+| Girls_Hostel | residential | 9 | 60.10 | 293,792.40 | 14,661 | 4.99 | 6.27 | 15 | 11.93 | 0.80 | 10.60 | 36.30 |
+| Mess | commercial | 8.85 | 80.60 | 617,587.90 | 57,622.30 | 9.33 | 12.57 | 23.52 | 17.46 | 0.74 | 18.85 | 61.70 |
+| Library | commercial | 9.10 | 60.80 | 201,337.20 | 35,126.20 | 17.45 | 28.37 | 10.16 | 6.25 | 0.61 | 7.24 | 68.60 |
+| Lecture | commercial | 14.85 | 18.90 | 18,588.80 | 3,542.30 | 19.06 | 22.41 | 3.02 | 2.56 | 0.85 | 2.13 | 7.40 |
+| Facilities | commercial | 0.90 | 85.80 | 282,436.20 | 0 | 0 | 0 | 11.31 | - | - | 9.27 | 232.30 |
 
 ![Low-occupancy energy share and intensity ratio, per building](../figures/fig_05_headline.png)
 
@@ -56,21 +56,21 @@ is effectively continuous, and in a building this small it is not.
 | building | kind | out-of-hours share % (clock rule) | % intervals out of hours | low-occupancy share % (occupancy rule) | % intervals low occupancy |
 |---|---|---|---|---|---|
 | Academic | commercial | 55.25 | 69.98 | 4.81 | 6.52 |
-| Boys_Hostel | residential | 74.10 | 69.65 | 4.45 | 5.96 |
-| Girls_Hostel | residential | 73.66 | 70.11 | 4.98 | 6.27 |
-| Mess | commercial | 66.37 | 69.98 | 9.34 | 12.59 |
-| Library | commercial | 54.96 | 68.82 | 17.43 | 28.36 |
-| Lecture | commercial | 22.09 | 27.62 | 19.06 | 22.39 |
-| Facilities | commercial | 63.65 | 68.64 | 0 | 0 |
+| Boys_Hostel | residential | 74.07 | 69.65 | 4.43 | 5.92 |
+| Girls_Hostel | residential | 73.61 | 70.06 | 4.99 | 6.27 |
+| Mess | commercial | 66.33 | 69.93 | 9.33 | 12.57 |
+| Library | commercial | 54.94 | 68.79 | 17.45 | 28.37 |
+| Lecture | commercial | 22.08 | 27.66 | 19.06 | 22.41 |
+| Facilities | commercial | 63.67 | 68.66 | 0 | 0 |
 
 ![Clock-based and occupancy-based definitions against the published figures](../figures/fig_05_published_comparison.png)
 
 *Applying Masoso & Grobler's own clock-based definition to this data gives the
-Academic building 55.2% and the Library 55.0%, against their published 56%.*
+Academic building 55.2% and the Library 54.9%, against their published 56%.*
 
 **This is the strongest external check in the project.** Applying Masoso &
 Grobler's clock-based definition to our data gives the Academic building
-**55.2%** and the Library **55.0%** -- against their published **56%**, from
+**55.2%** and the Library **54.9%** -- against their published **56%**, from
 different buildings on a different continent fifteen years earlier. Landing
 within a percentage point is good evidence that the pipeline measures what it
 claims to.
@@ -89,12 +89,12 @@ independently confirms.
 | building | base load a from model A (kW) | night 02:00-06:00 median (kW) | difference (kW) | difference % | mean power (kW) | base load as % of mean |
 |---|---|---|---|---|---|---|
 | Academic | 16.95 | 19.74 | -2.79 | -14.10 | 28.84 | 58.80 |
-| Boys_Hostel | 15.94 | 33.51 | -17.57 | -52.40 | 32.82 | 48.60 |
-| Girls_Hostel | 10.60 | 15.43 | -4.83 | -31.30 | 15 | 70.60 |
+| Boys_Hostel | 16.62 | 33.49 | -16.87 | -50.40 | 32.80 | 50.70 |
+| Girls_Hostel | 10.60 | 15.43 | -4.83 | -31.30 | 15 | 70.70 |
 | Mess | 18.85 | 16.76 | 2.09 | 12.40 | 23.52 | 80.10 |
-| Library | 7.24 | 5.69 | 1.55 | 27.30 | 10.16 | 71.30 |
-| Lecture | 2.13 | 3.97 | -1.84 | -46.30 | 3.02 | 70.60 |
-| Facilities | 9.27 | 10.17 | -0.90 | -8.80 | 11.30 | 82 |
+| Library | 7.24 | 5.69 | 1.55 | 27.30 | 10.16 | 71.20 |
+| Lecture | 2.13 | 3.96 | -1.83 | -46.30 | 3.02 | 70.60 |
+| Facilities | 9.27 | 10.18 | -0.91 | -8.90 | 11.31 | 82 |
 
 ![Model A intercept against the directly measured night-time median](../figures/fig_05_base_load_vs_night.png)
 
@@ -113,13 +113,13 @@ unoccupied and been wrong.
 
 | building | base load kw | mean power kw | variable share pct | responsiveness rank | intensity ratio | watts per occupant b | model A vs night median % | model A reliable? | measured rank |
 |---|---|---|---|---|---|---|---|---|---|
-| Library | 7.24 | 10.16 | 28.70 | 5 | 0.61 | 68.50 | 27.30 | NO -- extrapolated | 1 |
+| Library | 7.24 | 10.16 | 28.70 | 5 | 0.61 | 68.60 | 27.30 | NO -- extrapolated | 1 |
 | Academic | 16.95 | 28.84 | 41.20 | 2 | 0.74 | 128.10 | -14.10 | yes | 2 |
 | Mess | 18.85 | 23.52 | 19.90 | 6 | 0.74 | 61.70 | 12.40 | yes | 3 |
-| Boys_Hostel | 15.94 | 32.82 | 51.40 | 1 | 0.75 | 68 | -52.40 | NO -- extrapolated | 4 |
-| Girls_Hostel | 10.60 | 15 | 29.30 | 4 | 0.79 | 36.30 | -31.30 | NO -- extrapolated | 5 |
+| Boys_Hostel | 16.62 | 32.80 | 49.30 | 1 | 0.75 | 65.50 | -50.40 | NO -- extrapolated | 4 |
+| Girls_Hostel | 10.60 | 15 | 29.30 | 4 | 0.80 | 36.30 | -31.30 | NO -- extrapolated | 5 |
 | Lecture | 2.13 | 3.02 | 29.50 | 3 | 0.85 | 7.40 | -46.30 | NO -- extrapolated | 6 |
-| Facilities | 9.27 | 11.30 | 18 | 7 | - | 231.70 | -8.80 | yes | - |
+| Facilities | 9.27 | 11.31 | 18 | 7 | - | 232.30 | -8.90 | yes | - |
 
 ![How much of each building's load actually follows its occupants](../figures/fig_05_responsiveness.png)
 
@@ -132,7 +132,7 @@ average power when nearly empty) and the least is **Lecture** (85%). Ranked by
 the *modelled* non-base-load share the order differs, because that version
 extrapolates model A down to zero occupancy -- and for the two dormitories and
 the Lecture building that point lies far outside the occupancy range ever
-observed. In the worst case the extrapolated intercept sits 52% away from the
+observed. In the worst case the extrapolated intercept sits 50% away from the
 directly measured night-time median.
 
 Where the two disagree we rank on the measured ratio and flag the modelled value
@@ -145,12 +145,12 @@ fixed share is larger than the modelled figure, not smaller.
 | building | semester | vacation | change (pp) |
 |---|---|---|---|
 | Academic | 2.47 | 7.08 | 4.61 |
-| Boys_Hostel | 2.02 | 7.29 | 5.27 |
+| Boys_Hostel | 2.04 | 7.16 | 5.12 |
 | Facilities | 0 | 0 | 0 |
-| Girls_Hostel | 2.16 | 8.09 | 5.93 |
-| Lecture | 16.31 | 27.47 | 11.16 |
-| Library | 9.33 | 28.46 | 19.13 |
-| Mess | 3.43 | 15.34 | 11.91 |
+| Girls_Hostel | 2.18 | 8.10 | 5.92 |
+| Lecture | 16.31 | 27.46 | 11.15 |
+| Library | 9.33 | 28.48 | 19.15 |
+| Mess | 3.43 | 15.32 | 11.89 |
 
 ![Low-occupancy share and mean power, semester against vacation](../figures/fig_05_semester_vacation.png)
 
@@ -161,10 +161,10 @@ behaviour rather than the definition.*
 
 | building | supply | total kwh | low occ kwh | share pct | mean power w | mean power low occ w |
 |---|---|---|---|---|---|---|
-| Boys_Hostel | mains | 348,400.80 | 15,364.80 | 4.41 | 17,562.90 | 13,006.30 |
-| Boys_Hostel | ups | 302,627.20 | 13,594.50 | 4.49 | 15,255.40 | 11,507.70 |
-| Girls_Hostel | mains | 148,297.50 | 7,498.40 | 5.06 | 7,592.90 | 6,125.30 |
-| Girls_Hostel | ups | 144,739.60 | 7,089.40 | 4.90 | 7,410.80 | 5,791.20 |
+| Boys_Hostel | mains | 349,432.20 | 15,378.80 | 4.40 | 17,560 | 13,007.10 |
+| Boys_Hostel | ups | 305,047.60 | 13,668.20 | 4.48 | 15,253.10 | 11,514.90 |
+| Girls_Hostel | mains | 148,341.70 | 7,504.20 | 5.06 | 7,593.10 | 6,127.50 |
+| Girls_Hostel | ups | 144,997.70 | 7,095.40 | 4.89 | 7,409.70 | 5,792.20 |
 
 ![Low-occupancy share and mean power by supply, for the two dormitories](../figures/fig_05_mains_vs_ups.png)
 
@@ -175,14 +175,14 @@ comparison is not available in other campus datasets.*
 
 | kind | buildings | mean low occ share | mean intensity ratio | mean base load kw | total kwh |
 |---|---|---|---|---|---|
-| commercial | 5 | 10.13 | 0.74 | 10.89 | 1,967,073.80 |
-| residential | 2 | 4.71 | 0.77 | 13.27 | 944,065.20 |
+| commercial | 5 | 10.13 | 0.74 | 10.89 | 1,969,946.30 |
+| residential | 2 | 4.71 | 0.77 | 13.61 | 954,890 |
 
 #### Sensitivity check 1: Lecture under a 24-hour dead-meter rule
 
 | dead-meter rule | usable intervals | total kWh | low-occupancy share % |
 |---|---|---|---|
-| 6 h (as specified) | 36,930 | 18,581.90 | 19.06 |
+| 6 h (as specified) | 36,978 | 18,588.80 | 19.06 |
 | 24 h (nightly switch-offs kept as real zeros) | 81,322 | 18,581.90 | 17.76 |
 
 Phase 1 established that a building switched off at the mains overnight and a
@@ -196,13 +196,13 @@ survives it.
 
 | building | idle devices subtracted | raw threshold | corrected threshold | raw share % | corrected share % | change (pp) | raw % intervals low | corrected % intervals low |
 |---|---|---|---|---|---|---|---|---|
-| Academic | 50 | 12.90 | 10.40 | 4.81 | 48.15 | 43.34 | 6.52 | 61.83 |
-| Boys_Hostel | 20 | 21.05 | 20.05 | 4.45 | 6.34 | 1.89 | 5.96 | 8.16 |
-| Girls_Hostel | 20 | 9 | 8 | 4.98 | 9.83 | 4.85 | 6.27 | 12.53 |
-| Mess | 20 | 8.85 | 7.85 | 9.34 | 28.60 | 19.26 | 12.59 | 35.19 |
-| Library | 20 | 9.10 | 8.10 | 17.43 | 40.32 | 22.89 | 28.36 | 56.05 |
-| Lecture | 20 | 14.90 | 13.90 | 19.06 | 28.71 | 9.65 | 22.39 | 33.85 |
-| Facilities | 20 | 0.90 | 0 | 0 | 97.63 | 97.63 | 0 | 97.94 |
+| Academic | 50 | 12.90 | 10.40 | 4.81 | 48.14 | 43.33 | 6.52 | 61.83 |
+| Boys_Hostel | 20 | 21.05 | 20.05 | 4.43 | 6.29 | 1.86 | 5.92 | 8.09 |
+| Girls_Hostel | 20 | 9 | 8 | 4.99 | 9.84 | 4.85 | 6.27 | 12.53 |
+| Mess | 20 | 8.85 | 7.85 | 9.33 | 28.58 | 19.25 | 12.57 | 35.17 |
+| Library | 20 | 9.10 | 8.10 | 17.45 | 40.34 | 22.89 | 28.37 | 56.05 |
+| Lecture | 20 | 14.85 | 13.85 | 19.06 | 28.71 | 9.65 | 22.41 | 33.88 |
+| Facilities | 20 | 0.90 | 0 | 0 | 97.64 | 97.64 | 0 | 97.94 |
 
 Subtracting the documented idle-device baseline makes every building look
 emptier more often, so the low-occupancy share rises everywhere. This **confirms

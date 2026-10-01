@@ -695,6 +695,14 @@ dedup.to_csv(C.RESULTS_DIR / "phase6_unusual_per_building.csv")
 # ## Step 9: write Phase 6 into the report
 
 # %%
+# Cross-phase figures quoted below, read from the upstream results rather than
+# typed, so re-running an earlier phase cannot leave a stale number here.
+_corr = pd.read_csv(C.RESULTS_DIR / "phase2_power_occupancy_correlation.csv")
+_occ = pd.read_csv(C.RESULTS_DIR / "phase4_occupancy_contribution.csv")
+r2_lo = 100 * _corr["r_squared"].min()
+r2_hi = 100 * _corr["r_squared"].max()
+mean_gain = _occ["R2 gain from occupancy"].mean()
+
 fixed_t = overall[overall["detector"] == "T"]["f1"].mean()
 fixed_o = overall[overall["detector"] == "O"]["f1"].mean()
 matched_t = matched[matched["detector"] == "T"]["f1"].mean()
@@ -714,12 +722,16 @@ n_favour_o = int((fair["difference (O - T)"] > 0).sum())
 n_fair = len(fair)
 largest_gain = fair.loc[fair["difference (O - T)"].idxmax()]
 
-if n_favour_o == n_fair and fair["difference (O - T)"].max() > 0.02:
-    verdict = ("Detector O is consistently but modestly better once the "
-               "comparison is made fairly")
+if n_favour_o == n_fair:
+    verdict = (f"Detector O is ahead on all {n_fair} fair comparisons, though "
+               "modestly")
 elif n_favour_o >= n_fair - 1:
-    verdict = ("Detector O is slightly ahead on every fair comparison, but the "
-               "margins are small")
+    verdict = (f"Detector O is ahead on {n_favour_o} of the {n_fair} fair "
+               "comparisons, by margins small enough that the remaining one "
+               "sits essentially on zero")
+elif n_favour_o > n_fair / 2:
+    verdict = (f"Detector O is ahead on {n_favour_o} of {n_fair} fair "
+               "comparisons, but not consistently")
 else:
     verdict = "the two detectors are, for practical purposes, equivalent"
 
@@ -842,19 +854,25 @@ described above and should be disregarded. On the {n_fair} **fair** comparisons,
 - waste anomalies only, F1: {by_type[(by_type["anomaly_type"] == "waste") & (by_type["detector"] == "T")]["f1"].mean():.3f} -> {by_type[(by_type["anomaly_type"] == "waste") & (by_type["detector"] == "O")]["f1"].mean():.3f}
 - waste events noticed at all: {waste_event_t:.1%} -> {waste_event_o:.1%}
 
-**The direction is consistent and the pattern is exactly what theory predicts,
-but the size is small.** Every individual margin is between one and three
-percentage points. What makes them worth believing is that they all point the
-same way, and that **the largest gains are on the waste anomalies** -- the case
-designed to favour occupancy, because a sustained modest lift only looks wrong if
-you know the building was empty. Occupancy adds nothing to catching spikes, which
-stand out against any baseline, and it adds most to catching exactly the
-behaviour Phase 5 measured.
+**The pattern is what theory predicts, but the size is small enough that it has
+to be read carefully.** Every margin is between one and three percentage points,
+and {n_fair - n_favour_o} of the {n_fair} comparisons
+{"sits on the other side of zero" if n_fair - n_favour_o == 1 else "sit on the other side of zero"}
+-- close enough to nothing that it would be wrong to call the direction
+unanimous.
+
+What gives the result what weight it has is **where** the gains fall: the
+largest are on the **waste** anomalies, the case designed to favour occupancy,
+because a sustained modest lift only looks wrong if you know the building was
+empty. Occupancy adds nothing to catching spikes, which stand out against any
+baseline, and most to catching exactly the behaviour Phase 5 measured. A benefit
+that appears precisely where the mechanism predicts it is more believable than
+the same-sized benefit appearing at random.
 
 **So the honest answer to research question 3 is a qualified yes: occupancy
 helps, consistently, but far less than one might hope.** That is consistent with
 everything else the project found by different routes -- occupancy explains only
-7-45% of power variation (Phase 2), adds +0.107 to validation R-squared on
+{r2_lo:.0f}-{r2_hi:.0f}% of power variation (Phase 2), adds {mean_gain:+.3f} to validation R-squared on
 average (Phase 4), and several buildings have nearly flat daily profiles
 (Phase 3). A detector cannot exploit information that is not there, and on this
 campus there is not very much of it.
@@ -939,14 +957,16 @@ Detector O: matched-budget F1 {matched_t:.3f} -> {matched_o:.3f}, average
 precision {ap_t:.3f} -> {ap_o:.3f}, ROC AUC {auc_t:.3f} -> {auc_o:.3f}, and
 waste-event recall {waste_event_t:.1%} -> {waste_event_o:.1%}.
 
-Every margin is one to three percentage points. What makes them credible is that
-they all point the same way and that **the largest gains fall on the waste
-anomalies specifically** -- the case where occupancy ought to matter, because a
-sustained modest lift only looks wrong if you know the building was empty.
-Occupancy adds nothing to catching spikes, which stand out against any baseline.
+Every margin is one to three percentage points, and the one comparison that does
+not favour Detector O sits essentially on zero, so the direction is not
+unanimous. What gives the result weight is **where** the gains fall: the largest
+are on the waste anomalies specifically -- the case where occupancy ought to
+matter, because a sustained modest lift only looks wrong if you know the building
+was empty. Occupancy adds nothing to catching spikes, which stand out against any
+baseline.
 
 This modest result is consistent with everything else the project found:
-occupancy explains only 7-45% of power variation (Phase 2), adds +0.107 to
+occupancy explains only {r2_lo:.0f}-{r2_hi:.0f}% of power variation (Phase 2), adds {mean_gain:+.3f} to
 validation R-squared on average (Phase 4), and several buildings have a nearly
 flat daily profile (Phase 3). **A detector cannot exploit information that is not
 there**, and on this campus there is not very much of it.
@@ -1083,12 +1103,13 @@ print("figures referenced but missing:", report.check_figures())
 # %% [markdown]
 # ## Phase 6 conclusion
 #
-# **Research question 3 is answered: a qualified yes.** Once the comparison is
-# made fairly, Detector O is ahead of Detector T on every measure -- matched-budget
-# F1, average precision, ROC AUC, and waste-event recall -- but by only one to
-# three percentage points each. The direction is consistent and the largest gains
-# land on the waste anomalies specifically, which is exactly where occupancy ought
-# to help. Occupancy helps; it does not transform.
+# **Research question 3 is answered: a qualified yes, and a weak one.** Once the
+# comparison is made fairly, Detector O leads on most measures -- average
+# precision, ROC AUC and waste-event recall -- but by only one to three
+# percentage points, and at a matched alert budget the two are indistinguishable.
+# What makes the small benefit credible rather than noise is that the largest
+# gains land on the waste anomalies specifically, which is exactly where
+# occupancy ought to help. Occupancy helps a little; it does not transform.
 #
 # **The methodological finding is as important as the result.** At the fixed
 # `|z| > 3` threshold originally planned, Detector O appeared meaningfully
@@ -1099,7 +1120,7 @@ print("figures referenced but missing:", report.check_figures())
 # difference and called it a finding about occupancy.
 #
 # **Why the modest result is credible.** It agrees with every other route the
-# project took: occupancy explains 7-45% of power variation (Phase 2), adds +0.107
+# project took: occupancy explains a minority of power variation (Phase 2), adds little
 # average validation R² (Phase 4), and several buildings have nearly flat daily
 # profiles (Phase 3). It also matches the published LBNL finding for baseline
 # models, extending it from prediction to detection.

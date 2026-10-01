@@ -104,8 +104,31 @@ def download(url: str, destination: Path) -> None:
     partial.replace(destination)
 
 
+def place_plain_file(downloaded: Path) -> None:
+    """Keep a non-archive download as-is, under its own name in Dataset/."""
+    target = DATASET_DIR / downloaded.name
+    if target.resolve() != downloaded.resolve():
+        if target.exists():
+            print(f"    keeping existing {downloaded.name} (already present)")
+            downloaded.unlink(missing_ok=True)
+            return
+        shutil.move(str(downloaded), str(target))
+    print(f"    -> Dataset/{target.name}")
+
+
 def unzip_into_dataset(archive: Path) -> None:
-    """Unzip, then flatten a single wrapping folder if the archive has one."""
+    """Unzip, then flatten a single wrapping folder if the archive has one.
+
+    Every file in the collection is a .zip today, but figshare records do get
+    reorganised and a plain CSV would otherwise reach ZipFile and raise
+    BadZipFile -- and then be deleted by the cleanup step. So anything that is
+    not actually a zip is kept as a normal file instead.
+    """
+    if not zipfile.is_zipfile(archive):
+        print(f"    {archive.name} is not a zip archive; keeping it as a file")
+        place_plain_file(archive)
+        return
+
     staging = DATASET_DIR / f"_staging_{archive.stem}"
     if staging.exists():
         shutil.rmtree(staging)
@@ -180,9 +203,14 @@ def main(argv: list[str]) -> int:
 
         print(f"[get ] {entry['name']}  ({entry['size'] / 1048576:.1f} MB)")
         download(entry["url"], archive)
-        print(f"[unzip] {entry['name']}")
+
+        was_zip = zipfile.is_zipfile(archive)
+        print(f"[{'unzip' if was_zip else 'place'}] {entry['name']}")
         unzip_into_dataset(archive)
-        if not args.keep_zips:
+
+        # Only delete the download if it was an archive we extracted. Removing a
+        # plain file here would throw away the thing we just fetched.
+        if was_zip and not args.keep_zips:
             archive.unlink(missing_ok=True)
 
     print("\nDone. Check with:")

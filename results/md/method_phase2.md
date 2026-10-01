@@ -21,7 +21,7 @@ standard error the central limit theorem predicts.
 
 **Distribution fitting.** A Normal and a Log-normal are fitted with `scipy`,
 compared by histogram overlay, Q-Q plot and Kolmogorov-Smirnov test. With
-176,726 readings the KS p-value is uninformative -- it rejects any distribution
+176,803 readings the KS p-value is uninformative -- it rejects any distribution
 -- so the comparison is made on the **KS statistic**, which is an effect size.
 
 **Hypothesis tests.** Semester versus vacation and weekday versus weekend, for

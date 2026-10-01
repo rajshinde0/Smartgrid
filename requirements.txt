@@ -1,6 +1,16 @@
 # SMARTGRID-X -- pinned to the versions the notebooks were executed with.
 # Generated from the running environment, not typed by hand.
-# Python 3.14.3 on Windows 11.
+#
+# Requires Python 3.13 or newer; built and executed on 3.14.3.
+# These are exact pins on purpose: every number in docs/PROJECT_REPORT.md was
+# produced by this exact stack, so a reader can reproduce them bit for bit.
+#
+# All of these versions exist on PyPI. If `pip install -r requirements.txt`
+# reports "No matching distribution found", the cause is almost always an older
+# Python -- check `python --version` first. To run on an older interpreter,
+# relax the pins to lower bounds (for example `pandas>=2.2`); the analysis code
+# does not depend on anything newer than pandas 2.2 / scikit-learn 1.4, but the
+# published numbers were produced with the versions below.
 
 pandas==3.0.3
 numpy==2.4.3

@@ -130,7 +130,13 @@ if isinstance(date_range, tuple) and len(date_range) == 2:
 else:                                   # the widget returns one date mid-edit
     start = end = date_range if not isinstance(date_range, tuple) else date_range[0]
 
-window = data.loc[str(start) : str(pd.Timestamp(end) + pd.Timedelta(days=1))]
+# Build the bounds in the index's own timezone. Slicing a tz-aware index with
+# naive strings happens to work today, but it leaves the result depending on how
+# pandas chooses to localise them -- being explicit removes that question.
+tz = data.index.tz
+lower = pd.Timestamp(start).tz_localize(tz)
+upper = (pd.Timestamp(end) + pd.Timedelta(days=1)).tz_localize(tz)
+window = data.loc[lower:upper]
 
 # ---------------------------------------------------------------------------
 # Key numbers

@@ -2,13 +2,13 @@
 
 | building | n | mean | median | mode (1 kW bins) | min | max | range | variance | std | Q1 | Q3 | IQR | skew |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Academic | 176,730 | 28,843.90 | 23,980 | 22,000 | 0 | 87,120.60 | 87,120.60 | 201,289,521 | 14,187.70 | 19,226.70 | 34,389.50 | 15,162.80 | 1.16 |
-| Boys_Hostel | 119,024 | 32,818.30 | 30,793.40 | 24,000 | 7,043.30 | 87,537.40 | 80,494.10 | 155,657,815.10 | 12,476.30 | 23,327.70 | 39,994.40 | 16,666.70 | 0.80 |
-| Girls_Hostel | 117,186 | 15,003.70 | 14,849.10 | 15,000 | 4,551 | 30,282.90 | 25,731.90 | 18,659,460.70 | 4,319.70 | 11,874.90 | 17,758.70 | 5,883.80 | 0.28 |
-| Mess | 157,266 | 23,523 | 22,100.10 | 18,000 | 233.40 | 133,731.30 | 133,497.80 | 77,680,420.70 | 8,813.60 | 16,869.20 | 28,874.60 | 12,005.40 | 0.80 |
-| Library | 118,720 | 10,161.40 | 7,688.90 | 5,000 | 768.30 | 46,145.80 | 45,377.50 | 50,335,404.50 | 7,094.70 | 4,999.80 | 13,654 | 8,654.20 | 1.23 |
-| Lecture | 36,930 | 3,019 | 3,902 | 4,000 | 0 | 26,491 | 26,491 | 3,312,273.10 | 1,820 | 1,490.10 | 4,313.70 | 2,823.60 | 1.69 |
-| Facilities | 149,353 | 11,299.70 | 10,791.80 | 9,000 | 547.20 | 138,916.10 | 138,368.90 | 23,527,220 | 4,850.50 | 8,797.20 | 13,110.60 | 4,313.30 | 10.59 |
+| Academic | 176,807 | 28,844.90 | 23,982.20 | 22,000 | 0 | 87,120.60 | 87,120.60 | 201,275,150.90 | 14,187.10 | 19,227.70 | 34,390.30 | 15,162.60 | 1.16 |
+| Boys_Hostel | 120,915 | 32,804.70 | 30,797.90 | 24,000 | 7,043.30 | 87,537.40 | 80,494.10 | 154,018,094.10 | 12,410.40 | 23,401.10 | 39,920.10 | 16,519 | 0.80 |
+| Girls_Hostel | 117,508 | 15,001.10 | 14,846 | 15,000 | 4,551 | 30,282.90 | 25,731.90 | 18,673,817.60 | 4,321.30 | 11,869.50 | 17,755.90 | 5,886.40 | 0.28 |
+| Mess | 157,526 | 23,523.30 | 22,101 | 18,000 | 233.40 | 133,731.30 | 133,497.80 | 77,655,372.80 | 8,812.20 | 16,869.80 | 28,874 | 12,004.10 | 0.80 |
+| Library | 118,872 | 10,162.40 | 7,690 | 5,000 | 768.30 | 46,145.80 | 45,377.50 | 50,332,418.20 | 7,094.50 | 4,999.50 | 13,659 | 8,659.50 | 1.23 |
+| Lecture | 36,978 | 3,016.20 | 3,899.50 | 4,000 | 0 | 26,491 | 26,491 | 3,317,062.90 | 1,821.30 | 1,487.10 | 4,313.50 | 2,826.30 | 1.69 |
+| Facilities | 149,883 | 11,306.30 | 10,801.30 | 9,000 | 547.20 | 138,916.10 | 138,368.90 | 23,479,779.10 | 4,845.60 | 8,803.80 | 13,118.50 | 4,314.70 | 10.58 |
 
 The mean exceeds the median in every building, so every distribution is
 right-skewed. The Boys hostel has the highest average power (32.8 kW), above the
@@ -20,7 +20,7 @@ median, pointing to a large intermittent load.
 
 Every statistic above was recomputed from its definition with NumPy and asserted
 equal to the pandas result. The largest relative difference across all eleven
-statistics was 4.5e-15 -- floating-point noise. The check runs as an assertion,
+statistics was 6.8e-15 -- floating-point noise. The check runs as an assertion,
 so the notebook fails if they ever diverge.
 
 #### Population versus sample
@@ -31,7 +31,7 @@ so the notebook fails if they ever diverge.
 centred on the population mean; the observed standard error (36 kWh) matches the
 predicted one (37 kWh).*
 
-65.0% of 30-day samples land within 5% of the true mean -- **but only because
+65.2% of 30-day samples land within 5% of the true mean -- **but only because
 the days are drawn at random across the whole year**. An audit that happened to
 run in June would measure the air-conditioning season instead. This is why the
 project uses the full 3.7-year record rather than a sample.
@@ -41,7 +41,7 @@ project uses the full 3.7-year record rather than a sample.
 | distribution | KS statistic (lower is better) | KS p-value |
 |---|---|---|
 | Normal | 0.17 | < 1e-300 |
-| Log-normal | 0.08 | 1.03e-300 |
+| Log-normal | 0.08 | 1.21e-296 |
 
 The log-normal fits better on the KS statistic, as expected for a strictly
 positive right-skewed quantity. But the Q-Q plots show **neither is a good
@@ -62,25 +62,25 @@ alongside RMSE, since RMSE is dominated by the tail.
 
 | building | n semester | n vacation | mean semester (W) | mean vacation (W) | difference in means | percent difference | cohens d | effect size label | t-test p | Mann-Whitney p |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Academic | 76,494 | 100,236 | 32,843.90 | 25,791.30 | 7,052.50 | 27.30 | 0.51 | medium | < 1e-300 | < 1e-300 |
-| Boys_Hostel | 56,112 | 62,912 | 37,595.50 | 28,557.50 | 9,038.10 | 31.60 | 0.78 | medium | < 1e-300 | < 1e-300 |
-| Girls_Hostel | 57,428 | 59,758 | 16,084.90 | 13,964.60 | 2,120.30 | 15.20 | 0.51 | medium | < 1e-300 | < 1e-300 |
-| Mess | 73,770 | 83,496 | 25,268.40 | 21,980.90 | 3,287.50 | 15 | 0.38 | small | < 1e-300 | < 1e-300 |
-| Library | 55,934 | 62,786 | 12,435.70 | 8,135.20 | 4,300.50 | 52.90 | 0.64 | medium | < 1e-300 | < 1e-300 |
-| Lecture | 22,272 | 14,658 | 3,772.90 | 1,873.50 | 1,899.30 | 101.40 | 1.21 | large | < 1e-300 | < 1e-300 |
-| Facilities | 64,564 | 84,789 | 11,076 | 11,470.10 | -394.10 | -3.40 | -0.08 | negligible | 2.21e-56 | 5.68e-91 |
+| Academic | 76,540 | 100,267 | 32,845.30 | 25,791.10 | 7,054.20 | 27.40 | 0.51 | medium | < 1e-300 | < 1e-300 |
+| Boys_Hostel | 56,225 | 64,690 | 37,596.30 | 28,640.10 | 8,956.20 | 31.30 | 0.77 | medium | < 1e-300 | < 1e-300 |
+| Girls_Hostel | 57,592 | 59,916 | 16,082.40 | 13,961.80 | 2,120.60 | 15.20 | 0.51 | medium | < 1e-300 | < 1e-300 |
+| Mess | 73,885 | 83,641 | 25,268.50 | 21,981.60 | 3,286.90 | 15 | 0.38 | small | < 1e-300 | < 1e-300 |
+| Library | 55,967 | 62,905 | 12,437 | 8,138.60 | 4,298.40 | 52.80 | 0.64 | medium | < 1e-300 | < 1e-300 |
+| Lecture | 22,308 | 14,670 | 3,768.60 | 1,872.10 | 1,896.50 | 101.30 | 1.21 | large | < 1e-300 | < 1e-300 |
+| Facilities | 64,891 | 84,992 | 11,089.60 | 11,471.70 | -382.10 | -3.30 | -0.08 | negligible | 2.20e-53 | 1.88e-85 |
 
 **Weekday versus weekend:**
 
 | building | mean weekday (W) | mean weekend (W) | difference in means | percent difference | cohens d | effect size label | t-test p | Mann-Whitney p |
 |---|---|---|---|---|---|---|---|---|
-| Academic | 31,624.20 | 21,791.20 | 9,833 | 45.10 | 0.73 | medium | < 1e-300 | < 1e-300 |
-| Boys_Hostel | 33,475 | 31,136.80 | 2,338.30 | 7.50 | 0.19 | negligible | 1.03e-207 | 3.77e-139 |
-| Girls_Hostel | 15,243.20 | 14,390.20 | 853 | 5.90 | 0.20 | negligible | 1.97e-219 | 1.65e-184 |
-| Mess | 24,259.30 | 21,668 | 2,591.20 | 12 | 0.30 | small | < 1e-300 | < 1e-300 |
-| Library | 11,408 | 6,934.90 | 4,473.10 | 64.50 | 0.66 | medium | < 1e-300 | < 1e-300 |
-| Lecture | 3,146.50 | 2,271.60 | 874.90 | 38.50 | 0.49 | small | 2.70e-123 | < 1e-300 |
-| Facilities | 11,581.70 | 10,582.70 | 999 | 9.40 | 0.21 | small | 3.48e-217 | < 1e-300 |
+| Academic | 31,625.20 | 21,792.30 | 9,832.80 | 45.10 | 0.73 | medium | < 1e-300 | < 1e-300 |
+| Boys_Hostel | 33,463.10 | 31,120.50 | 2,342.60 | 7.50 | 0.19 | negligible | 3.43e-214 | 3.26e-144 |
+| Girls_Hostel | 15,240.30 | 14,388.50 | 851.80 | 5.90 | 0.20 | negligible | 2.98e-219 | 1.26e-184 |
+| Mess | 24,258.90 | 21,669.30 | 2,589.60 | 12 | 0.30 | small | < 1e-300 | < 1e-300 |
+| Library | 11,408.70 | 6,934.60 | 4,474.20 | 64.50 | 0.66 | medium | < 1e-300 | < 1e-300 |
+| Lecture | 3,144 | 2,267.70 | 876.30 | 38.60 | 0.49 | small | 6.04e-124 | < 1e-300 |
+| Facilities | 11,588.50 | 10,589.50 | 999 | 9.40 | 0.21 | small | 9.31e-219 | < 1e-300 |
 
 Every p-value here is small enough to print in scientific notation, so on a
 naive "p < 0.05" reading every difference is significant and the p-values tell
@@ -115,7 +115,7 @@ what the campus consumed.*
 ![Average daily energy use by building](../figures/fig_02_bar_daily_energy.png)
 
 *The fair comparison, independent of how many days each meter recorded. The Boys
-hostel is the largest daily consumer at 731 kWh/day.*
+hostel is the largest daily consumer at 742 kWh/day.*
 
 ![Distribution of 10-minute power readings by building](../figures/fig_02_box_power_by_building.png)
 
@@ -143,13 +143,13 @@ left: even at minimum occupancy the building draws a substantial load.*
 
 | building | kind | n | pearson r | pearson p | spearman r | spearman p | r squared |
 |---|---|---|---|---|---|---|---|
-| Academic | commercial | 176,730 | 0.67 | < 1e-300 | 0.65 | < 1e-300 | 0.45 |
-| Boys_Hostel | residential | 119,024 | 0.65 | < 1e-300 | 0.66 | < 1e-300 | 0.42 |
-| Girls_Hostel | residential | 117,186 | 0.45 | < 1e-300 | 0.43 | < 1e-300 | 0.20 |
-| Mess | commercial | 157,266 | 0.41 | < 1e-300 | 0.45 | < 1e-300 | 0.17 |
-| Library | commercial | 118,720 | 0.50 | < 1e-300 | 0.61 | < 1e-300 | 0.25 |
-| Lecture | commercial | 36,930 | 0.31 | < 1e-300 | 0.36 | < 1e-300 | 0.10 |
-| Facilities | commercial | 149,353 | 0.27 | < 1e-300 | 0.37 | < 1e-300 | 0.07 |
+| Academic | commercial | 176,807 | 0.67 | < 1e-300 | 0.65 | < 1e-300 | 0.45 |
+| Boys_Hostel | residential | 120,915 | 0.65 | < 1e-300 | 0.66 | < 1e-300 | 0.42 |
+| Girls_Hostel | residential | 117,508 | 0.45 | < 1e-300 | 0.43 | < 1e-300 | 0.20 |
+| Mess | commercial | 157,526 | 0.41 | < 1e-300 | 0.45 | < 1e-300 | 0.17 |
+| Library | commercial | 118,872 | 0.50 | < 1e-300 | 0.61 | < 1e-300 | 0.25 |
+| Lecture | commercial | 36,978 | 0.31 | < 1e-300 | 0.36 | < 1e-300 | 0.10 |
+| Facilities | commercial | 149,883 | 0.27 | < 1e-300 | 0.37 | < 1e-300 | 0.07 |
 
 Occupancy and power are correlated in every building but never strongly. The
 best case is **Academic at r = 0.67**, meaning occupancy explains about 44% of

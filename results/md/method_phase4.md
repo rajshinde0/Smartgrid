@@ -35,7 +35,7 @@ deployed system could legitimately do and involves no test data. Model
 
 **Feature selection.** A correlation filter and `SelectKBest` with
 `f_regression` are reported for transparency but not used to prune: with a few
-dozen encoded columns and 123,710 training rows there is no overfitting pressure
+dozen encoded columns and 123,764 training rows there is no overfitting pressure
 to relieve, and dropping hour dummies would cost interpretability for no gain.
 
 **Notebook:** `notebooks/04_regression.ipynb`.

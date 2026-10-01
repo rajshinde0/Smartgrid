@@ -7,6 +7,8 @@ where the train/test split is chronological.
 
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
 import pandas as pd
 
@@ -23,16 +25,17 @@ BLOCKS_PER_DAY = 144
 def is_vacation(index: pd.DatetimeIndex) -> np.ndarray:
     """True for dates inside an approximate IIIT-Delhi vacation window.
 
-    **This is an approximation and is logged as such.** The I-BLEND project site
-    does not publish an academic calendar -- we checked; the repository contains
-    only the website's assets and the reading scripts. So the windows in
-    `config.VACATION_WINDOWS` are taken from the shape of a typical IIIT-Delhi
-    academic year (summer vacation from mid-May to the end of July, winter break
-    in the second half of December).
+    **This is the fallback, not the default.** The real calendar is published
+    with the dataset on figshare and `load_official_calendar` reads it; this
+    function is used only when those files are missing, and
+    `add_calendar_features` warns loudly when it falls back.
 
-    `validate_semester_flag` below checks the approximation against the data
-    itself, by testing whether dormitory occupancy actually collapses inside
-    these windows.
+    The windows in `config.VACATION_WINDOWS` are the shape of a typical
+    IIIT-Delhi academic year (summer vacation mid-May to end of July, winter
+    break in the second half of December). Measured against the published
+    calendar they agree on only about 68% of days, chiefly because the official
+    definition of low activity also counts weekends and public holidays --
+    see `compare_calendar_to_approximation`.
     """
     month = index.month.to_numpy()
     day = index.day.to_numpy()
@@ -117,6 +120,19 @@ def add_calendar_features(df: pd.DataFrame) -> pd.DataFrame:
         )
         out["calendar_source"] = "official"
     else:
+        # Falling back silently would be the worst outcome: every
+        # semester-vs-vacation result would quietly rest on an approximation
+        # that agrees with the real calendar on only about two-thirds of days,
+        # and nothing downstream would say so.
+        warnings.warn(
+            "Official IIIT-Delhi calendar not found in "
+            f"{C.DATASET_DIR} (looked for {', '.join(C.CALENDAR_GLOBS)}). "
+            "Falling back to approximate vacation windows, which agree with "
+            "the published calendar on only about 68% of days. "
+            "Run `python tools/get_data.py` to fetch it.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
         vacation = is_vacation(idx)
         out["is_vacation"] = vacation
         out["is_semester"] = ~vacation

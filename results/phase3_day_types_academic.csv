@@ -1,5 +1,5 @@
 cluster,name,days,mean power (kW),night floor (kW),midday (kW),% weekend,% vacation
-0,"high load, daytime peak",450,35.4,22.1,54.1,4.4,36.7
-1,"lowest load, flat all day",284,18.1,17.3,19.9,63.4,19.0
-2,"highest load, morning peak",80,41.2,36.2,59.0,7.5,18.8
-3,"low load, morning peak",488,26.1,20.1,35.5,33.4,22.1
+0,"low load, morning peak",488,26.1,20.1,35.6,32.8,21.7
+1,"highest load, morning peak",81,41.2,36.1,59.0,7.4,19.8
+2,"high load, daytime peak",452,35.4,22.1,54.1,4.4,36.5
+3,"lowest load, flat all day",291,18.1,17.4,19.9,63.9,19.6

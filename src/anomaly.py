@@ -83,6 +83,12 @@ def inject_anomalies(
         duration_min = int(rng.integers(C.SPIKE_DURATION_MIN[0],
                                         C.SPIKE_DURATION_MIN[1] + 1))
         length = max(1, duration_min // MINUTES_PER_BLOCK)
+
+        # An event cannot be longer than the data it is placed in. Without this
+        # guard rng.integers(0, n - length) is called with a non-positive upper
+        # bound and raises for any split shorter than the event.
+        if length >= n:
+            continue
         start = int(rng.integers(0, n - length))
         window = slice(start, start + length)
 
@@ -416,11 +422,21 @@ def group_into_episodes(
     rows = []
     for group in groups:
         window = scored.iloc[group]
+        # Two different, both-useful durations:
+        #   flagged_hours -- time actually flagged (count of 10-minute blocks)
+        #   span_hours    -- wall-clock first flag to end of the last one
+        # They differ whenever an episode bridges a short unflagged gap, so
+        # reporting only one would mislead. The "+1 block" on the span is
+        # because the index holds the *start* of each interval.
+        flagged_hours = len(group) / BLOCKS_PER_HOUR
+        span = (window.index[-1] - window.index[0]).total_seconds() / 3600
         rows.append({
             "start": window.index[0],
             "end": window.index[-1],
             "intervals": len(group),
-            "duration_hours": round(len(group) / BLOCKS_PER_HOUR, 2),
+            "flagged_hours": round(flagged_hours, 2),
+            "span_hours": round(span + 1 / BLOCKS_PER_HOUR, 2),
+            "duration_hours": round(flagged_hours, 2),   # kept: prior name
             "peak_z": round(float(window["z"].abs().max()), 2),
             "mean_excess_kW": round(float(window["residual_w"].mean()) / 1000, 2),
             "total_excess_kWh": round(

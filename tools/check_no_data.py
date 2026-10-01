@@ -20,18 +20,43 @@ FORBIDDEN_PREFIXES = ("Dataset/", "data/")
 FORBIDDEN_SUFFIXES = (".parquet", ".pkl", ".joblib")
 
 
+class NotAGitRepo(RuntimeError):
+    """Raised when this guard is run somewhere git cannot answer."""
+
+
 def tracked_files() -> list[str]:
-    """Every path git currently tracks (i.e. would be pushed)."""
-    out = subprocess.run(
-        ["git", "ls-files"], capture_output=True, text=True, check=True
-    ).stdout
-    return [line for line in out.splitlines() if line.strip()]
+    """Every path git currently tracks (i.e. would be pushed).
+
+    Raises NotAGitRepo with a readable explanation rather than letting a
+    CalledProcessError or FileNotFoundError traceback escape: this script is a
+    safety guard, and a guard that crashes confusingly is worse than one that
+    says plainly why it could not check.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "ls-files"], capture_output=True, text=True, check=True
+        )
+    except FileNotFoundError as exc:
+        raise NotAGitRepo("git is not installed or not on PATH") from exc
+    except subprocess.CalledProcessError as exc:
+        detail = (exc.stderr or "").strip().splitlines()
+        raise NotAGitRepo(
+            detail[0] if detail else "git ls-files failed"
+        ) from exc
+    return [line for line in result.stdout.splitlines() if line.strip()]
 
 
 def main() -> int:
     problems: list[str] = []
 
-    for rel in tracked_files():
+    try:
+        tracked = tracked_files()
+    except NotAGitRepo as exc:
+        print(f"check_no_data: cannot check -- {exc}.")
+        print("Run this from inside the project's git working tree.")
+        return 2
+
+    for rel in tracked:
         if rel.startswith(FORBIDDEN_PREFIXES):
             problems.append(f"FORBIDDEN PATH   {rel}")
             continue
@@ -49,7 +74,8 @@ def main() -> int:
             print("  " + p)
         return 1
 
-    print(f"check_no_data: OK ({len(tracked_files())} tracked files, none forbidden, none >50 MB)")
+    print(f"check_no_data: OK ({len(tracked)} tracked files, none forbidden, "
+          "none >50 MB)")
     return 0
 
 

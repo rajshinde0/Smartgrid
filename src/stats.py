@@ -42,6 +42,14 @@ def describe_manual(values: np.ndarray) -> dict[str, float]:
     x = x[np.isfinite(x)]
     n = x.size
 
+    # An empty input (or one that was entirely NaN) has no statistics to report.
+    # Returning NaNs is better than dividing by zero: the caller sees that there
+    # was nothing to describe instead of getting a traceback from deep inside.
+    if n == 0:
+        return {key: float("nan") for key in
+                ("n", "mean", "median", "min", "max", "range",
+                 "variance", "std", "q1", "q3", "iqr")} | {"n": 0.0}
+
     total = 0.0
     for value in x:                       # an explicit loop, to show the formula
         total += value
@@ -50,8 +58,11 @@ def describe_manual(values: np.ndarray) -> dict[str, float]:
     squared_deviations = 0.0
     for value in x:
         squared_deviations += (value - mean) ** 2
-    variance = squared_deviations / (n - 1)      # n-1: this is a sample
-    sd = variance ** 0.5
+    # n-1 because this is a sample, not a population. A single observation has
+    # no spread to estimate, so the sample variance is genuinely undefined
+    # rather than zero.
+    variance = squared_deviations / (n - 1) if n > 1 else float("nan")
+    sd = variance ** 0.5 if np.isfinite(variance) else float("nan")
 
     ordered = np.sort(x)
     median = (
@@ -252,11 +263,21 @@ def cohens_d(a: np.ndarray, b: np.ndarray) -> float:
     """
     a = np.asarray(a, dtype="float64")
     b = np.asarray(b, dtype="float64")
+    a = a[np.isfinite(a)]
+    b = b[np.isfinite(b)]
     na, nb = a.size, b.size
+
+    # Pooling needs at least one degree of freedom, which means at least two
+    # observations between the two groups beyond the two means being estimated.
+    if na + nb - 2 <= 0:
+        return float("nan")
+
     pooled_sd = np.sqrt(
         ((na - 1) * a.var(ddof=1) + (nb - 1) * b.var(ddof=1)) / (na + nb - 2)
     )
-    return float((a.mean() - b.mean()) / pooled_sd) if pooled_sd else np.nan
+    if not np.isfinite(pooled_sd) or pooled_sd == 0:
+        return float("nan")
+    return float((a.mean() - b.mean()) / pooled_sd)
 
 
 def compare_groups(

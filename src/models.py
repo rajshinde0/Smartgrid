@@ -89,14 +89,23 @@ def metrics(y_true, y_pred) -> dict[str, float]:
     """
     y_true = np.asarray(y_true, dtype="float64")
     y_pred = np.asarray(y_pred, dtype="float64")
+
+    # MAPE is undefined wherever the true value is zero, so those intervals are
+    # excluded with nanmean rather than allowed to poison the whole average.
+    # Using plain mean here returns NaN for the entire building as soon as one
+    # reading is 0 W -- which happens whenever a meter is briefly off for less
+    # than the dead-meter threshold.
+    with np.errstate(divide="ignore", invalid="ignore"):
+        relative = np.abs(
+            (y_true - y_pred) / np.where(y_true == 0, np.nan, y_true)
+        )
+    mape = float(np.nanmean(relative) * 100) if np.isfinite(relative).any() else float("nan")
+
     return {
         "MAE_w": float(mean_absolute_error(y_true, y_pred)),
         "RMSE_w": float(np.sqrt(mean_squared_error(y_true, y_pred))),
         "R2": float(r2_score(y_true, y_pred)),
-        "MAPE_pct": float(
-            np.mean(np.abs((y_true - y_pred) / np.where(y_true == 0, np.nan, y_true)))
-            * 100
-        ),
+        "MAPE_pct": mape,
     }
 
 

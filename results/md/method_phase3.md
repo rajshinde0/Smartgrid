@@ -5,13 +5,13 @@ collection of days.
 gap-free 10-minute grid, 144 consecutive values are always exactly one calendar
 day. The series is trimmed to whole days and then a single NumPy `reshape` turns
 it into a (days x 144) matrix -- no pivot and no loop. Days containing any gap,
-or any interval flagged `meter_off`, are excluded: 1,302 of 1,356 days survive
+or any interval flagged `meter_off`, are excluded: 1,312 of 1,356 days survive
 for the Academic building.
 
 **Reducing to hourly.** Each row is reshaped from 144 into (24, 6) and averaged
 along the last axis -- a vectorized operation. The same calculation written as
 three nested Python loops gives identical numbers (largest difference 0.0e+00)
-and is 69x slower, which is the practical argument for vectorisation throughout
+and is 53x slower, which is the practical argument for vectorisation throughout
 the project.
 
 **Standardisation.** Each hour column is centred and scaled to unit variance.
