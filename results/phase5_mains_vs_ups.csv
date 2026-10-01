@@ -1,5 +1,5 @@
 building,supply,total_kwh,low_occ_kwh,share_pct,mean_power_w,mean_power_low_occ_w
-Boys_Hostel,mains,349432.2,15378.8,4.4,17560.0,13007.1
-Boys_Hostel,ups,305047.6,13668.2,4.48,15253.1,11514.9
-Girls_Hostel,mains,148341.7,7504.2,5.06,7593.1,6127.5
-Girls_Hostel,ups,144997.7,7095.4,4.89,7409.7,5792.2
+Boys_Hostel,mains,349178.9,15371.3,4.4,17560.1,13006.3
+Boys_Hostel,ups,304129.7,13640.3,4.49,15253.1,11510.8
+Girls_Hostel,mains,148312.4,7504.2,5.06,7593.0,6127.5
+Girls_Hostel,ups,144837.9,7090.6,4.9,7411.3,5791.4

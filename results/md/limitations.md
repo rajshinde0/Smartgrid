@@ -53,7 +53,7 @@ described only as patterns worth inspecting.
 #### 4. Very uneven data coverage
 
 Usable coverage ranges from **18.9%** to **90.5%**. The Lecture building is the
-extreme case: its meter is flagged off for **25,488 hours**, leaving only 18.9%
+extreme case: its meter is flagged off for **25,501 hours**, leaving only 18.9%
 of its intervals usable, so every Lecture figure rests on a much smaller sample
 than the others. The Boys hostel, Girls hostel and Library each lose several
 consecutive months to meter outages. This is a smaller sample, not a biased
@@ -95,7 +95,7 @@ this report now uses the published calendar (decision D01-03).
 Model A estimates base load as the power a fitted line predicts at zero
 occupancy. For buildings whose occupancy never approaches zero -- the two
 dormitories especially -- that point lies far outside the observed data, and the
-estimate departs from the directly measured night-time median by up to **50%**.
+estimate departs from the directly measured night-time median by up to **51%**.
 Section 6.6 reports both, ranks buildings on the *measured* quantity, and flags
 where the modelled one should not be trusted.
 

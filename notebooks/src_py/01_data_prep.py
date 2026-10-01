@@ -263,9 +263,18 @@ display(raw_quality[[
 #
 # **The rule:** power exactly 0 for more than **6 continuous hours** is marked
 # `meter_off`. We test on the *maximum* power in each 10-minute block, so a block
-# only counts as zero if every one of its 1-minute readings was zero. Blocks with
-# no readings at all break the run rather than extending it -- a gap is not
-# evidence of a dead meter.
+# only counts as zero if every one of its 1-minute readings was zero.
+#
+# **Short gaps bridge a run rather than breaking it.** This is a correction to an
+# earlier version. Originally any missing block split a zero-run, which meant a
+# single dropout inside a ten-hour outage produced two five-hour runs, neither
+# crossing the six-hour threshold -- so the entire outage went unflagged and its
+# zeros were counted as real consumption. That hid about 2,413 zero-blocks in the
+# Lecture building alone. Now a gap of up to 30 minutes (the same limit used for
+# interpolation) joins the runs on either side, provided both sides read zero.
+# Longer gaps still break the run: at that length the absence is its own event.
+# The flag itself is never set on a missing block -- we do not claim a meter was
+# off during an interval we have no reading for.
 
 # %%
 lecture_raw, _ = ingest.ingest_meter("lecture_mains", verbose=False)
@@ -586,8 +595,20 @@ viz.save_fig(fig, "fig_01_semester_validation")
 # 5. adds the calendar, lag, rolling and kWh features
 #
 # **On interpolation.** Filling a 20-minute gap between two similar readings is
-# safe. Filling a 200-day gap would be inventing data. The `limit` parameter
-# stops the fill after 3 consecutive missing 10-minute blocks, and every filled
+# safe. Filling a 200-day gap would be inventing data.
+#
+# Getting that rule right turned out to need care. The obvious implementation --
+# pandas' `interpolate(limit=3)` -- does **not** mean "skip gaps longer than 3
+# blocks". `limit` caps the number of *consecutive* missing values filled, so
+# given a 200-day gap it fills the first 3 blocks and stops. Those three values
+# are drawn along a straight line between the last reading before the gap and
+# the first one after it, months later: precisely the invented data the limit
+# was supposed to prevent. On this dataset that produced **5,301 fabricated
+# blocks against 2,498 legitimate ones** -- more than two thirds of all the
+# filling was wrong.
+#
+# So `interpolate_short_gaps` measures each gap's **whole** length first and
+# fills only the runs that are short enough in their entirety. Every filled
 # value is marked `was_interpolated` so nothing downstream mistakes it for a
 # measurement.
 
@@ -1207,6 +1228,42 @@ report.log_decision(
                       "All semester-vs-vacation results, and the is_semester and "
                       "is_working_day model features, now use the published "
                       "calendar.",
+)
+
+report.log_decision(
+    id="D01-08", phase="1",
+    decision="Gap interpolation measures the whole gap, not consecutive values",
+    options_considered="pandas interpolate(limit=3) as originally written; "
+                       "measure each gap's full length and fill only short ones; "
+                       "drop interpolation entirely",
+    chosen="Measure the whole run; fill only gaps whose entire length is within "
+           f"the {C.INTERPOLATE_LIMIT_MIN}-minute limit",
+    reason="pandas' limit= caps *consecutive* values filled, so a 200-day gap "
+           "had its first 3 blocks filled along a straight line between "
+           "readings months apart. That is the invented data the limit was "
+           "meant to prevent.",
+    effect_on_results="Removes 5,301 fabricated blocks and keeps 2,498 "
+                      "legitimate ones. Interpolated blocks fall from 5,206 to "
+                      "2,184 and usable coverage drops 0.02-0.41 percentage "
+                      "points per building -- lower, and correct.",
+)
+
+report.log_decision(
+    id="D01-09", phase="1",
+    decision="A short gap bridges a run of zeros instead of breaking it",
+    options_considered="Any gap breaks the run (original); gaps up to 30 min "
+                       "bridge it when zeros sit on both sides; ignore gaps "
+                       "entirely when measuring runs",
+    chosen=f"Gaps up to {C.INTERPOLATE_LIMIT_MIN} minutes bridge a zero-run "
+           "when both neighbours read zero; the gap itself is never flagged",
+    reason="A single dropout inside a ten-hour outage split it into two "
+           "five-hour runs, neither of which crossed the six-hour threshold, so "
+           "the outage went unflagged and its zeros counted as real "
+           "consumption. About 2,413 zero-blocks in Lecture were hidden this "
+           "way.",
+    effect_on_results="Adds roughly 14 hours to Lecture's meter-off total and "
+                      "almost nothing elsewhere. Never flags a block we have no "
+                      "reading for, so it cannot invent dead time.",
 )
 
 report.log_decision(

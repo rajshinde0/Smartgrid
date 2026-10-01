@@ -33,6 +33,22 @@ from . import clean, config as C, ingest, occupancy as occ
 
 BLOCKS_PER_HOUR = 6
 
+# The keys every low_occupancy_share() result carries, whichever path it takes.
+SHARE_KEYS = (
+    "threshold", "p95_occupancy", "intervals_total", "intervals_low",
+    "pct_intervals_low", "total_kwh", "low_occ_kwh", "share_pct",
+    "mean_power_low_w", "mean_power_all_w", "reachable",
+)
+
+
+def _empty_share_result() -> dict:
+    """A result with every key present and nothing measured."""
+    out = {key: np.nan for key in SHARE_KEYS}
+    out["intervals_total"] = 0
+    out["intervals_low"] = 0
+    out["reachable"] = False
+    return out
+
 
 def low_occupancy_share(
     df: pd.DataFrame,
@@ -41,10 +57,15 @@ def low_occupancy_share(
     occupancy_col: str = "occupancy",
     usable_col: str = "usable",
 ) -> dict:
-    """Share of a building's measured energy consumed at low occupancy."""
+    """Share of a building's measured energy consumed at low occupancy.
+
+    Both return paths produce the **same keys**: callers index this dict
+    directly, so an early return with fewer keys would raise a KeyError far from
+    its cause. The empty case fills every value with NaN instead.
+    """
     usable = df[df[usable_col] & df[occupancy_col].notna() & df["kwh"].notna()]
     if usable.empty:
-        return {"threshold": np.nan, "share_pct": np.nan, "reachable": False}
+        return _empty_share_result()
 
     p95 = float(np.percentile(usable[occupancy_col], C.LOW_OCC_PERCENTILE))
     threshold = fraction * p95

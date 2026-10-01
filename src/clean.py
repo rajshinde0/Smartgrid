@@ -23,7 +23,10 @@ BLOCKS_PER_HOUR = 6          # 10-minute blocks in an hour
 
 
 def flag_meter_off(
-    power_max: pd.Series, *, hours: float = C.DEAD_METER_HOURS
+    power_max: pd.Series,
+    *,
+    hours: float = C.DEAD_METER_HOURS,
+    bridge_steps: int = C.INTERPOLATE_LIMIT_STEPS,
 ) -> pd.Series:
     """Flag long unbroken runs of exactly-zero power as "meter off".
 
@@ -32,23 +35,49 @@ def flag_meter_off(
     reporting. The Lecture building does this for most of the record.
 
     We test on the **maximum** power within each 10-minute block, so a block only
-    counts as zero if every one of its 1-minute readings was zero. Blocks with no
-    readings at all break the run rather than extending it: a gap is not evidence
-    of a dead meter, it is just a gap.
+    counts as zero if every one of its 1-minute readings was zero.
+
+    **Short gaps bridge a run rather than breaking it.** A missing block carries
+    no evidence either way, but letting it split a run meant a single dropout
+    inside a ten-hour outage produced two five-hour runs, neither of which
+    crossed the threshold, so the whole outage went unflagged and its zeros were
+    counted as real consumption. On this dataset that hid 2,413 zero-blocks
+    (about 402 hours) in the Lecture building alone. Gaps longer than
+    `bridge_steps` still break the run: at that length the absence is its own
+    event, not a dropout.
+
+    The flag itself is never set on a missing block -- only on blocks that
+    actually read zero.
 
     Returns a boolean Series aligned to the input.
     """
     min_blocks = int(round(hours * BLOCKS_PER_HOUR))
 
-    # NaN (no readings) must not count as a zero, so fill it with a sentinel.
-    is_zero = power_max.fillna(-1.0).eq(0.0)
+    is_zero = power_max.eq(0.0)          # NaN compares False, as intended
+    is_missing = power_max.isna()
+
+    # Treat a short gap as part of whatever surrounds it, so it neither breaks a
+    # zero-run nor becomes one. Only gaps bounded by zeros on both sides can
+    # extend a zero-run; a gap next to real consumption stays a break.
+    bridged = is_zero.copy()
+    short_gap = is_missing & (gap_runs(power_max) <= bridge_steps)
+    if short_gap.any():
+        # Blank out the missing positions so ffill/bfill reach past them to the
+        # nearest block that actually has a reading. Without the mask these are
+        # plain booleans with nothing to fill and the result is always False.
+        known = is_zero.where(~is_missing)
+        zero_before = known.ffill().fillna(False).astype(bool)
+        zero_after = known.bfill().fillna(False).astype(bool)
+        bridged |= short_gap & zero_before & zero_after
 
     # Give every unbroken run of identical values its own group id, then measure
     # how long each run is. This is the standard run-length trick.
-    run_id = (is_zero != is_zero.shift()).cumsum()
-    run_length = is_zero.groupby(run_id).transform("size")
+    run_id = (bridged != bridged.shift()).cumsum()
+    run_length = bridged.groupby(run_id).transform("size")
 
-    return is_zero & (run_length >= min_blocks)
+    # A bridged gap counts towards the run's length but is not itself flagged:
+    # we never claim a meter was off during a block we have no reading for.
+    return is_zero & bridged & (run_length >= min_blocks)
 
 
 def zero_run_lengths(power_max: pd.Series) -> pd.Series:
@@ -91,24 +120,51 @@ def iqr_fences(series: pd.Series, k: float = 1.5) -> tuple[float, float]:
     return float(q1 - k * iqr), float(q3 + k * iqr)
 
 
+def gap_runs(series: pd.Series) -> pd.Series:
+    """Length, in blocks, of the run of missing values each row belongs to.
+
+    Rows that are not missing get the length of their own non-missing run, so
+    only combine this with an `isna()` mask.
+    """
+    missing = series.isna()
+    run_id = (missing != missing.shift()).cumsum()
+    return missing.groupby(run_id).transform("size")
+
+
 def interpolate_short_gaps(
     series: pd.Series, *, limit_steps: int = C.INTERPOLATE_LIMIT_STEPS
 ) -> tuple[pd.Series, pd.Series]:
-    """Fill gaps of at most `limit_steps` missing blocks; leave longer ones.
+    """Fill gaps of at most `limit_steps` missing blocks; leave longer ones **whole**.
 
     Filling a 20-minute gap between two similar readings is safe. Filling a
-    200-day gap would be inventing data, so `limit` stops the fill after the
-    given number of consecutive missing steps.
+    200-day gap would be inventing data.
+
+    **Why this does not use pandas' `limit=` argument.** `limit` caps the number
+    of *consecutive* NaNs filled, which is not the same rule: given a 200-day
+    gap it fills the first `limit` blocks and stops, rather than skipping the
+    gap. Those blocks are drawn along a straight line between the last reading
+    before the gap and the first one after it -- readings that may be months
+    apart -- so they are exactly the invented data the limit was meant to
+    prevent. On this dataset that behaviour produced 5,301 fabricated blocks
+    against 2,498 legitimate ones.
+
+    So we measure each gap's **whole** length first and fill only the runs that
+    are short enough in their entirety.
 
     Returns the filled series and a boolean Series marking which values were
     filled rather than measured -- so nothing downstream can mistake an
     interpolated value for a reading.
     """
-    was_missing = series.isna()
-    filled = series.interpolate(
-        method="time", limit=limit_steps, limit_area="inside"
-    )
-    return filled, was_missing & filled.notna()
+    missing = series.isna()
+    short_gap = missing & (gap_runs(series) <= limit_steps)
+
+    # Interpolate without a limit, then keep the result only where the gap was
+    # short enough. limit_area="inside" still refuses to extrapolate before the
+    # first reading or after the last.
+    candidate = series.interpolate(method="time", limit_area="inside")
+    filled = series.where(~short_gap, candidate)
+
+    return filled, short_gap & filled.notna()
 
 
 def clean_meter(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:

@@ -1,43 +1,43 @@
 building,detector,rule,alerts,true_positives,false_positives,false_negatives,true_negatives,precision,recall,f1,accuracy
-Academic,T,two-sided |z| > 3 (as specified),2061,547,1514,1139,23322,0.2654,0.3244,0.292,0.9
-Academic,T,one-sided z > 3 (positive only),2061,547,1514,1139,23322,0.2654,0.3244,0.292,0.9
-Academic,T,IQR fences (cross-check),1651,477,1174,1209,23662,0.2889,0.2829,0.2859,0.9102
-Academic,O,two-sided |z| > 3 (as specified),3529,646,2883,1040,21953,0.1831,0.3832,0.2477,0.8521
-Academic,O,one-sided z > 3 (positive only),3187,646,2541,1040,22295,0.2027,0.3832,0.2651,0.865
-Academic,O,IQR fences (cross-check),2967,582,2385,1104,22451,0.1962,0.3452,0.2502,0.8684
-Boys_Hostel,T,two-sided |z| > 3 (as specified),665,193,472,715,16758,0.2902,0.2126,0.2454,0.9346
-Boys_Hostel,T,one-sided z > 3 (positive only),653,193,460,715,16770,0.2956,0.2126,0.2473,0.9352
-Boys_Hostel,T,IQR fences (cross-check),949,232,717,676,16513,0.2445,0.2555,0.2499,0.9232
-Boys_Hostel,O,two-sided |z| > 3 (as specified),682,243,439,665,16791,0.3563,0.2676,0.3057,0.9391
-Boys_Hostel,O,one-sided z > 3 (positive only),662,243,419,665,16811,0.3671,0.2676,0.3096,0.9402
-Boys_Hostel,O,IQR fences (cross-check),942,286,656,622,16574,0.3036,0.315,0.3092,0.9295
-Girls_Hostel,T,two-sided |z| > 3 (as specified),193,188,5,689,16745,0.9741,0.2144,0.3514,0.9606
-Girls_Hostel,T,one-sided z > 3 (positive only),193,188,5,689,16745,0.9741,0.2144,0.3514,0.9606
-Girls_Hostel,T,IQR fences (cross-check),249,232,17,645,16733,0.9317,0.2645,0.4121,0.9624
-Girls_Hostel,O,two-sided |z| > 3 (as specified),178,178,0,699,16750,1.0,0.203,0.3374,0.9603
-Girls_Hostel,O,one-sided z > 3 (positive only),178,178,0,699,16750,1.0,0.203,0.3374,0.9603
-Girls_Hostel,O,IQR fences (cross-check),231,224,7,653,16743,0.9697,0.2554,0.4043,0.9626
-Mess,T,two-sided |z| > 3 (as specified),370,309,61,2526,20734,0.8351,0.109,0.1928,0.8905
-Mess,T,one-sided z > 3 (positive only),370,309,61,2526,20734,0.8351,0.109,0.1928,0.8905
-Mess,T,IQR fences (cross-check),501,366,135,2469,20660,0.7305,0.1291,0.2194,0.8898
-Mess,O,two-sided |z| > 3 (as specified),378,326,52,2509,20743,0.8624,0.115,0.2029,0.8916
-Mess,O,one-sided z > 3 (positive only),378,326,52,2509,20743,0.8624,0.115,0.2029,0.8916
-Mess,O,IQR fences (cross-check),507,386,121,2449,20674,0.7613,0.1362,0.231,0.8912
-Library,T,two-sided |z| > 3 (as specified),1681,1174,507,3369,12782,0.6984,0.2584,0.3772,0.7826
-Library,T,one-sided z > 3 (positive only),1681,1174,507,3369,12782,0.6984,0.2584,0.3772,0.7826
-Library,T,IQR fences (cross-check),322,322,0,4221,13289,1.0,0.0709,0.1324,0.7633
-Library,O,two-sided |z| > 3 (as specified),1746,1075,671,3468,12618,0.6157,0.2366,0.3419,0.7679
-Library,O,one-sided z > 3 (positive only),1723,1075,648,3468,12641,0.6239,0.2366,0.3431,0.7692
-Library,O,IQR fences (cross-check),581,546,35,3997,13254,0.9398,0.1202,0.2131,0.7739
-Lecture,T,two-sided |z| > 3 (as specified),185,71,114,2577,2786,0.3838,0.0268,0.0501,0.515
-Lecture,T,one-sided z > 3 (positive only),54,54,0,2594,2900,1.0,0.0204,0.04,0.5324
-Lecture,T,IQR fences (cross-check),377,133,244,2515,2656,0.3528,0.0502,0.0879,0.5027
-Lecture,O,two-sided |z| > 3 (as specified),154,54,100,2594,2800,0.3506,0.0204,0.0385,0.5144
-Lecture,O,one-sided z > 3 (positive only),41,41,0,2607,2900,1.0,0.0155,0.0305,0.5301
-Lecture,O,IQR fences (cross-check),233,90,143,2558,2757,0.3863,0.034,0.0625,0.5132
-Facilities,T,two-sided |z| > 3 (as specified),489,220,269,104,21890,0.4499,0.679,0.5412,0.9834
-Facilities,T,one-sided z > 3 (positive only),482,220,262,104,21897,0.4564,0.679,0.5459,0.9837
-Facilities,T,IQR fences (cross-check),559,228,331,96,21828,0.4079,0.7037,0.5164,0.981
-Facilities,O,two-sided |z| > 3 (as specified),580,218,362,106,21797,0.3759,0.6728,0.4823,0.9792
-Facilities,O,one-sided z > 3 (positive only),573,218,355,106,21804,0.3805,0.6728,0.4861,0.9795
-Facilities,O,IQR fences (cross-check),558,218,340,106,21819,0.3907,0.6728,0.4943,0.9802
+Academic,T,two-sided |z| > 3 (as specified),2081,546,1535,1217,23216,0.2624,0.3097,0.2841,0.8962
+Academic,T,one-sided z > 3 (positive only),2081,546,1535,1217,23216,0.2624,0.3097,0.2841,0.8962
+Academic,T,IQR fences (cross-check),1694,499,1195,1264,23556,0.2946,0.283,0.2887,0.9073
+Academic,O,two-sided |z| > 3 (as specified),3502,643,2859,1120,21892,0.1836,0.3647,0.2443,0.8499
+Academic,O,one-sided z > 3 (positive only),3159,643,2516,1120,22235,0.2035,0.3647,0.2613,0.8629
+Academic,O,IQR fences (cross-check),2961,596,2365,1167,22386,0.2013,0.3381,0.2523,0.8668
+Boys_Hostel,T,two-sided |z| > 3 (as specified),673,200,473,746,16599,0.2972,0.2114,0.2471,0.9323
+Boys_Hostel,T,one-sided z > 3 (positive only),664,200,464,746,16608,0.3012,0.2114,0.2484,0.9328
+Boys_Hostel,T,IQR fences (cross-check),951,247,704,699,16368,0.2597,0.2611,0.2604,0.9221
+Boys_Hostel,O,two-sided |z| > 3 (as specified),704,255,449,691,16623,0.3622,0.2696,0.3091,0.9367
+Boys_Hostel,O,one-sided z > 3 (positive only),679,255,424,691,16648,0.3756,0.2696,0.3138,0.9381
+Boys_Hostel,O,IQR fences (cross-check),1002,325,677,621,16395,0.3244,0.3436,0.3337,0.928
+Girls_Hostel,T,two-sided |z| > 3 (as specified),196,190,6,659,16740,0.9694,0.2238,0.3636,0.9622
+Girls_Hostel,T,one-sided z > 3 (positive only),196,190,6,659,16740,0.9694,0.2238,0.3636,0.9622
+Girls_Hostel,T,IQR fences (cross-check),250,233,17,616,16729,0.932,0.2744,0.424,0.964
+Girls_Hostel,O,two-sided |z| > 3 (as specified),179,179,0,670,16746,1.0,0.2108,0.3482,0.9619
+Girls_Hostel,O,one-sided z > 3 (positive only),179,179,0,670,16746,1.0,0.2108,0.3482,0.9619
+Girls_Hostel,O,IQR fences (cross-check),233,225,8,624,16738,0.9657,0.265,0.4159,0.9641
+Mess,T,two-sided |z| > 3 (as specified),367,311,56,2524,20716,0.8474,0.1097,0.1943,0.8907
+Mess,T,one-sided z > 3 (positive only),367,311,56,2524,20716,0.8474,0.1097,0.1943,0.8907
+Mess,T,IQR fences (cross-check),500,376,124,2459,20648,0.752,0.1326,0.2255,0.8906
+Mess,O,two-sided |z| > 3 (as specified),376,327,49,2508,20723,0.8697,0.1153,0.2037,0.8917
+Mess,O,one-sided z > 3 (positive only),376,327,49,2508,20723,0.8697,0.1153,0.2037,0.8917
+Mess,O,IQR fences (cross-check),514,402,112,2433,20660,0.7821,0.1418,0.2401,0.8922
+Library,T,two-sided |z| > 3 (as specified),1638,1154,484,3441,12733,0.7045,0.2511,0.3703,0.7796
+Library,T,one-sided z > 3 (positive only),1638,1154,484,3441,12733,0.7045,0.2511,0.3703,0.7796
+Library,T,IQR fences (cross-check),258,258,0,4337,13217,1.0,0.0561,0.1063,0.7565
+Library,O,two-sided |z| > 3 (as specified),1714,1102,612,3493,12605,0.6429,0.2398,0.3493,0.7695
+Library,O,one-sided z > 3 (positive only),1690,1102,588,3493,12629,0.6521,0.2398,0.3507,0.7709
+Library,O,IQR fences (cross-check),556,534,22,4061,13195,0.9604,0.1162,0.2073,0.7708
+Lecture,T,two-sided |z| > 3 (as specified),187,70,117,2585,2757,0.3743,0.0264,0.0493,0.5113
+Lecture,T,one-sided z > 3 (positive only),58,58,0,2597,2874,1.0,0.0218,0.0428,0.5303
+Lecture,T,IQR fences (cross-check),415,161,254,2494,2620,0.388,0.0606,0.1049,0.503
+Lecture,O,two-sided |z| > 3 (as specified),119,35,84,2620,2790,0.2941,0.0132,0.0252,0.5109
+Lecture,O,one-sided z > 3 (positive only),30,30,0,2625,2874,1.0,0.0113,0.0223,0.5252
+Lecture,O,IQR fences (cross-check),236,89,147,2566,2727,0.3771,0.0335,0.0616,0.5093
+Facilities,T,two-sided |z| > 3 (as specified),483,222,261,103,21861,0.4596,0.6831,0.5495,0.9838
+Facilities,T,one-sided z > 3 (positive only),476,222,254,103,21868,0.4664,0.6831,0.5543,0.9841
+Facilities,T,IQR fences (cross-check),545,226,319,99,21803,0.4147,0.6954,0.5195,0.9814
+Facilities,O,two-sided |z| > 3 (as specified),570,215,355,110,21767,0.3772,0.6615,0.4804,0.9793
+Facilities,O,one-sided z > 3 (positive only),563,215,348,110,21774,0.3819,0.6615,0.4842,0.9796
+Facilities,O,IQR fences (cross-check),557,214,343,111,21779,0.3842,0.6585,0.4853,0.9798

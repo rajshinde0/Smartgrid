@@ -1,8 +1,8 @@
 building,test intervals,spike events,waste events,spike intervals,waste intervals,% of intervals contaminated,low-occ intervals available
-Academic,26522,199,63,324,1362,6.36,772
-Boys_Hostel,18138,198,31,326,582,5.01,544
-Girls_Hostel,17627,198,26,325,552,4.98,393
-Mess,23630,198,123,326,2509,12.0,1255
-Library,17832,198,200,326,4217,25.48,4420
-Lecture,5548,190,131,304,2344,47.73,2740
-Facilities,22483,199,0,324,0,1.44,0
+Academic,26514,200,70,325,1438,6.65,772
+Boys_Hostel,18018,198,30,326,620,5.25,523
+Girls_Hostel,17595,196,27,331,518,4.83,393
+Mess,23607,199,123,324,2511,12.01,1255
+Library,17812,198,200,325,4270,25.8,4399
+Lecture,5529,191,131,309,2346,48.02,2731
+Facilities,22447,198,0,325,0,1.45,0

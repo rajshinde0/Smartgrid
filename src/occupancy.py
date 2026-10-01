@@ -9,6 +9,8 @@ on a threshold instead.
 
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
 import pandas as pd
 
@@ -27,6 +29,23 @@ def load_occupancy(building: str) -> pd.DataFrame:
         {"occupancy": raw["occupancy_count"].to_numpy(dtype="float64")},
         index=pd.DatetimeIndex(ts),
     ).sort_index()
+    # Snap to the 10-minute grid before reindexing. Every I-BLEND occupancy
+    # timestamp is already on a boundary (verified in Phase 0), but reindexing
+    # an unsnapped index would *silently drop* any that were not, which is the
+    # worst possible failure: fewer rows, no error, no sign anything was lost.
+    snapped = out.index.floor(C.TARGET_FREQ)
+    moved = int((snapped != out.index).sum())
+    if moved:
+        warnings.warn(
+            f"{building}: {moved:,} occupancy timestamps were not on the "
+            f"{C.TARGET_FREQ} grid and have been floored onto it. They would "
+            "otherwise have been dropped without warning.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+        out.index = snapped
+        out = out[~out.index.duplicated(keep="first")]
+
     out = out[~out.index.duplicated(keep="first")]
     out.index.name = "ts"
 

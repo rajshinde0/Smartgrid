@@ -359,3 +359,46 @@ Detector O, and waste-event recall improved (+0.029 → +0.041).
 **Lesson.** "We checked and it does not exist" was true of the place we looked
 and false of the dataset. Worth checking the data repository itself, not just
 the project website.
+
+---
+
+## Second code review (2 Oct 2026) - 6 issues found, all fixed
+
+**Trigger.** A fresh read of the pipeline with no prior context, after the first
+review round (commit `c703e30`). Documented in `docs/bugFix1.md` (round 1) and
+`docs/bugFix2.md` (round 2).
+
+**The one that mattered.** `interpolate_short_gaps` used pandas'
+`interpolate(limit=3)`, which caps *consecutive* NaNs rather than skipping long
+gaps - so a 200-day gap had its first 3 blocks filled along a straight line
+between readings months apart. **5,301 fabricated blocks against 2,498
+legitimate ones: 68% of all interpolation was invented data.** It had been
+harmless while round 1's bug discarded the column; fixing that discard made this
+one live. **A fix promoted a latent bug to a live one** - the best argument for
+reviewing twice. Interpolated blocks now 5,206 -> 2,184.
+
+**Also fixed.**
+- A single dropout split a zero-run, so a 10 h outage became two 5 h runs and
+  neither crossed the 6 h threshold. Hid 2,413 zero-blocks (~402 h) in Lecture.
+  Short gaps now bridge a run when both sides read zero; the gap itself is never
+  flagged. D01-09.
+- `low_occupancy_share` returned 3 keys on the empty path and 11 on the normal
+  one - a KeyError waiting for any building with no usable rows.
+- `power_missing` was counted after invalidation, double-counting with
+  `power_invalid` (harmless today: power_invalid is 0 everywhere).
+- `load_occupancy` reindexed without flooring, so an off-grid timestamp would
+  vanish silently. Now floored with a warning.
+- Removed `peek`, `tail_rows`, `count_rows` from ingest.py - zero call sites.
+
+**Result movement.** Headline unchanged to within 0.01pp. Usable coverage fell
+0.02-0.41pp per building (correctly - those blocks were fabricated). Lecture
+meter-off +14 h. Decisions now 42 (D01-08, D01-09 added).
+
+**A recurring failure mode, now fixed properly.** The RQ3 comparison count
+flipped 5/5 -> 4/5 -> 5/5 across these fixes. Each time the report's *generated*
+count updated itself and the hand-written sentence beside it did not. Those
+sentences are now generated from the count too, so they cannot contradict it.
+Also fixed a `.capitalize()` that was rendering "Detector o".
+
+**Next.** Nothing outstanding. Team names in docs/PROJECT_REPORT.md are still
+placeholders.

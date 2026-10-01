@@ -49,6 +49,14 @@ def _clean_chunk(chunk: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
     """Apply the invalid-value rules to one chunk; return it plus fix counts."""
     fixes: dict[str, int] = {}
 
+    # Count what was missing in the file *before* we invalidate anything.
+    # Counting afterwards would report every reading rejected by the range rule
+    # in both power_invalid and power_missing, so the two columns of the Phase 1
+    # data-quality table would double-count the same rows.
+    fixes["power_missing_in_source"] = (
+        int(chunk["power"].isna().sum()) if "power" in chunk else 0
+    )
+
     # --- power: negative or absurdly large is not a real reading -------------
     if "power" in chunk:
         bad = (chunk["power"] < 0) | (chunk["power"] > C.POWER_MAX_W)
@@ -71,6 +79,8 @@ def _clean_chunk(chunk: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
         chunk["pf_was_negative"] = neg.astype("int8")
 
     fixes["rows_read"] = len(chunk)
+    # Missing after cleaning = missing in the source + whatever we invalidated.
+    # Both are reported so the table adds up and neither is mistaken for the other.
     fixes["power_missing"] = int(chunk["power"].isna().sum()) if "power" in chunk else 0
     fixes["current_missing"] = (
         int(chunk["current"].isna().sum()) if "current" in chunk else 0
@@ -219,26 +229,3 @@ def ingest_all(force: bool = False) -> dict[str, dict[str, int]]:
         _, s = ingest_meter(meter_key, force=force)
         stats[meter_key] = s
     return stats
-
-
-def peek(path: Path, n: int = 5) -> pd.DataFrame:
-    """First n rows of a raw CSV -- cheap, for exploration cells."""
-    return pd.read_csv(path, nrows=n)
-
-
-def tail_rows(path: Path, n: int = 5) -> pd.DataFrame:
-    """Last n rows of a raw CSV without loading the whole file into memory."""
-    header = pd.read_csv(path, nrows=0).columns
-    keep: list[pd.DataFrame] = []
-    for chunk in pd.read_csv(path, chunksize=CHUNK_ROWS):
-        keep = [chunk.tail(n)]
-    out = keep[0] if keep else pd.DataFrame(columns=header)
-    return out.reset_index(drop=True)
-
-
-def count_rows(path: Path) -> int:
-    """Row count of a raw CSV, read in chunks so memory stays flat."""
-    total = 0
-    for chunk in pd.read_csv(path, usecols=[0], chunksize=CHUNK_ROWS):
-        total += len(chunk)
-    return total

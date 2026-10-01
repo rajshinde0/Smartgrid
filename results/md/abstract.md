@@ -20,14 +20,14 @@ building, and in every building the base load -- the power drawn whether or not
 anyone is present -- is the larger share of mean consumption. As an external
 check, applying the clock-based definition of Masoso & Grobler (2010) to this
 data reproduces their published 56% to within a percentage point (55.2% for the
-Academic building, 54.9% for the Library).
+Academic building, 55.0% for the Library).
 
 Two further results emerged. Occupancy is a **weak predictor**: it raises
-validation R-squared by only +0.109 on average over a time-only model, and
+validation R-squared by only +0.106 on average over a time-only model, and
 explains between 8% and 44% of the variation in power. And a controlled
 experiment on synthetic anomalies shows an occupancy-aware detector is
 **consistently but only marginally** better than a time-only one --
-matched-budget F1 0.289 against 0.287, average precision 0.414 against 0.423 --
+matched-budget F1 0.287 against 0.289, average precision 0.415 against 0.430 --
 with the gains concentrated, as theory predicts, on sustained waste rather than
 on spikes.
 

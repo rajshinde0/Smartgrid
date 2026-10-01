@@ -49,14 +49,14 @@ building, and in every building the base load -- the power drawn whether or not
 anyone is present -- is the larger share of mean consumption. As an external
 check, applying the clock-based definition of Masoso & Grobler (2010) to this
 data reproduces their published 56% to within a percentage point (55.2% for the
-Academic building, 54.9% for the Library).
+Academic building, 55.0% for the Library).
 
 Two further results emerged. Occupancy is a **weak predictor**: it raises
-validation R-squared by only +0.109 on average over a time-only model, and
+validation R-squared by only +0.106 on average over a time-only model, and
 explains between 8% and 44% of the variation in power. And a controlled
 experiment on synthetic anomalies shows an occupancy-aware detector is
 **consistently but only marginally** better than a time-only one --
-matched-budget F1 0.289 against 0.287, average precision 0.414 against 0.423 --
+matched-budget F1 0.287 against 0.289, average precision 0.415 against 0.430 --
 with the gains concentrated, as theory predicts, on sustained waste rather than
 on spikes.
 
@@ -507,13 +507,13 @@ knowing whether anyone was in the building.
 <!-- BEGIN:phase1_data_quality_table -->
 | building | meters | first | last | 10-min intervals | usable % | power missing % | occupancy missing % | meter-off hours | interpolated blocks | outliers flagged (IQR) | outliers flagged (Z>3) | invalid voltage fixed | negative pf readings | total kWh (usable) |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Academic | 1 | 2014-02-16 | 2017-11-03 | 195,406 | 90.48 | 1.93 | 8.04 | 10.50 | 89 | 13,195 | 1,538 | 0 | 0 | 849,996.20 |
-| Boys_Hostel | 2 | 2014-02-16 | 2017-11-03 | 195,407 | 61.88 | 30.23 | 7.96 | 0 | 2,654 | 5,499 | 1,909 | 0 | 0 | 661,097.60 |
-| Girls_Hostel | 2 | 2014-02-16 | 2017-11-03 | 195,406 | 60.14 | 32.27 | 8.05 | 0 | 385 | 1,296 | 578 | 0 | 0 | 293,792.40 |
-| Mess | 1 | 2014-02-16 | 2017-11-03 | 195,405 | 80.62 | 11.10 | 8.69 | 0 | 281 | 3,464 | 1,632 | 0 | 0 | 617,587.90 |
-| Library | 1 | 2014-02-16 | 2017-11-03 | 195,406 | 60.83 | 30.34 | 11.46 | 0 | 166 | 10,002 | 2,350 | 0 | 0 | 201,337.20 |
-| Lecture | 1 | 2014-02-16 | 2017-11-03 | 195,397 | 18.92 | 79.04 | 22.46 | 25,487.50 | 2,269 | 125 | 119 | 0 | 0 | 18,588.80 |
-| Facilities | 1 | 2014-07-10 | 2017-11-03 | 174,600 | 85.84 | 4.51 | 9.71 | 0 | 537 | 7,208 | 190 | 0 | 0 | 282,436.20 |
+| Academic | 1 | 2014-02-16 | 2017-11-03 | 195,406 | 90.46 | 1.96 | 8.04 | 10.50 | 26 | 13,195 | 1,538 | 0 | 0 | 849,728.20 |
+| Boys_Hostel | 2 | 2014-02-16 | 2017-11-03 | 195,407 | 61.47 | 30.65 | 7.96 | 0 | 1,588 | 5,499 | 1,909 | 0 | 0 | 656,715.30 |
+| Girls_Hostel | 2 | 2014-02-16 | 2017-11-03 | 195,406 | 60.02 | 32.39 | 8.05 | 0 | 130 | 1,296 | 578 | 0 | 0 | 293,330.80 |
+| Mess | 1 | 2014-02-16 | 2017-11-03 | 195,405 | 80.54 | 11.18 | 8.69 | 0 | 125 | 3,464 | 1,632 | 0 | 0 | 617,014.90 |
+| Library | 1 | 2014-02-16 | 2017-11-03 | 195,406 | 60.77 | 30.41 | 11.46 | 0 | 25 | 10,002 | 2,350 | 0 | 0 | 201,095.10 |
+| Lecture | 1 | 2014-02-16 | 2017-11-03 | 195,397 | 18.86 | 80.24 | 22.46 | 25,501 | 5 | 125 | 119 | 0 | 0 | 18,583.30 |
+| Facilities | 1 | 2014-07-10 | 2017-11-03 | 174,600 | 85.70 | 4.66 | 9.71 | 0 | 285 | 7,208 | 190 | 0 | 0 | 281,884.90 |
 <!-- END:phase1_data_quality_table -->
 
 ---
@@ -629,7 +629,7 @@ standard error the central limit theorem predicts.
 
 **Distribution fitting.** A Normal and a Log-normal are fitted with `scipy`,
 compared by histogram overlay, Q-Q plot and Kolmogorov-Smirnov test. With
-176,803 readings the KS p-value is uninformative -- it rejects any distribution
+176,752 readings the KS p-value is uninformative -- it rejects any distribution
 -- so the comparison is made on the **KS statistic**, which is an effect size.
 
 **Hypothesis tests.** Semester versus vacation and weekday versus weekend, for
@@ -657,7 +657,7 @@ for the Academic building.
 **Reducing to hourly.** Each row is reshaped from 144 into (24, 6) and averaged
 along the last axis -- a vectorized operation. The same calculation written as
 three nested Python loops gives identical numbers (largest difference 0.0e+00)
-and is 53x slower, which is the practical argument for vectorisation throughout
+and is 78x slower, which is the practical argument for vectorisation throughout
 the project.
 
 **Standardisation.** Each hour column is centred and scaled to unit variance.
@@ -724,7 +724,7 @@ deployed system could legitimately do and involves no test data. Model
 
 **Feature selection.** A correlation filter and `SelectKBest` with
 `f_regression` are reported for transparency but not used to prune: with a few
-dozen encoded columns and 123,764 training rows there is no overfitting pressure
+dozen encoded columns and 123,729 training rows there is no overfitting pressure
 to relieve, and dropping hour dummies would cost interpretability for no gain.
 
 **Notebook:** `notebooks/04_regression.ipynb`.
@@ -900,18 +900,18 @@ occupancy known -- varies from **18.9%** to **90.5%**:
 
 | building | rows | usable rows | pct usable | pct power missing | pct occupancy missing | hours meter off | total kwh |
 |---|---|---|---|---|---|---|---|
-| Academic | 195,406 | 176,807 | 90.48 | 1.93 | 8.04 | 10.50 | 849,996.20 |
-| Boys_Hostel | 195,407 | 120,915 | 61.88 | 30.23 | 7.96 | 0 | 661,097.60 |
-| Girls_Hostel | 195,406 | 117,508 | 60.14 | 32.27 | 8.05 | 0 | 293,792.40 |
-| Mess | 195,405 | 157,526 | 80.62 | 11.10 | 8.69 | 0 | 617,587.90 |
-| Library | 195,406 | 118,872 | 60.83 | 30.34 | 11.46 | 0 | 201,337.20 |
-| Lecture | 195,397 | 36,978 | 18.92 | 79.04 | 22.46 | 25,487.50 | 18,588.80 |
-| Facilities | 174,600 | 149,883 | 85.84 | 4.51 | 9.71 | 0 | 282,436.20 |
+| Academic | 195,406 | 176,756 | 90.46 | 1.96 | 8.04 | 10.50 | 849,728.20 |
+| Boys_Hostel | 195,407 | 120,114 | 61.47 | 30.65 | 7.96 | 0 | 656,715.30 |
+| Girls_Hostel | 195,406 | 117,292 | 60.02 | 32.39 | 8.05 | 0 | 293,330.80 |
+| Mess | 195,405 | 157,376 | 80.54 | 11.18 | 8.69 | 0 | 617,014.90 |
+| Library | 195,406 | 118,742 | 60.77 | 30.41 | 11.46 | 0 | 201,095.10 |
+| Lecture | 195,397 | 36,854 | 18.86 | 80.24 | 22.46 | 25,501 | 18,583.30 |
+| Facilities | 174,600 | 149,637 | 85.70 | 4.66 | 9.71 | 0 | 281,884.90 |
 
 Three observations matter for everything that follows.
 
 1. **Lecture is only 18.9% usable.** Its meter is flagged off
-   for **25,488 hours** -- about
+   for **25,501 hours** -- about
    2.9 years of the 3.7-year window. Its
    results rest on a far smaller sample than any other building, and every table
    it appears in says so.
@@ -1020,13 +1020,13 @@ coefficient.*
 
 | building | n | mean | median | mode (1 kW bins) | min | max | range | variance | std | Q1 | Q3 | IQR | skew |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Academic | 176,807 | 28,844.90 | 23,982.20 | 22,000 | 0 | 87,120.60 | 87,120.60 | 201,275,150.90 | 14,187.10 | 19,227.70 | 34,390.30 | 15,162.60 | 1.16 |
-| Boys_Hostel | 120,915 | 32,804.70 | 30,797.90 | 24,000 | 7,043.30 | 87,537.40 | 80,494.10 | 154,018,094.10 | 12,410.40 | 23,401.10 | 39,920.10 | 16,519 | 0.80 |
-| Girls_Hostel | 117,508 | 15,001.10 | 14,846 | 15,000 | 4,551 | 30,282.90 | 25,731.90 | 18,673,817.60 | 4,321.30 | 11,869.50 | 17,755.90 | 5,886.40 | 0.28 |
-| Mess | 157,526 | 23,523.30 | 22,101 | 18,000 | 233.40 | 133,731.30 | 133,497.80 | 77,655,372.80 | 8,812.20 | 16,869.80 | 28,874 | 12,004.10 | 0.80 |
-| Library | 118,872 | 10,162.40 | 7,690 | 5,000 | 768.30 | 46,145.80 | 45,377.50 | 50,332,418.20 | 7,094.50 | 4,999.50 | 13,659 | 8,659.50 | 1.23 |
-| Lecture | 36,978 | 3,016.20 | 3,899.50 | 4,000 | 0 | 26,491 | 26,491 | 3,317,062.90 | 1,821.30 | 1,487.10 | 4,313.50 | 2,826.30 | 1.69 |
-| Facilities | 149,883 | 11,306.30 | 10,801.30 | 9,000 | 547.20 | 138,916.10 | 138,368.90 | 23,479,779.10 | 4,845.60 | 8,803.80 | 13,118.50 | 4,314.70 | 10.58 |
+| Academic | 176,756 | 28,844.10 | 23,980.20 | 22,000 | 0 | 87,120.60 | 87,120.60 | 201,282,884.10 | 14,187.40 | 19,227.50 | 34,389.70 | 15,162.20 | 1.16 |
+| Boys_Hostel | 120,114 | 32,804.60 | 30,780.20 | 24,000 | 7,043.30 | 87,537.40 | 80,494.10 | 154,674,314 | 12,436.80 | 23,372.50 | 39,942.70 | 16,570.10 | 0.80 |
+| Girls_Hostel | 117,292 | 15,005.20 | 14,850.40 | 15,000 | 4,551 | 30,282.90 | 25,731.90 | 18,664,853.30 | 4,320.30 | 11,876.50 | 17,758.70 | 5,882.20 | 0.28 |
+| Mess | 157,376 | 23,523.90 | 22,101.60 | 18,000 | 233.40 | 133,731.30 | 133,497.80 | 77,672,114.80 | 8,813.20 | 16,869.90 | 28,874.70 | 12,004.80 | 0.80 |
+| Library | 118,742 | 10,161.30 | 7,688.70 | 5,000 | 768.30 | 46,145.80 | 45,377.50 | 50,340,732 | 7,095.10 | 4,999.40 | 13,654.10 | 8,654.60 | 1.23 |
+| Lecture | 36,854 | 3,025.50 | 3,908.40 | 4,000 | 0 | 26,491 | 26,491 | 3,299,591.60 | 1,816.50 | 1,495.10 | 4,313.90 | 2,818.80 | 1.70 |
+| Facilities | 149,637 | 11,302.70 | 10,796.20 | 9,000 | 547.20 | 138,916.10 | 138,368.90 | 23,497,981.10 | 4,847.50 | 8,800.90 | 13,114.20 | 4,313.30 | 10.59 |
 
 The mean exceeds the median in every building, so every distribution is
 right-skewed. The Boys hostel has the highest average power (32.8 kW), above the
@@ -1038,7 +1038,7 @@ median, pointing to a large intermittent load.
 
 Every statistic above was recomputed from its definition with NumPy and asserted
 equal to the pandas result. The largest relative difference across all eleven
-statistics was 6.8e-15 -- floating-point noise. The check runs as an assertion,
+statistics was 4.0e-15 -- floating-point noise. The check runs as an assertion,
 so the notebook fails if they ever diverge.
 
 #### Population versus sample
@@ -1049,7 +1049,7 @@ so the notebook fails if they ever diverge.
 centred on the population mean; the observed standard error (36 kWh) matches the
 predicted one (37 kWh).*
 
-65.2% of 30-day samples land within 5% of the true mean -- **but only because
+64.9% of 30-day samples land within 5% of the true mean -- **but only because
 the days are drawn at random across the whole year**. An audit that happened to
 run in June would measure the air-conditioning season instead. This is why the
 project uses the full 3.7-year record rather than a sample.
@@ -1059,7 +1059,7 @@ project uses the full 3.7-year record rather than a sample.
 | distribution | KS statistic (lower is better) | KS p-value |
 |---|---|---|
 | Normal | 0.17 | < 1e-300 |
-| Log-normal | 0.08 | 1.21e-296 |
+| Log-normal | 0.08 | < 1e-300 |
 
 The log-normal fits better on the KS statistic, as expected for a strictly
 positive right-skewed quantity. But the Q-Q plots show **neither is a good
@@ -1080,25 +1080,25 @@ alongside RMSE, since RMSE is dominated by the tail.
 
 | building | n semester | n vacation | mean semester (W) | mean vacation (W) | difference in means | percent difference | cohens d | effect size label | t-test p | Mann-Whitney p |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Academic | 76,540 | 100,267 | 32,845.30 | 25,791.10 | 7,054.20 | 27.40 | 0.51 | medium | < 1e-300 | < 1e-300 |
-| Boys_Hostel | 56,225 | 64,690 | 37,596.30 | 28,640.10 | 8,956.20 | 31.30 | 0.77 | medium | < 1e-300 | < 1e-300 |
-| Girls_Hostel | 57,592 | 59,916 | 16,082.40 | 13,961.80 | 2,120.60 | 15.20 | 0.51 | medium | < 1e-300 | < 1e-300 |
-| Mess | 73,885 | 83,641 | 25,268.50 | 21,981.60 | 3,286.90 | 15 | 0.38 | small | < 1e-300 | < 1e-300 |
-| Library | 55,967 | 62,905 | 12,437 | 8,138.60 | 4,298.40 | 52.80 | 0.64 | medium | < 1e-300 | < 1e-300 |
-| Lecture | 22,308 | 14,670 | 3,768.60 | 1,872.10 | 1,896.50 | 101.30 | 1.21 | large | < 1e-300 | < 1e-300 |
-| Facilities | 64,891 | 84,992 | 11,089.60 | 11,471.70 | -382.10 | -3.30 | -0.08 | negligible | 2.20e-53 | 1.88e-85 |
+| Academic | 76,510 | 100,246 | 32,844.10 | 25,791.20 | 7,052.90 | 27.30 | 0.51 | medium | < 1e-300 | < 1e-300 |
+| Boys_Hostel | 56,168 | 63,946 | 37,595 | 28,596.90 | 8,998.10 | 31.50 | 0.78 | medium | < 1e-300 | < 1e-300 |
+| Girls_Hostel | 57,493 | 59,799 | 16,085.90 | 13,966.10 | 2,119.80 | 15.20 | 0.51 | medium | < 1e-300 | < 1e-300 |
+| Mess | 73,828 | 83,548 | 25,268.20 | 21,982.50 | 3,285.70 | 14.90 | 0.38 | small | < 1e-300 | < 1e-300 |
+| Library | 55,939 | 62,803 | 12,435.70 | 8,135.50 | 4,300.20 | 52.90 | 0.64 | medium | < 1e-300 | < 1e-300 |
+| Lecture | 22,226 | 14,628 | 3,781 | 1,877.50 | 1,903.50 | 101.40 | 1.22 | large | < 1e-300 | < 1e-300 |
+| Facilities | 64,745 | 84,892 | 11,081.70 | 11,471.30 | -389.60 | -3.40 | -0.08 | negligible | 2.62e-55 | 9.39e-89 |
 
 **Weekday versus weekend:**
 
 | building | mean weekday (W) | mean weekend (W) | difference in means | percent difference | cohens d | effect size label | t-test p | Mann-Whitney p |
 |---|---|---|---|---|---|---|---|---|
-| Academic | 31,625.20 | 21,792.30 | 9,832.80 | 45.10 | 0.73 | medium | < 1e-300 | < 1e-300 |
-| Boys_Hostel | 33,463.10 | 31,120.50 | 2,342.60 | 7.50 | 0.19 | negligible | 3.43e-214 | 3.26e-144 |
-| Girls_Hostel | 15,240.30 | 14,388.50 | 851.80 | 5.90 | 0.20 | negligible | 2.98e-219 | 1.26e-184 |
-| Mess | 24,258.90 | 21,669.30 | 2,589.60 | 12 | 0.30 | small | < 1e-300 | < 1e-300 |
-| Library | 11,408.70 | 6,934.60 | 4,474.20 | 64.50 | 0.66 | medium | < 1e-300 | < 1e-300 |
-| Lecture | 3,144 | 2,267.70 | 876.30 | 38.60 | 0.49 | small | 6.04e-124 | < 1e-300 |
-| Facilities | 11,588.50 | 10,589.50 | 999 | 9.40 | 0.21 | small | 9.31e-219 | < 1e-300 |
+| Academic | 31,624.60 | 21,790.90 | 9,833.70 | 45.10 | 0.73 | medium | < 1e-300 | < 1e-300 |
+| Boys_Hostel | 33,463.60 | 31,118.10 | 2,345.50 | 7.50 | 0.19 | negligible | 2.55e-212 | 5.08e-143 |
+| Girls_Hostel | 15,244.20 | 14,392.60 | 851.70 | 5.90 | 0.20 | negligible | 8.35e-219 | 2.79e-184 |
+| Mess | 24,260 | 21,668.80 | 2,591.10 | 12 | 0.30 | small | < 1e-300 | < 1e-300 |
+| Library | 11,408.20 | 6,934.10 | 4,474.10 | 64.50 | 0.66 | medium | < 1e-300 | < 1e-300 |
+| Lecture | 3,154.50 | 2,271 | 883.50 | 38.90 | 0.49 | small | 1.08e-125 | < 1e-300 |
+| Facilities | 11,584.40 | 10,586.90 | 997.50 | 9.40 | 0.21 | small | 2.23e-217 | < 1e-300 |
 
 Every p-value here is small enough to print in scientific notation, so on a
 naive "p < 0.05" reading every difference is significant and the p-values tell
@@ -1106,7 +1106,7 @@ us nothing beyond the fact that we have a lot of data. The **Cohen's d** column
 carries the finding, and it is **not uniform across the campus**.
 
 *Semester versus vacation* splits the buildings in two. The **Lecture** (d =
-1.21) show large effects -- buildings whose purpose empties out when term ends.
+1.22) show large effects -- buildings whose purpose empties out when term ends.
 But the **Facilities** (d = -0.08) barely move, and no buildings actually
 consumes **more** power during vacation, because the Indian summer vacation
 coincides with Delhi's hottest months: cooling load rises exactly as occupation
@@ -1133,7 +1133,7 @@ what the campus consumed.*
 ![Average daily energy use by building](../figures/fig_02_bar_daily_energy.png)
 
 *The fair comparison, independent of how many days each meter recorded. The Boys
-hostel is the largest daily consumer at 742 kWh/day.*
+hostel is the largest daily consumer at 738 kWh/day.*
 
 ![Distribution of 10-minute power readings by building](../figures/fig_02_box_power_by_building.png)
 
@@ -1161,13 +1161,13 @@ left: even at minimum occupancy the building draws a substantial load.*
 
 | building | kind | n | pearson r | pearson p | spearman r | spearman p | r squared |
 |---|---|---|---|---|---|---|---|
-| Academic | commercial | 176,807 | 0.67 | < 1e-300 | 0.65 | < 1e-300 | 0.45 |
-| Boys_Hostel | residential | 120,915 | 0.65 | < 1e-300 | 0.66 | < 1e-300 | 0.42 |
-| Girls_Hostel | residential | 117,508 | 0.45 | < 1e-300 | 0.43 | < 1e-300 | 0.20 |
-| Mess | commercial | 157,526 | 0.41 | < 1e-300 | 0.45 | < 1e-300 | 0.17 |
-| Library | commercial | 118,872 | 0.50 | < 1e-300 | 0.61 | < 1e-300 | 0.25 |
-| Lecture | commercial | 36,978 | 0.31 | < 1e-300 | 0.36 | < 1e-300 | 0.10 |
-| Facilities | commercial | 149,883 | 0.27 | < 1e-300 | 0.37 | < 1e-300 | 0.07 |
+| Academic | commercial | 176,756 | 0.67 | < 1e-300 | 0.65 | < 1e-300 | 0.45 |
+| Boys_Hostel | residential | 120,114 | 0.65 | < 1e-300 | 0.66 | < 1e-300 | 0.42 |
+| Girls_Hostel | residential | 117,292 | 0.45 | < 1e-300 | 0.43 | < 1e-300 | 0.20 |
+| Mess | commercial | 157,376 | 0.41 | < 1e-300 | 0.45 | < 1e-300 | 0.17 |
+| Library | commercial | 118,742 | 0.50 | < 1e-300 | 0.61 | < 1e-300 | 0.25 |
+| Lecture | commercial | 36,854 | 0.31 | < 1e-300 | 0.36 | < 1e-300 | 0.10 |
+| Facilities | commercial | 149,637 | 0.27 | < 1e-300 | 0.37 | < 1e-300 | 0.07 |
 
 Occupancy and power are correlated in every building but never strongly. The
 best case is **Academic at r = 0.67**, meaning occupancy explains about 44% of
@@ -1317,13 +1317,13 @@ Before any model result can be read, one thing has to be established:
 
 | building | mean kW 2014 | mean kW 2015 | mean kW 2016 | mean kW 2017 | growth 2014-2017 % | r(power,occ) 2014 | r(power,occ) 2017 |
 |---|---|---|---|---|---|---|---|
-| Academic | 23.90 | 27.70 | 29.80 | 34.10 | 42.40 | 0.71 | 0.45 |
-| Boys_Hostel | 27.20 | 32.30 | 32.90 | 39.60 | 45.70 | 0.61 | 0.62 |
-| Girls_Hostel | 12.90 | 14.10 | 15.70 | 16.90 | 31.70 | 0.41 | 0.50 |
+| Academic | 23.90 | 27.70 | 29.80 | 34 | 42.40 | 0.71 | 0.45 |
+| Boys_Hostel | 27.20 | 32.30 | 32.90 | 39.80 | 46.20 | 0.61 | 0.62 |
+| Girls_Hostel | 12.90 | 14.10 | 15.70 | 16.90 | 31.60 | 0.41 | 0.50 |
 | Mess | 19.70 | 21.80 | 25.50 | 26.80 | 35.70 | 0.36 | 0.47 |
-| Library | 7.50 | 11 | 10.60 | 10.30 | 36.80 | 0.54 | 0.39 |
-| Lecture | 3.40 | 2.40 | 3.20 | 3.10 | -6.70 | 0.38 | 0.13 |
-| Facilities | 8.80 | 10.30 | 11.80 | 13.10 | 48.50 | 0.04 | 0.40 |
+| Library | 7.50 | 11 | 10.60 | 10.20 | 36.80 | 0.54 | 0.39 |
+| Lecture | 3.40 | 2.40 | 3.20 | 3.20 | -6.60 | 0.38 | 0.13 |
+| Facilities | 8.80 | 10.30 | 11.80 | 13.10 | 48.40 | 0.04 | 0.40 |
 
 ![Mean power by year, indexed to 2014, and total growth per building](../figures/fig_04_drift_by_year.png)
 
@@ -1342,56 +1342,56 @@ which is why model selection uses the validation split.
 
 | building | model | train R2 | val R2 | test R2 | test R2 (drift-corrected) | val MAE kW | test MAE kW | test RMSE kW |
 |---|---|---|---|---|---|---|---|---|
-| Academic | A: power ~ occupancy | 0.56 | - | -0.17 | - | - | 11.67 | 18.07 |
+| Academic | A: power ~ occupancy | 0.56 | - | -0.17 | - | - | 11.66 | 18.06 |
 | Academic | B: time only | 0.62 | 0.51 | 0.09 | 0.17 | 7.57 | 11.18 | 15.94 |
-| Academic | C: time + occupancy | 0.73 | 0.52 | 0.01 | 0.07 | 7.71 | 10.74 | 16.59 |
-| Academic | D: random forest (time + occupancy) | 0.84 | 0.59 | 0.01 | 0.11 | 6.50 | 10.37 | 16.61 |
-| Boys_Hostel | A: power ~ occupancy | 0.40 | - | 0.10 | - | - | 8.56 | 12.01 |
-| Boys_Hostel | B: time only | 0.68 | 0.23 | -0.01 | 0.29 | 9.14 | 9.77 | 12.73 |
-| Boys_Hostel | C: time + occupancy | 0.77 | 0.45 | 0.07 | 0.28 | 8 | 9.38 | 12.22 |
-| Boys_Hostel | D: random forest (time + occupancy) | 0.74 | 0.59 | 0.18 | 0.22 | 6.63 | 8.47 | 11.50 |
-| Girls_Hostel | A: power ~ occupancy | 0.21 | - | -0.88 | - | - | 3.62 | 4.52 |
+| Academic | C: time + occupancy | 0.73 | 0.52 | 0.01 | 0.07 | 7.71 | 10.73 | 16.59 |
+| Academic | D: random forest (time + occupancy) | 0.84 | 0.59 | 0.01 | 0.11 | 6.53 | 10.36 | 16.60 |
+| Boys_Hostel | A: power ~ occupancy | 0.41 | - | 0.11 | - | - | 8.59 | 12.04 |
+| Boys_Hostel | B: time only | 0.68 | 0.23 | 0.01 | 0.29 | 9.13 | 9.69 | 12.70 |
+| Boys_Hostel | C: time + occupancy | 0.78 | 0.42 | 0.08 | 0.27 | 8.26 | 9.36 | 12.25 |
+| Boys_Hostel | D: random forest (time + occupancy) | 0.74 | 0.59 | 0.16 | 0.22 | 6.52 | 8.56 | 11.66 |
+| Girls_Hostel | A: power ~ occupancy | 0.21 | - | -0.88 | - | - | 3.61 | 4.52 |
 | Girls_Hostel | B: time only | 0.69 | -0.63 | -0.84 | -0.65 | 3.47 | 3.62 | 4.47 |
-| Girls_Hostel | C: time + occupancy | 0.73 | -0.24 | -0.86 | -0.57 | 2.96 | 3.68 | 4.49 |
-| Girls_Hostel | D: random forest (time + occupancy) | 0.69 | -0.42 | -0.71 | -0.50 | 3.21 | 3.46 | 4.31 |
+| Girls_Hostel | C: time + occupancy | 0.73 | -0.23 | -0.86 | -0.57 | 2.96 | 3.68 | 4.50 |
+| Girls_Hostel | D: random forest (time + occupancy) | 0.69 | -0.42 | -0.71 | -0.50 | 3.20 | 3.46 | 4.31 |
 | Mess | A: power ~ occupancy | 0.15 | - | -0.08 | - | - | 7.53 | 10.07 |
-| Mess | B: time only | 0.43 | 0.33 | -0.05 | 0.06 | 4.65 | 7.66 | 9.89 |
-| Mess | C: time + occupancy | 0.44 | 0.33 | -0.03 | 0.07 | 4.60 | 7.61 | 9.83 |
-| Mess | D: random forest (time + occupancy) | 0.54 | 0.22 | -0.05 | 0 | 4.86 | 7.65 | 9.92 |
-| Library | A: power ~ occupancy | 0.30 | - | -0.05 | - | - | 6.84 | 8.54 |
-| Library | B: time only | 0.36 | -0.26 | 0.04 | -0.03 | 4.48 | 6.75 | 8.19 |
-| Library | C: time + occupancy | 0.46 | -0.06 | -0.10 | -0.13 | 4.02 | 7.05 | 8.73 |
-| Library | D: random forest (time + occupancy) | 0.62 | 0.15 | -0.09 | -0.09 | 3.14 | 6.62 | 8.69 |
-| Lecture | A: power ~ occupancy | 0.17 | - | -0.30 | - | - | 1.36 | 1.59 |
-| Lecture | B: time only | 0.47 | -0.20 | 0.24 | -0.12 | 1.26 | 0.84 | 1.21 |
-| Lecture | C: time + occupancy | 0.48 | -0.19 | 0.24 | -0.12 | 1.27 | 0.87 | 1.21 |
-| Lecture | D: random forest (time + occupancy) | 0.70 | -0.05 | 0.25 | -0.04 | 1.24 | 0.80 | 1.20 |
-| Facilities | A: power ~ occupancy | 0.06 | - | -0.67 | - | - | 2.96 | 3.92 |
-| Facilities | B: time only | 0.27 | 0.32 | 0.03 | 0.19 | 1.92 | 2.23 | 3 |
-| Facilities | C: time + occupancy | 0.28 | 0.25 | 0.04 | 0.15 | 2.04 | 2.21 | 2.98 |
-| Facilities | D: random forest (time + occupancy) | 0.44 | 0.34 | -0.08 | 0.04 | 1.88 | 2.32 | 3.16 |
+| Mess | B: time only | 0.43 | 0.32 | -0.04 | 0.06 | 4.65 | 7.65 | 9.89 |
+| Mess | C: time + occupancy | 0.44 | 0.33 | -0.03 | 0.07 | 4.61 | 7.61 | 9.83 |
+| Mess | D: random forest (time + occupancy) | 0.54 | 0.22 | -0.05 | 0 | 4.86 | 7.64 | 9.92 |
+| Library | A: power ~ occupancy | 0.30 | - | -0.05 | - | - | 6.82 | 8.53 |
+| Library | B: time only | 0.36 | -0.26 | 0.04 | -0.03 | 4.49 | 6.73 | 8.17 |
+| Library | C: time + occupancy | 0.46 | -0.06 | -0.09 | -0.12 | 4.02 | 7.03 | 8.72 |
+| Library | D: random forest (time + occupancy) | 0.62 | 0.16 | -0.08 | -0.08 | 3.11 | 6.60 | 8.67 |
+| Lecture | A: power ~ occupancy | 0.17 | - | -0.32 | - | - | 1.35 | 1.57 |
+| Lecture | B: time only | 0.48 | -0.20 | 0.23 | -0.13 | 1.26 | 0.83 | 1.20 |
+| Lecture | C: time + occupancy | 0.49 | -0.19 | 0.22 | -0.13 | 1.27 | 0.86 | 1.21 |
+| Lecture | D: random forest (time + occupancy) | 0.70 | -0.05 | 0.22 | -0.06 | 1.23 | 0.82 | 1.21 |
+| Facilities | A: power ~ occupancy | 0.06 | - | -0.67 | - | - | 2.97 | 3.94 |
+| Facilities | B: time only | 0.27 | 0.30 | 0.03 | 0.20 | 1.92 | 2.24 | 3 |
+| Facilities | C: time + occupancy | 0.28 | 0.24 | 0.04 | 0.16 | 2.03 | 2.21 | 2.99 |
+| Facilities | D: random forest (time + occupancy) | 0.44 | 0.33 | -0.07 | 0.04 | 1.87 | 2.32 | 3.16 |
 
 #### Does occupancy help? (Research question 2)
 
 | building | B val R2 | C val R2 | R2 gain from occupancy | B val MAE kW | C val MAE kW | MAE improvement % | D (forest) val R2 |
 |---|---|---|---|---|---|---|---|
 | Academic | 0.51 | 0.52 | 0.01 | 7.57 | 7.71 | -1.90 | 0.59 |
-| Boys_Hostel | 0.23 | 0.45 | 0.22 | 9.14 | 8 | 12.40 | 0.59 |
-| Girls_Hostel | -0.63 | -0.24 | 0.39 | 3.47 | 2.96 | 14.50 | -0.42 |
-| Mess | 0.33 | 0.33 | 0.01 | 4.65 | 4.60 | 0.90 | 0.22 |
-| Library | -0.26 | -0.06 | 0.20 | 4.48 | 4.02 | 10.30 | 0.15 |
-| Lecture | -0.20 | -0.19 | 0.01 | 1.26 | 1.27 | -0.60 | -0.05 |
-| Facilities | 0.32 | 0.25 | -0.06 | 1.92 | 2.04 | -5.90 | 0.34 |
+| Boys_Hostel | 0.23 | 0.42 | 0.19 | 9.13 | 8.26 | 9.50 | 0.59 |
+| Girls_Hostel | -0.63 | -0.23 | 0.40 | 3.47 | 2.96 | 14.50 | -0.42 |
+| Mess | 0.32 | 0.33 | 0.01 | 4.65 | 4.61 | 0.90 | 0.22 |
+| Library | -0.26 | -0.06 | 0.20 | 4.49 | 4.02 | 10.50 | 0.16 |
+| Lecture | -0.20 | -0.19 | 0.01 | 1.26 | 1.27 | -0.70 | -0.05 |
+| Facilities | 0.30 | 0.24 | -0.06 | 1.92 | 2.03 | -5.80 | 0.33 |
 
 ![Validation R-squared for models B and C, and the gain from adding occupancy](../figures/fig_04_model_comparison.png)
 
 *Occupancy improves validation R-squared in 6 of the 7 buildings, by a mean of
-+0.109, but the gain ranges from -0.062 to +0.394.*
++0.106, but the gain ranges from -0.062 to +0.395.*
 
 **Yes -- in most buildings, modestly, and very unevenly.** Adding occupancy
 raises validation R-squared in **6 of 7** buildings, with a mean gain of
-**+0.109**. But the spread is the real story: the largest gain is Girls Hostel
-at **+0.394**, while occupancy makes the model slightly *worse* in Facilities
+**+0.106**. But the spread is the real story: the largest gain is Girls Hostel
+at **+0.395**, while occupancy makes the model slightly *worse* in Facilities
 (-0.062 at worst). It improves MAE in 4 of 7.
 
 **A note on how to read these numbers.** Several validation R-squared values are
@@ -1409,7 +1409,7 @@ number of people in them.** The same conclusion arrives independently from the
 Phase 2 correlations and the Phase 3 flat daily profiles.
 
 The pattern across buildings is also readable. Occupancy helps most where people
-genuinely drive the load -- the Girls hostel (+0.394) and the Library (+0.195)
+genuinely drive the load -- the Girls hostel (+0.395) and the Library (+0.198)
 -- and helps least, or slightly hurts, in the Mess and Facilities, whose loads
 are driven by equipment schedules and weather rather than by headcount.
 
@@ -1418,17 +1418,17 @@ are driven by equipment schedules and weather rather than by headcount.
 | building | model | CV MAE kW (mean) | CV MAE kW (sd) | folds |
 |---|---|---|---|---|
 | Academic | B: time only | 6.82 | 0.85 | 5 |
-| Academic | C: time + occupancy | 5.76 | 0.35 | 5 |
-| Boys_Hostel | B: time only | 7.17 | 1.83 | 5 |
-| Boys_Hostel | C: time + occupancy | 5.09 | 0.20 | 5 |
-| Girls_Hostel | B: time only | 2.45 | 0.46 | 5 |
+| Academic | C: time + occupancy | 5.77 | 0.35 | 5 |
+| Boys_Hostel | B: time only | 7.16 | 1.80 | 5 |
+| Boys_Hostel | C: time + occupancy | 5.03 | 0.26 | 5 |
+| Girls_Hostel | B: time only | 2.45 | 0.45 | 5 |
 | Girls_Hostel | C: time + occupancy | 2.48 | 0.66 | 5 |
 | Mess | B: time only | 5.65 | 1.61 | 5 |
 | Mess | C: time + occupancy | 5.58 | 1.66 | 5 |
-| Library | B: time only | 5.12 | 1.28 | 5 |
-| Library | C: time + occupancy | 4.54 | 1.46 | 5 |
-| Lecture | B: time only | 1.50 | 1.13 | 5 |
-| Lecture | C: time + occupancy | 1.42 | 0.96 | 5 |
+| Library | B: time only | 5.12 | 1.27 | 5 |
+| Library | C: time + occupancy | 4.55 | 1.45 | 5 |
+| Lecture | B: time only | 1.46 | 1.05 | 5 |
+| Lecture | C: time + occupancy | 1.37 | 0.87 | 5 |
 | Facilities | B: time only | 2.88 | 0.58 | 5 |
 | Facilities | C: time + occupancy | 2.80 | 0.64 | 5 |
 
@@ -1437,12 +1437,12 @@ are driven by equipment schedules and weather rather than by headcount.
 | building | kind | a: base load (kW) | b: watts per occupant | mean power (kW) | base load as % of mean | night 02-06 median (kW) | R2 in sample |
 |---|---|---|---|---|---|---|---|
 | Academic | commercial | 16.95 | 128.10 | 27.21 | 62.30 | 18.96 | 0.56 |
-| Boys_Hostel | residential | 16.62 | 65.50 | 30.87 | 53.90 | 32.60 | 0.40 |
+| Boys_Hostel | residential | 16.32 | 66.60 | 30.87 | 52.90 | 32.67 | 0.41 |
 | Girls_Hostel | residential | 10.60 | 36.30 | 14.12 | 75.10 | 14.82 | 0.21 |
-| Mess | commercial | 18.85 | 61.70 | 22.67 | 83.10 | 16.12 | 0.15 |
-| Library | commercial | 7.24 | 68.60 | 10.31 | 70.30 | 5.84 | 0.30 |
-| Lecture | commercial | 2.13 | 7.40 | 2.94 | 72.40 | 1.07 | 0.17 |
-| Facilities | commercial | 9.27 | 232.30 | 10.82 | 85.60 | 9.74 | 0.06 |
+| Mess | commercial | 18.85 | 61.70 | 22.67 | 83.20 | 16.12 | 0.15 |
+| Library | commercial | 7.24 | 68.50 | 10.31 | 70.30 | 5.84 | 0.30 |
+| Lecture | commercial | 2.14 | 7.30 | 2.95 | 72.50 | 1.07 | 0.17 |
+| Facilities | commercial | 9.27 | 232 | 10.82 | 85.60 | 9.75 | 0.06 |
 
 ![Base load against responsiveness, one point per building](../figures/fig_04_base_load_vs_responsiveness.png)
 
@@ -1470,19 +1470,19 @@ relationship that does not exist.
 
 | max depth | train MAE w | val MAE w |
 |---|---|---|
-| 2 | 6,482.60 | 6,519.20 |
-| 4 | 5,644.90 | 6,229 |
-| 6 | 4,926.90 | 7,123.90 |
-| 8 | 4,418.60 | 6,706.30 |
-| 12 | 3,747.30 | 6,499.80 |
-| 16 | 3,322.80 | 6,402 |
-| 24 | 2,840.50 | 6,412.90 |
-| unlimited | 2,689.80 | 6,431 |
+| 2 | 6,481.20 | 6,519.60 |
+| 4 | 5,642.90 | 6,243.50 |
+| 6 | 4,935 | 7,190.10 |
+| 8 | 4,416.70 | 6,694.40 |
+| 12 | 3,746.40 | 6,533.90 |
+| 16 | 3,322.20 | 6,408.10 |
+| 24 | 2,838.10 | 6,406 |
+| unlimited | 2,688.30 | 6,423.90 |
 
 ![Training and validation error against model complexity](../figures/fig_04_overfitting_curves.png)
 
 *The forest shows the textbook picture: at unlimited depth its training error is
-2.69 kW but its validation error is 6.43 kW, a gap of 2.4x. That gap is
+2.69 kW but its validation error is 6.42 kW, a gap of 2.4x. That gap is
 overfitting made visible.*
 
 #### What the forest uses
@@ -1496,8 +1496,8 @@ overfitting made visible.*
 
 | detector | mean residual kW | sd residual kW | median kW |
 |---|---|---|---|
-| T (model B, time only) | -0.21 | 15.18 | -4.67 |
-| O (model C, time + occupancy) | -2.09 | 15.93 | -6.36 |
+| T (model B, time only) | -0.21 | 15.18 | -4.68 |
+| O (model C, time + occupancy) | -2.10 | 15.93 | -6.36 |
 
 ![Residual distributions for models B and C, and residuals against prediction](../figures/fig_04_residuals_academic.png)
 
@@ -1514,13 +1514,13 @@ watts.*
 
 | building | kind | p95 occupancy | threshold (5% of p95) | usable intervals | intervals at/below threshold | % of intervals | threshold reachable |
 |---|---|---|---|---|---|---|---|
-| Academic | commercial | 258 | 12.90 | 176,807 | 11,533 | 6.52 | True |
-| Boys_Hostel | residential | 421 | 21.05 | 120,915 | 7,154 | 5.92 | True |
-| Girls_Hostel | residential | 180 | 9 | 117,508 | 7,371 | 6.27 | True |
-| Mess | commercial | 177 | 8.85 | 157,526 | 19,807 | 12.57 | True |
-| Library | commercial | 182 | 9.10 | 118,872 | 33,721 | 28.37 | True |
-| Lecture | commercial | 297 | 14.85 | 36,978 | 8,288 | 22.41 | True |
-| Facilities | commercial | 18 | 0.90 | 149,883 | 0 | 0 | False |
+| Academic | commercial | 258 | 12.90 | 176,756 | 11,530 | 6.52 | True |
+| Boys_Hostel | residential | 421 | 21.05 | 120,114 | 7,120 | 5.93 | True |
+| Girls_Hostel | residential | 180 | 9 | 117,292 | 7,355 | 6.27 | True |
+| Mess | commercial | 177 | 8.85 | 157,376 | 19,798 | 12.58 | True |
+| Library | commercial | 182 | 9.10 | 118,742 | 33,681 | 28.36 | True |
+| Lecture | commercial | 298 | 14.90 | 36,854 | 8,258 | 22.41 | True |
+| Facilities | commercial | 18 | 0.90 | 149,637 | 0 | 0 | False |
 
 Facilities is the exception predicted in Phase 0: its occupancy runs 1 to 47
 with a 95th percentile of 18, so the threshold is **0.9** -- below its own
@@ -1532,13 +1532,13 @@ the sensitivity curve instead.
 
 | building | kind | threshold | coverage % | total kWh measured | low-occupancy kWh | low-occupancy energy share % | % of intervals low | mean power overall (kW) | mean power when low (kW) | intensity ratio | base load a (kW) | watts per occupant b |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Academic | commercial | 12.90 | 90.50 | 849,996.20 | 40,846.90 | 4.81 | 6.52 | 28.84 | 21.25 | 0.74 | 16.95 | 128.10 |
-| Boys_Hostel | residential | 21.05 | 61.90 | 661,097.60 | 29,281.60 | 4.43 | 5.92 | 32.80 | 24.56 | 0.75 | 16.62 | 65.50 |
-| Girls_Hostel | residential | 9 | 60.10 | 293,792.40 | 14,661 | 4.99 | 6.27 | 15 | 11.93 | 0.80 | 10.60 | 36.30 |
-| Mess | commercial | 8.85 | 80.60 | 617,587.90 | 57,622.30 | 9.33 | 12.57 | 23.52 | 17.46 | 0.74 | 18.85 | 61.70 |
-| Library | commercial | 9.10 | 60.80 | 201,337.20 | 35,126.20 | 17.45 | 28.37 | 10.16 | 6.25 | 0.61 | 7.24 | 68.60 |
-| Lecture | commercial | 14.85 | 18.90 | 18,588.80 | 3,542.30 | 19.06 | 22.41 | 3.02 | 2.56 | 0.85 | 2.13 | 7.40 |
-| Facilities | commercial | 0.90 | 85.80 | 282,436.20 | 0 | 0 | 0 | 11.31 | - | - | 9.27 | 232.30 |
+| Academic | commercial | 12.90 | 90.50 | 849,728.20 | 40,835.60 | 4.81 | 6.52 | 28.84 | 21.25 | 0.74 | 16.95 | 128.10 |
+| Boys_Hostel | residential | 21.05 | 61.50 | 656,715.30 | 29,099.70 | 4.43 | 5.93 | 32.80 | 24.52 | 0.75 | 16.32 | 66.60 |
+| Girls_Hostel | residential | 9 | 60 | 293,330.80 | 14,618 | 4.98 | 6.27 | 15.01 | 11.92 | 0.80 | 10.60 | 36.30 |
+| Mess | commercial | 8.85 | 80.50 | 617,014.90 | 57,595.30 | 9.33 | 12.58 | 23.52 | 17.45 | 0.74 | 18.85 | 61.70 |
+| Library | commercial | 9.10 | 60.80 | 201,095.10 | 35,060.80 | 17.43 | 28.36 | 10.16 | 6.25 | 0.61 | 7.24 | 68.50 |
+| Lecture | commercial | 14.90 | 18.90 | 18,583.30 | 3,541.80 | 19.06 | 22.41 | 3.03 | 2.57 | 0.85 | 2.14 | 7.30 |
+| Facilities | commercial | 0.90 | 85.70 | 281,884.90 | 0 | 0 | 0 | 11.30 | - | - | 9.27 | 232 |
 
 ![Low-occupancy energy share and intensity ratio, per building](../figures/fig_05_headline.png)
 
@@ -1568,21 +1568,21 @@ is effectively continuous, and in a building this small it is not.
 | building | kind | out-of-hours share % (clock rule) | % intervals out of hours | low-occupancy share % (occupancy rule) | % intervals low occupancy |
 |---|---|---|---|---|---|
 | Academic | commercial | 55.25 | 69.98 | 4.81 | 6.52 |
-| Boys_Hostel | residential | 74.07 | 69.65 | 4.43 | 5.92 |
-| Girls_Hostel | residential | 73.61 | 70.06 | 4.99 | 6.27 |
-| Mess | commercial | 66.33 | 69.93 | 9.33 | 12.57 |
-| Library | commercial | 54.94 | 68.79 | 17.45 | 28.37 |
-| Lecture | commercial | 22.08 | 27.66 | 19.06 | 22.41 |
-| Facilities | commercial | 63.67 | 68.66 | 0 | 0 |
+| Boys_Hostel | residential | 74.06 | 69.64 | 4.43 | 5.93 |
+| Girls_Hostel | residential | 73.64 | 70.09 | 4.98 | 6.27 |
+| Mess | commercial | 66.35 | 69.96 | 9.33 | 12.58 |
+| Library | commercial | 54.96 | 68.82 | 17.43 | 28.36 |
+| Lecture | commercial | 22.09 | 27.65 | 19.06 | 22.41 |
+| Facilities | commercial | 63.68 | 68.66 | 0 | 0 |
 
 ![Clock-based and occupancy-based definitions against the published figures](../figures/fig_05_published_comparison.png)
 
 *Applying Masoso & Grobler's own clock-based definition to this data gives the
-Academic building 55.2% and the Library 54.9%, against their published 56%.*
+Academic building 55.2% and the Library 55.0%, against their published 56%.*
 
 **This is the strongest external check in the project.** Applying Masoso &
 Grobler's clock-based definition to our data gives the Academic building
-**55.2%** and the Library **54.9%** -- against their published **56%**, from
+**55.2%** and the Library **55.0%** -- against their published **56%**, from
 different buildings on a different continent fifteen years earlier. Landing
 within a percentage point is good evidence that the pipeline measures what it
 claims to.
@@ -1601,12 +1601,12 @@ independently confirms.
 | building | base load a from model A (kW) | night 02:00-06:00 median (kW) | difference (kW) | difference % | mean power (kW) | base load as % of mean |
 |---|---|---|---|---|---|---|
 | Academic | 16.95 | 19.74 | -2.79 | -14.10 | 28.84 | 58.80 |
-| Boys_Hostel | 16.62 | 33.49 | -16.87 | -50.40 | 32.80 | 50.70 |
-| Girls_Hostel | 10.60 | 15.43 | -4.83 | -31.30 | 15 | 70.70 |
+| Boys_Hostel | 16.32 | 33.49 | -17.17 | -51.30 | 32.80 | 49.70 |
+| Girls_Hostel | 10.60 | 15.43 | -4.83 | -31.30 | 15.01 | 70.60 |
 | Mess | 18.85 | 16.76 | 2.09 | 12.40 | 23.52 | 80.10 |
-| Library | 7.24 | 5.69 | 1.55 | 27.30 | 10.16 | 71.20 |
-| Lecture | 2.13 | 3.96 | -1.83 | -46.30 | 3.02 | 70.60 |
-| Facilities | 9.27 | 10.18 | -0.91 | -8.90 | 11.31 | 82 |
+| Library | 7.24 | 5.69 | 1.55 | 27.30 | 10.16 | 71.30 |
+| Lecture | 2.14 | 3.97 | -1.83 | -46 | 3.03 | 70.70 |
+| Facilities | 9.27 | 10.18 | -0.91 | -8.90 | 11.30 | 82 |
 
 ![Model A intercept against the directly measured night-time median](../figures/fig_05_base_load_vs_night.png)
 
@@ -1625,13 +1625,13 @@ unoccupied and been wrong.
 
 | building | base load kw | mean power kw | variable share pct | responsiveness rank | intensity ratio | watts per occupant b | model A vs night median % | model A reliable? | measured rank |
 |---|---|---|---|---|---|---|---|---|---|
-| Library | 7.24 | 10.16 | 28.70 | 5 | 0.61 | 68.60 | 27.30 | NO -- extrapolated | 1 |
+| Library | 7.24 | 10.16 | 28.70 | 5 | 0.61 | 68.50 | 27.30 | NO -- extrapolated | 1 |
 | Academic | 16.95 | 28.84 | 41.20 | 2 | 0.74 | 128.10 | -14.10 | yes | 2 |
 | Mess | 18.85 | 23.52 | 19.90 | 6 | 0.74 | 61.70 | 12.40 | yes | 3 |
-| Boys_Hostel | 16.62 | 32.80 | 49.30 | 1 | 0.75 | 65.50 | -50.40 | NO -- extrapolated | 4 |
-| Girls_Hostel | 10.60 | 15 | 29.30 | 4 | 0.80 | 36.30 | -31.30 | NO -- extrapolated | 5 |
-| Lecture | 2.13 | 3.02 | 29.50 | 3 | 0.85 | 7.40 | -46.30 | NO -- extrapolated | 6 |
-| Facilities | 9.27 | 11.31 | 18 | 7 | - | 232.30 | -8.90 | yes | - |
+| Boys_Hostel | 16.32 | 32.80 | 50.20 | 1 | 0.75 | 66.60 | -51.30 | NO -- extrapolated | 4 |
+| Girls_Hostel | 10.60 | 15.01 | 29.40 | 3 | 0.80 | 36.30 | -31.30 | NO -- extrapolated | 5 |
+| Lecture | 2.14 | 3.03 | 29.40 | 3 | 0.85 | 7.30 | -46 | NO -- extrapolated | 6 |
+| Facilities | 9.27 | 11.30 | 18 | 7 | - | 232 | -8.90 | yes | - |
 
 ![How much of each building's load actually follows its occupants](../figures/fig_05_responsiveness.png)
 
@@ -1644,7 +1644,7 @@ average power when nearly empty) and the least is **Lecture** (85%). Ranked by
 the *modelled* non-base-load share the order differs, because that version
 extrapolates model A down to zero occupancy -- and for the two dormitories and
 the Lecture building that point lies far outside the occupancy range ever
-observed. In the worst case the extrapolated intercept sits 50% away from the
+observed. In the worst case the extrapolated intercept sits 51% away from the
 directly measured night-time median.
 
 Where the two disagree we rank on the measured ratio and flag the modelled value
@@ -1657,12 +1657,12 @@ fixed share is larger than the modelled figure, not smaller.
 | building | semester | vacation | change (pp) |
 |---|---|---|---|
 | Academic | 2.47 | 7.08 | 4.61 |
-| Boys_Hostel | 2.04 | 7.16 | 5.12 |
+| Boys_Hostel | 2.03 | 7.21 | 5.18 |
 | Facilities | 0 | 0 | 0 |
-| Girls_Hostel | 2.18 | 8.10 | 5.92 |
+| Girls_Hostel | 2.17 | 8.10 | 5.93 |
 | Lecture | 16.31 | 27.46 | 11.15 |
-| Library | 9.33 | 28.48 | 19.15 |
-| Mess | 3.43 | 15.32 | 11.89 |
+| Library | 9.33 | 28.47 | 19.14 |
+| Mess | 3.43 | 15.33 | 11.90 |
 
 ![Low-occupancy share and mean power, semester against vacation](../figures/fig_05_semester_vacation.png)
 
@@ -1673,10 +1673,10 @@ behaviour rather than the definition.*
 
 | building | supply | total kwh | low occ kwh | share pct | mean power w | mean power low occ w |
 |---|---|---|---|---|---|---|
-| Boys_Hostel | mains | 349,432.20 | 15,378.80 | 4.40 | 17,560 | 13,007.10 |
-| Boys_Hostel | ups | 305,047.60 | 13,668.20 | 4.48 | 15,253.10 | 11,514.90 |
-| Girls_Hostel | mains | 148,341.70 | 7,504.20 | 5.06 | 7,593.10 | 6,127.50 |
-| Girls_Hostel | ups | 144,997.70 | 7,095.40 | 4.89 | 7,409.70 | 5,792.20 |
+| Boys_Hostel | mains | 349,178.90 | 15,371.30 | 4.40 | 17,560.10 | 13,006.30 |
+| Boys_Hostel | ups | 304,129.70 | 13,640.30 | 4.49 | 15,253.10 | 11,510.80 |
+| Girls_Hostel | mains | 148,312.40 | 7,504.20 | 5.06 | 7,593 | 6,127.50 |
+| Girls_Hostel | ups | 144,837.90 | 7,090.60 | 4.90 | 7,411.30 | 5,791.40 |
 
 ![Low-occupancy share and mean power by supply, for the two dormitories](../figures/fig_05_mains_vs_ups.png)
 
@@ -1687,15 +1687,15 @@ comparison is not available in other campus datasets.*
 
 | kind | buildings | mean low occ share | mean intensity ratio | mean base load kw | total kwh |
 |---|---|---|---|---|---|
-| commercial | 5 | 10.13 | 0.74 | 10.89 | 1,969,946.30 |
-| residential | 2 | 4.71 | 0.77 | 13.61 | 954,890 |
+| commercial | 5 | 10.13 | 0.74 | 10.89 | 1,968,306.40 |
+| residential | 2 | 4.71 | 0.77 | 13.46 | 950,046.10 |
 
 #### Sensitivity check 1: Lecture under a 24-hour dead-meter rule
 
 | dead-meter rule | usable intervals | total kWh | low-occupancy share % |
 |---|---|---|---|
-| 6 h (as specified) | 36,978 | 18,588.80 | 19.06 |
-| 24 h (nightly switch-offs kept as real zeros) | 81,322 | 18,581.90 | 17.76 |
+| 6 h (as specified) | 36,854 | 18,583.30 | 19.06 |
+| 24 h (nightly switch-offs kept as real zeros) | 81,215 | 18,581.90 | 17.76 |
 
 Phase 1 established that a building switched off at the mains overnight and a
 meter that has stopped reporting both read exactly 0 W, and that the specified
@@ -1708,13 +1708,13 @@ survives it.
 
 | building | idle devices subtracted | raw threshold | corrected threshold | raw share % | corrected share % | change (pp) | raw % intervals low | corrected % intervals low |
 |---|---|---|---|---|---|---|---|---|
-| Academic | 50 | 12.90 | 10.40 | 4.81 | 48.14 | 43.33 | 6.52 | 61.83 |
-| Boys_Hostel | 20 | 21.05 | 20.05 | 4.43 | 6.29 | 1.86 | 5.92 | 8.09 |
-| Girls_Hostel | 20 | 9 | 8 | 4.99 | 9.84 | 4.85 | 6.27 | 12.53 |
-| Mess | 20 | 8.85 | 7.85 | 9.33 | 28.58 | 19.25 | 12.57 | 35.17 |
-| Library | 20 | 9.10 | 8.10 | 17.45 | 40.34 | 22.89 | 28.37 | 56.05 |
-| Lecture | 20 | 14.85 | 13.85 | 19.06 | 28.71 | 9.65 | 22.41 | 33.88 |
-| Facilities | 20 | 0.90 | 0 | 0 | 97.64 | 97.64 | 0 | 97.94 |
+| Academic | 50 | 12.90 | 10.40 | 4.81 | 48.15 | 43.34 | 6.52 | 61.83 |
+| Boys_Hostel | 20 | 21.05 | 20.05 | 4.43 | 6.31 | 1.88 | 5.93 | 8.12 |
+| Girls_Hostel | 20 | 9 | 8 | 4.98 | 9.83 | 4.85 | 6.27 | 12.53 |
+| Mess | 20 | 8.85 | 7.85 | 9.33 | 28.59 | 19.26 | 12.58 | 35.17 |
+| Library | 20 | 9.10 | 8.10 | 17.43 | 40.32 | 22.89 | 28.36 | 56.05 |
+| Lecture | 20 | 14.90 | 13.90 | 19.06 | 28.71 | 9.65 | 22.41 | 33.87 |
+| Facilities | 20 | 0.90 | 0 | 0 | 97.63 | 97.63 | 0 | 97.94 |
 
 Subtracting the documented idle-device baseline makes every building look
 emptier more often, so the low-occupancy share rises everywhere. This **confirms
@@ -1732,13 +1732,13 @@ adjustment (D00-06).
 
 | building | test intervals | spike events | waste events | spike intervals | waste intervals | % of intervals contaminated | low-occ intervals available |
 |---|---|---|---|---|---|---|---|
-| Academic | 26,522 | 199 | 63 | 324 | 1,362 | 6.36 | 772 |
-| Boys_Hostel | 18,138 | 198 | 31 | 326 | 582 | 5.01 | 544 |
-| Girls_Hostel | 17,627 | 198 | 26 | 325 | 552 | 4.98 | 393 |
-| Mess | 23,630 | 198 | 123 | 326 | 2,509 | 12 | 1,255 |
-| Library | 17,832 | 198 | 200 | 326 | 4,217 | 25.48 | 4,420 |
-| Lecture | 5,548 | 190 | 131 | 304 | 2,344 | 47.73 | 2,740 |
-| Facilities | 22,483 | 199 | 0 | 324 | 0 | 1.44 | 0 |
+| Academic | 26,514 | 200 | 70 | 325 | 1,438 | 6.65 | 772 |
+| Boys_Hostel | 18,018 | 198 | 30 | 326 | 620 | 5.25 | 523 |
+| Girls_Hostel | 17,595 | 196 | 27 | 331 | 518 | 4.83 | 393 |
+| Mess | 23,607 | 199 | 123 | 324 | 2,511 | 12.01 | 1,255 |
+| Library | 17,812 | 198 | 200 | 325 | 4,270 | 25.80 | 4,399 |
+| Lecture | 5,529 | 191 | 131 | 309 | 2,346 | 48.02 | 2,731 |
+| Facilities | 22,447 | 198 | 0 | 325 | 0 | 1.45 | 0 |
 
 Spikes are short and can go anywhere, so nearly all 200 are placed. Waste events
 run 2-6 hours and must start inside a low-occupancy period, and those are only
@@ -1762,12 +1762,12 @@ than Detector T.*
 
 | detector | anomaly type | n anomaly intervals | true positives | false positives | false negatives | precision | recall | f1 | accuracy |
 |---|---|---|---|---|---|---|---|---|---|
-| T | all | 1,686 | 547 | 1,514 | 1,139 | 0.27 | 0.32 | 0.29 | 0.90 |
-| T | spike | 324 | 106 | 1,514 | 218 | 0.07 | 0.33 | 0.11 | 0.93 |
-| T | waste | 1,362 | 441 | 1,514 | 921 | 0.23 | 0.32 | 0.27 | 0.91 |
-| O | all | 1,686 | 646 | 2,883 | 1,040 | 0.18 | 0.38 | 0.25 | 0.85 |
-| O | spike | 324 | 123 | 2,883 | 201 | 0.04 | 0.38 | 0.07 | 0.88 |
-| O | waste | 1,362 | 523 | 2,883 | 839 | 0.15 | 0.38 | 0.22 | 0.86 |
+| T | all | 1,763 | 546 | 1,535 | 1,217 | 0.26 | 0.31 | 0.28 | 0.90 |
+| T | spike | 325 | 95 | 1,535 | 230 | 0.06 | 0.29 | 0.10 | 0.93 |
+| T | waste | 1,438 | 451 | 1,535 | 987 | 0.23 | 0.31 | 0.26 | 0.90 |
+| O | all | 1,763 | 643 | 2,859 | 1,120 | 0.18 | 0.36 | 0.24 | 0.85 |
+| O | spike | 325 | 116 | 2,859 | 209 | 0.04 | 0.36 | 0.07 | 0.88 |
+| O | waste | 1,438 | 527 | 2,859 | 911 | 0.16 | 0.37 | 0.22 | 0.86 |
 
 A note on **accuracy**: it is reported because the plan asks for it, but it is
 the least useful number here. Anomalies are a few percent of the intervals, so a
@@ -1777,13 +1777,13 @@ detector that flags nothing at all still scores above 90%.
 
 | building | T residual sd (kW) | T MAD scale (kW) | T alerts at z>3 | O residual sd (kW) | O MAD scale (kW) | O alerts at z>3 | extra alerts from O |
 |---|---|---|---|---|---|---|---|
-| Academic | 16.33 | 11.32 | 2,061 | 17.10 | 8.67 | 3,529 | 1,468 |
-| Boys_Hostel | 11.59 | 8.59 | 665 | 11.95 | 8.78 | 682 | 17 |
-| Girls_Hostel | 4.51 | 4.21 | 193 | 4.59 | 4.41 | 178 | -15 |
-| Mess | 10.30 | 9.34 | 370 | 10.34 | 9.30 | 378 | 8 |
-| Library | 9.16 | 6.18 | 1,681 | 9.69 | 6.26 | 1,746 | 65 |
-| Lecture | 1.52 | 1.21 | 185 | 1.54 | 1.27 | 154 | -31 |
-| Facilities | 3.01 | 2.54 | 489 | 3.05 | 2.53 | 580 | 91 |
+| Academic | 16.29 | 11.29 | 2,081 | 17.08 | 8.67 | 3,502 | 1,421 |
+| Boys_Hostel | 11.60 | 8.62 | 673 | 12.04 | 8.76 | 704 | 31 |
+| Girls_Hostel | 4.56 | 4.24 | 196 | 4.64 | 4.41 | 179 | -17 |
+| Mess | 10.30 | 9.40 | 367 | 10.33 | 9.36 | 376 | 9 |
+| Library | 9.13 | 6.15 | 1,638 | 9.67 | 6.25 | 1,714 | 76 |
+| Lecture | 1.53 | 1.19 | 187 | 1.54 | 1.31 | 119 | -68 |
+| Facilities | 3 | 2.54 | 483 | 3.04 | 2.52 | 570 | 87 |
 
 **Detector O raises far more alerts than Detector T at the same threshold, and
 that is an artefact of the threshold.** Model C is the better model, so its
@@ -1799,37 +1799,37 @@ investigate?) and with **threshold-free** measures.
 
 | building | detector | alert budget | precision | recall | f1 |
 |---|---|---|---|---|---|
-| Academic | T | 2,061 | 0.27 | 0.32 | 0.29 |
-| Academic | O | 2,061 | 0.25 | 0.30 | 0.27 |
-| Boys_Hostel | T | 665 | 0.29 | 0.21 | 0.25 |
-| Boys_Hostel | O | 665 | 0.36 | 0.26 | 0.31 |
-| Girls_Hostel | T | 178 | 0.98 | 0.20 | 0.33 |
-| Girls_Hostel | O | 178 | 1 | 0.20 | 0.34 |
-| Mess | T | 370 | 0.84 | 0.11 | 0.19 |
-| Mess | O | 370 | 0.87 | 0.11 | 0.20 |
-| Library | T | 1,681 | 0.70 | 0.26 | 0.38 |
-| Library | O | 1,681 | 0.63 | 0.23 | 0.34 |
-| Lecture | T | 154 | 0.40 | 0.02 | 0.04 |
-| Lecture | O | 154 | 0.35 | 0.02 | 0.04 |
-| Facilities | T | 489 | 0.45 | 0.68 | 0.54 |
-| Facilities | O | 489 | 0.43 | 0.65 | 0.52 |
+| Academic | T | 2,081 | 0.26 | 0.31 | 0.28 |
+| Academic | O | 2,081 | 0.26 | 0.31 | 0.28 |
+| Boys_Hostel | T | 673 | 0.30 | 0.21 | 0.25 |
+| Boys_Hostel | O | 673 | 0.37 | 0.27 | 0.31 |
+| Girls_Hostel | T | 179 | 0.98 | 0.21 | 0.34 |
+| Girls_Hostel | O | 179 | 1 | 0.21 | 0.35 |
+| Mess | T | 367 | 0.85 | 0.11 | 0.19 |
+| Mess | O | 367 | 0.87 | 0.11 | 0.20 |
+| Library | T | 1,638 | 0.70 | 0.25 | 0.37 |
+| Library | O | 1,638 | 0.66 | 0.23 | 0.34 |
+| Lecture | T | 119 | 0.30 | 0.01 | 0.03 |
+| Lecture | O | 119 | 0.29 | 0.01 | 0.03 |
+| Facilities | T | 483 | 0.46 | 0.68 | 0.55 |
+| Facilities | O | 483 | 0.43 | 0.64 | 0.51 |
 
 | building | detector | roc auc | average precision | baseline precision |
 |---|---|---|---|---|
-| Academic | T | 0.68 | 0.31 | 0.06 |
-| Academic | O | 0.71 | 0.31 | 0.06 |
-| Boys_Hostel | T | 0.66 | 0.21 | 0.05 |
-| Boys_Hostel | O | 0.80 | 0.30 | 0.05 |
-| Girls_Hostel | T | 0.67 | 0.40 | 0.05 |
-| Girls_Hostel | O | 0.73 | 0.43 | 0.05 |
+| Academic | T | 0.66 | 0.30 | 0.07 |
+| Academic | O | 0.68 | 0.30 | 0.07 |
+| Boys_Hostel | T | 0.67 | 0.20 | 0.05 |
+| Boys_Hostel | O | 0.80 | 0.31 | 0.05 |
+| Girls_Hostel | T | 0.71 | 0.43 | 0.05 |
+| Girls_Hostel | O | 0.76 | 0.47 | 0.05 |
 | Mess | T | 0.57 | 0.30 | 0.12 |
-| Mess | O | 0.57 | 0.31 | 0.12 |
-| Library | T | 0.55 | 0.46 | 0.25 |
-| Library | O | 0.51 | 0.42 | 0.25 |
-| Lecture | T | 0.63 | 0.53 | 0.48 |
-| Lecture | O | 0.61 | 0.52 | 0.48 |
-| Facilities | T | 0.97 | 0.69 | 0.01 |
-| Facilities | O | 0.97 | 0.67 | 0.01 |
+| Mess | O | 0.58 | 0.32 | 0.12 |
+| Library | T | 0.56 | 0.46 | 0.26 |
+| Library | O | 0.51 | 0.43 | 0.26 |
+| Lecture | T | 0.62 | 0.53 | 0.48 |
+| Lecture | O | 0.61 | 0.53 | 0.48 |
+| Facilities | T | 0.96 | 0.67 | 0.01 |
+| Facilities | O | 0.96 | 0.65 | 0.01 |
 
 ![Detector T against Detector O at a matched budget and threshold-free  [SYNTHETIC]](../figures/fig_06_detector_comparison.png)
 
@@ -1841,28 +1841,27 @@ identically.*
 | comparison | detector T | detector O | metric | difference (O - T) |
 |---|---|---|---|---|
 | fixed threshold \|z\| > 3 (as specified) | 0.29 | 0.28 | mean F1 | -0.01 |
-| matched alert budget | 0.29 | 0.29 | mean F1 | -0.00 |
-| threshold-free ranking | 0.41 | 0.42 | mean average precision | 0.01 |
+| matched alert budget | 0.29 | 0.29 | mean F1 | 0.00 |
+| threshold-free ranking | 0.41 | 0.43 | mean average precision | 0.02 |
 | threshold-free ranking | 0.68 | 0.70 | mean ROC AUC | 0.02 |
-| waste anomalies only, matched budget | 0.15 | 0.16 | mean F1 | 0.01 |
-| waste events noticed at all | 0.20 | 0.23 | event recall | 0.03 |
+| waste anomalies only, matched budget | 0.16 | 0.17 | mean F1 | 0.02 |
+| waste events noticed at all | 0.19 | 0.25 | event recall | 0.05 |
 
-**Detector o is ahead on 4 of the 5 fair comparisons, by margins small enough
-that the remaining one sits essentially on zero.** At the fixed threshold the
-mean F1 is 0.293 for T against 0.279 for O -- but that gap is the calibration
-artefact described above and should be disregarded. On the 5 **fair**
-comparisons, 4 favour Detector O:
+**Detector O is ahead on all 5 fair comparisons, though modestly.** At the fixed
+threshold the mean F1 is 0.294 for T against 0.280 for O -- but that gap is the
+calibration artefact described above and should be disregarded. On the 5
+**fair** comparisons, 5 favour Detector O:
 
-- matched alert budget: mean F1 0.289 -> 0.287 (-0.002)
-- average precision: 0.414 -> 0.423 (+0.009)
-- ROC AUC: 0.675 -> 0.696 (+0.021)
-- waste anomalies only, F1: 0.151 -> 0.164
-- waste events noticed at all: 19.5% -> 22.9%
+- matched alert budget: mean F1 0.287 -> 0.289 (+0.002)
+- average precision: 0.415 -> 0.430 (+0.015)
+- ROC AUC: 0.677 -> 0.697 (+0.020)
+- waste anomalies only, F1: 0.155 -> 0.174
+- waste events noticed at all: 19.3% -> 24.8%
 
 **The pattern is what theory predicts, but the size is small enough that it has
 to be read carefully.** Every margin is between one and three percentage points,
-and 1 of the 5 comparisons sits on the other side of zero -- close enough to
-nothing that it would be wrong to call the direction unanimous.
+and every one of them points the same way, which is what makes margins this
+small worth reporting at all.
 
 What gives the result what weight it has is **where** the gains fall: the
 largest are on the **waste** anomalies, the case designed to favour occupancy,
@@ -1875,7 +1874,7 @@ the same-sized benefit appearing at random.
 **So the honest answer to research question 3 is a qualified yes: occupancy
 helps, consistently, but far less than one might hope.** That is consistent with
 everything else the project found by different routes -- occupancy explains only
-8-44% of power variation (Phase 2), adds +0.109 to validation R-squared on
+8-44% of power variation (Phase 2), adds +0.106 to validation R-squared on
 average (Phase 4), and several buildings have nearly flat daily profiles (Phase
 3). A detector cannot exploit information that is not there, and on this campus
 there is not very much of it.
@@ -1889,12 +1888,12 @@ and extends it from prediction to detection.
 
 | rule | detector | alerts | precision | recall | f1 |
 |---|---|---|---|---|---|
-| IQR fences (cross-check) | O | 859.86 | 0.56 | 0.27 | 0.28 |
-| IQR fences (cross-check) | T | 658.29 | 0.57 | 0.25 | 0.27 |
-| one-sided z > 3 (positive only) | O | 963.14 | 0.63 | 0.27 | 0.28 |
-| one-sided z > 3 (positive only) | T | 784.86 | 0.65 | 0.26 | 0.29 |
-| two-sided \|z\| > 3 (as specified) | O | 1,035.29 | 0.53 | 0.27 | 0.28 |
-| two-sided \|z\| > 3 (as specified) | T | 806.29 | 0.56 | 0.26 | 0.29 |
+| IQR fences (cross-check) | O | 865.57 | 0.57 | 0.27 | 0.29 |
+| IQR fences (cross-check) | T | 659 | 0.58 | 0.25 | 0.28 |
+| one-sided z > 3 (positive only) | O | 953.71 | 0.64 | 0.27 | 0.28 |
+| one-sided z > 3 (positive only) | T | 782.86 | 0.65 | 0.26 | 0.29 |
+| two-sided \|z\| > 3 (as specified) | O | 1,023.43 | 0.53 | 0.27 | 0.28 |
+| two-sided \|z\| > 3 (as specified) | T | 803.57 | 0.56 | 0.26 | 0.29 |
 
 **One-sided detection is a clear improvement.** Every injected anomaly is
 additive, and real waste is too -- lights left on add power, they never subtract
@@ -1911,13 +1910,13 @@ Phase 2 established that these residuals are heavy-tailed.
 
 | building | test intervals | NORMAL | WARNING | ANOMALY | % flagged |
 |---|---|---|---|---|---|
-| Academic | 26,522 | 20,811 | 2,167 | 3,544 | 11.89 |
-| Boys_Hostel | 18,138 | 15,790 | 1,716 | 632 | 3.16 |
-| Girls_Hostel | 17,627 | 17,228 | 397 | 2 | 0.01 |
-| Mess | 23,630 | 22,435 | 1,057 | 138 | 0.58 |
-| Library | 17,832 | 14,348 | 1,866 | 1,618 | 8.91 |
-| Lecture | 5,548 | 4,622 | 469 | 457 | 0.67 |
-| Facilities | 22,483 | 20,476 | 1,548 | 459 | 2.01 |
+| Academic | 26,514 | 20,800 | 2,169 | 3,545 | 11.89 |
+| Boys_Hostel | 18,018 | 15,675 | 1,706 | 637 | 3.24 |
+| Girls_Hostel | 17,595 | 17,201 | 392 | 2 | 0.01 |
+| Mess | 23,607 | 22,412 | 1,060 | 135 | 0.57 |
+| Library | 17,812 | 14,340 | 1,845 | 1,627 | 8.97 |
+| Lecture | 5,529 | 4,582 | 473 | 474 | 0.69 |
+| Facilities | 22,447 | 20,436 | 1,551 | 460 | 2.02 |
 
 ![The most unusual real pattern found, with occupancy below](../figures/fig_06_top_real_pattern.png)
 
@@ -1946,38 +1945,40 @@ exactly what it would change.
 | 6 | 0 | WiFi over-count of idle devices | Ignore it; subtract the documented idle baseline before thresholding and use that as the headline; use raw counts for the headline and report a corrected variant | Raw counts for the headline; corrected-occupancy run reported as a robustness check in Phase 5 | The over-count (~20 devices, ~50 in Academic) is an approximate constant from the dataset paper, not a measurement. Building the headline on it would rest the main result on an estimate. | Headline is conservative (raw counts make buildings look more occupied than they are, so waste is understated). The corrected run quantifies by how much. |
 | 7 | 0 | Analysis resolution | Keep 1-minute energy and forward-fill occupancy; average energy into 10-minute blocks to match occupancy | 10min blocks | Occupancy is natively 10-minute. Up-sampling it to 1 minute would invent ten times more data than was measured. Every occupancy timestamp already falls exactly on a 10-minute boundary. | Reduces ~2.3M rows per meter to ~231k, which is what makes the whole project run on a laptop. No loss of information relative to the occupancy signal. |
 | 8 | 0 | Random seed | Unseeded; a fixed seed | seed = 42 everywhere (sampling, k-means, anomaly injection, random forest) | Results must be reproducible by a teammate or an examiner running the notebooks again. | None on the substance; makes every reported number exactly reproducible. |
-| 9 | 1 | Dead-meter rule | No rule; flag any zero reading; flag runs of 0 W longer than 6 h | Runs of exactly 0 W longer than 6 continuous hours are flagged meter_off; tested on the block maximum | A building can draw very little at night but not exactly 0.000 W for six hours. Flagging every isolated zero would also catch genuine brief shutdowns. | Removes 25,488 h from Lecture and 10 h from Academic. Without it, Lecture would appear to be the most efficient building on campus, which is an artefact. |
+| 9 | 1 | Dead-meter rule | No rule; flag any zero reading; flag runs of 0 W longer than 6 h | Runs of exactly 0 W longer than 6 continuous hours are flagged meter_off; tested on the block maximum | A building can draw very little at night but not exactly 0.000 W for six hours. Flagging every isolated zero would also catch genuine brief shutdowns. | Removes 25,501 h from Lecture and 10 h from Academic. Without it, Lecture would appear to be the most efficient building on campus, which is an artefact. |
 | 10 | 1 | Outlier handling | Delete IQR outliers; delete Z>3 outliers; winsorise; flag both and delete neither | Flag with both IQR and Z-score; delete nothing | Extreme power readings are the phenomenon Phase 6 is built to detect. Removing them would remove the subject of the study, and IQR alone flags ~6.8% of the Academic record -- mostly ordinary working-day peaks. | No rows removed. Two extra boolean columns available to later phases. |
 | 11 | 1 | Semester / vacation calendar | Approximate windows from a typical academic year; infer purely from the data; use the official IIIT-Delhi calendar published with I-BLEND | The official calendar (one CSV per year, 2013-2017), with the approximation retained only as a fallback | The calendar is published in the same figshare collection as the energy and occupancy data. An earlier version of this project approximated it, having searched the project GitHub site -- which hosts only the website assets and reading scripts -- and wrongly concluded no calendar existed. A purely data-driven split would have been circular, since occupancy is also our explanatory variable. | Material. The approximation agreed with the published calendar on only 68.5% of days: it marked 26.5% of days as vacation against the official 57.4% low-activity, missing every weekend and public holiday. All semester-vs-vacation results, and the is_semester and is_working_day model features, now use the published calendar. |
-| 12 | 1 | Interpolation limit | No interpolation; fill all gaps; fill only short gaps | Time interpolation for gaps up to 30 minutes (3 blocks); longer gaps left missing; every filled value marked was_interpolated | Filling 20 minutes between two similar readings is safe; filling a 200-day outage would be inventing data. | Fills 6,381 blocks across all seven buildings -- under 0.47% of the total. Negligible effect on any aggregate. |
+| 12 | 1 | Interpolation limit | No interpolation; fill all gaps; fill only short gaps | Time interpolation for gaps up to 30 minutes (3 blocks); longer gaps left missing; every filled value marked was_interpolated | Filling 20 minutes between two similar readings is safe; filling a 200-day outage would be inventing data. | Fills 2,184 blocks across all seven buildings -- under 0.16% of the total. Negligible effect on any aggregate. |
 | 13 | 1 | Combining hostel mains and UPS meters | Use mains only; use the sum only; keep both separate and also sum | Keep mains and UPS as separate columns AND provide the sum; the sum is NaN if either meter is missing | Which supply keeps running when rooms empty out is a Phase 5 question, so the split must survive. Adding a measured value to a missing one would silently understate the building total. | Hostel totals are only available when both meters report, which is part of why the two dormitories sit near 60% usable rather than 90%. |
 | 14 | 1 | Chunk-boundary handling when resampling | Read whole files and resample once; resample each chunk and average the averages; accumulate per-block sums and counts across chunks | Per-block sums and counts, combined across chunks before the mean is formed | Averaging chunk averages is wrong whenever a 10-minute block spans two chunks. Sums and counts combine exactly. | None relative to a correct single-pass mean -- that is the point. Verified against all_buildings_power.csv to within 0.122%. |
 | 15 | 1 | Ambiguity between a dead meter and a building switched off at night | Keep the 6 h rule and say nothing; raise the threshold to 24 h so nightly switch-offs count as real zero consumption; keep the rule and publish a sensitivity check | Keep the specified 6 h rule as primary; re-run the Lecture figure with a 24 h rule in Phase 5 as a sensitivity check | A switched-off building and a dead meter both report exactly 0 W and cannot be told apart from the power value alone. The zero-run histogram shows two populations: short runs near half a day (34.5% of zero hours) and multi-day runs (65.5% of zero hours). | Affects Lecture only, and only its denominator. The sensitivity check in Phase 5 quantifies it; the rest of the campus is unaffected because no other meter has sustained exact zeros. |
-| 16 | 2 | Reporting effect size alongside every p-value | Report p-values only; report effect sizes only; report both and lead with effect size | Both, leading with Cohen's d and the percentage difference | Sample sizes run from 37,000 to 177,000 intervals. At that size every test returns p < 0.001 for differences of no practical importance, so a p-value alone would let us claim significance for everything. | Changes the conclusion of Step 7 from 'all differences are significant' to 'all differences are detectable but most are small', which is the honest reading. |
-| 17 | 2 | Which statistic decides the Normal vs Log-normal comparison | KS p-value; KS statistic; AIC; visual inspection only | KS statistic (an effect size), supported by Q-Q plots | With 176,803 readings the KS p-value rejects both candidates, so it cannot discriminate. The statistic measures the largest gap between fitted and observed distributions and remains meaningful. | Log-normal wins (KS 0.083 vs 0.171), but the Q-Q plots show neither fits well because the data is bimodal. That negative result is reported rather than hidden. |
-| 18 | 2 | Mode of a continuous variable | Report the raw mode; bin first; omit the mode | Round power to the nearest 1 kW before taking the mode | Power is a float to five decimal places, so every value occurs exactly once and the raw mode is an arbitrary first row. | Makes the mode column meaningful. Bin width is a choice: a different width would shift the reported mode slightly. |
-| 19 | 2 | Scatter plots drawn as small multiples on a subsample | One scatter with all 7 buildings overlaid; small multiples; hexbin density plots | One panel per building, each a random subsample of 6,000 points (seed 42) | Seven overlapping colours in one scatter cannot be told apart reliably, and 170,000 points per building render as a solid block that hides the structure. | Visual only -- all correlation statistics are computed on the complete data, not the subsample. |
-| 20 | 3 | Which days enter the PCA | All days, filling gaps; days with no missing intervals; days with no missing intervals and no meter-off period | Complete days only -- no gaps and no meter-off intervals | PCA has no concept of a missing value, and an interpolated or dead hour would become a fictitious 'shape' the components had to explain. | 1,312 of 1,356 (96.8%) of Academic days are used. Buildings with long outages contribute proportionally fewer days. |
-| 21 | 3 | Standardising the hour columns before PCA | Raw watts; centre only; centre and scale to unit variance | Centre and scale each hour column | Midday hours vary far more in absolute watts than 4 a.m. hours, so unscaled PCA would largely describe the middle of the day. | Components describe the *shape* of a day rather than its size. PC1 still captures overall level, but through the correlation structure rather than raw magnitude. |
-| 22 | 3 | Number of k-means clusters | k = 2, 3, 4, 5; choosing k by elbow or silhouette | k = 4, fixed, with seed 42 | Four is enough to separate the interpretable kinds of day (busy/quiet crossed with peaky/flat) without producing clusters too small to describe. Clustering is supporting analysis here, so a defensible fixed k is preferable to tuning a number nothing downstream depends on. | Affects only the day-type table and its chart. No later phase consumes the cluster labels. |
-| 23 | 3 | Using np.linalg.eig rather than np.linalg.eigh | eig (general); eigh (symmetric matrices); SVD | eig, taking the real part, then verified against sklearn | A covariance matrix is symmetric, so eigh would be faster and more stable and would return real values directly. eig is used because it is the general routine and makes the textbook derivation explicit; the verification against sklearn guards the choice. | None -- results assert equal to sklearn to within 1e-8 after sign alignment. |
-| 24 | 4 | Train/validation/test split | Random 80/20; random 70/15/15; chronological 70/15/15 | Chronological 70%/15%/15% via train_test_split(shuffle=False) | A shuffled split on a time series fits the model on later data to predict earlier data, which makes every error measure optimistic and meaningless. | Test metrics are much worse than a shuffled split would report -- and correctly so. It also exposes the concept drift that a shuffled split would have hidden entirely. |
-| 25 | 4 | Handling the 2014-2017 growth in consumption | Ignore it; detrend the whole series; refit on recent data only; apply a validation-calibrated offset | Report test metrics both uncorrected and with an offset equal to the mean error on the validation split | Mean power rose 32-48% across the record, so a model trained on 2014-2016 under-predicts 2017 by a near-constant amount. The validation split lies entirely before the test split, so using it introduces no leakage. | Lifts Academic model B test R-squared from 0.089 to 0.173. Phase 6 uses the corrected predictions, otherwise the drift alone would flag the whole test period as anomalous. |
-| 26 | 4 | Excluding lag features from models B and C | Include lag 1h and lag 1d (best accuracy); include neither; include lag 1d only | Neither -- calendar and occupancy features only | Lag 1h lifts validation R-squared from 0.55 to 0.83, but a model that knows recent power absorbs waste into its expectation and would predict that lights left on stay on. We need expected consumption, not best forecast. | Reported R-squared is far lower than it could be. This is deliberate: it is the price of a baseline that can detect sustained waste in Phase 6. |
-| 27 | 4 | One-hot encoding hour and month instead of using them as numbers | Raw integers; one-hot; sine/cosine cyclic encoding | One-hot with drop='first' | Hour and month are cyclic: hour 23 is adjacent to hour 0. As raw integers a linear model would treat 23:00 as twenty-three times 01:00. One-hot makes no ordering assumption and keeps the coefficients directly readable as 'the effect of this hour'. | Expands 7 raw columns to 44 encoded ones. Sine/cosine encoding would use fewer columns but impose a smooth shape on the day, which building load does not follow. |
-| 28 | 4 | Feature selection reported but not applied | Prune to SelectKBest's top k; prune by correlation threshold; report the ranking without pruning | Report the ranking; keep all features | With 44 encoded columns and 123,764 training rows there is no overfitting pressure to relieve, and both methods are univariate so they cannot see redundancy anyway. Dropping hour dummies would cost interpretability for no measurable gain. | None on the scores. The ranking is reported because it shows occupancy is the strongest single predictor. |
-| 29 | 4 | Random forest depth | Unlimited depth; tuned by grid search; fixed at 12 | max_depth = 12, min_samples_leaf = 5, 120 trees, random_state = 42 | The depth curve shows validation error flattening around depth 12 while training error keeps falling -- at unlimited depth the gap is 2.4x. Model D is a sanity check on whether non-linearity matters, not the deliverable, so a defensible fixed depth is preferable to tuning. | Model D scores slightly better than C on validation in most buildings, confirming some non-linearity, but not enough to displace the interpretable linear models that Phases 5 and 6 depend on. |
-| 30 | 5 | Reporting an intensity ratio alongside the energy share | Energy share only (as specified); intensity ratio only; both | Both, leading with the intensity ratio in the narrative | The energy share depends partly on how *often* a building is nearly empty, which is a fact about the campus timetable rather than about the building. The ratio of mean power when empty to mean power overall isolates the building's own behaviour. | Adds a column; changes no specified number. It is what lets the headline be stated as 'still draws 62-85% of average power' rather than only as a share. |
-| 31 | 5 | Computing the published clock-based definition on our own data | Quote the published figures beside ours; compute their definition on our data and compare like with like | Compute outside-08:00-18:00-weekdays share on our data as well | Our occupancy threshold captures only 6-28% of intervals while a clock rule captures about 70%. Comparing the two directly would be misleading, and the difference between the definitions is itself the point of an occupancy-aware analysis. | Yields 55.2% for Academic and 54.9% for Library against the published 56% -- a strong external check that the pipeline measures what it claims. |
-| 32 | 5 | Threshold held fixed across semester and vacation | Recompute p95 within each period; hold the whole-record threshold fixed | Fixed threshold from the whole record | Recomputing p95 within each period would move the definition of 'low' between the two groups -- a vacation p95 is lower, so its threshold would be lower -- and the comparison would measure the threshold rather than the behaviour. | Makes the semester/vacation comparison meaningful. With a per-period threshold both columns would tend towards the same value by construction. |
-| 33 | 5 | Defining responsiveness as the non-base-load share of mean power | Rank by slope b alone; rank by base load a alone; rank by (mean - a) / mean | (mean power - base load) / mean power | Slope b alone is not comparable across buildings whose occupancy ranges differ by a factor of twenty (Facilities peaks at 47 occupants, the Boys hostel at 614). Base load alone ignores building size. The ratio is dimensionless and comparable. | Determines the ranking in section 6.6. A slope-only ranking would put Facilities first purely because its small occupancy range forces a large coefficient. |
-| 34 | 6 | Standardising residuals with median/MAD rather than mean/SD | Mean and standard deviation; median and MAD; a rolling window statistic | Median and 1.4826 x MAD, identical for both detectors | The standard deviation is inflated by the very anomalies being hunted, so a few large events raise the threshold and hide themselves. The MAD is barely moved by a small proportion of extreme values. | Raises recall for both detectors equally. Because the procedure is identical on both sides, the T-vs-O comparison is unaffected by the choice. |
-| 35 | 6 | Adding a matched-alert-budget and threshold-free comparison | Report the fixed \|z\| > 3 threshold only, as planned; add a matched-budget comparison; add threshold-free scores | All three, and lead the conclusion with the fair ones | At a fixed threshold Detector O raises far more alerts purely because model C fits better, so its residual MAD is smaller. That buys recall and costs precision for reasons unrelated to occupancy, so the fixed-threshold comparison answers the wrong question. | Changes the answer to research question 3. At the fixed threshold O looks different from T (F1 0.279 vs 0.293); compared fairly they are equivalent (matched-budget F1 0.287 vs 0.289). |
-| 36 | 6 | Reporting event-level recall alongside interval-level recall | Interval-level only; event-level only; both | Both, with event-level as the operationally meaningful one | Interval recall penalises a detector that spots a six-hour waste event in its first hour and then treats the new level as normal. For an operator, noticing the event at all is what matters. | Event-level recall is far higher than interval-level for both detectors, and the T-vs-O ordering is unchanged. |
-| 37 | 6 | Fewer waste events injected than requested | Force 200 events by allowing overlap; shorten the events; accept the achieved count | Accept the achieved count and report it | Waste events run 2-6 hours and must sit inside low-occupancy periods, which are only 6% of the Academic record. Allowing overlaps would create compound events with ambiguous labels; shortening them would stop testing the sustained-waste case that is the point of the experiment. | Waste sample sizes vary by building (buildings with more low-occupancy time fit more events). All scores use the achieved counts, which are reported in full. |
-| 38 | 6 | Reporting a one-sided detection variant | Two-sided \|z\| > 3 only, as planned; one-sided only; both | Two-sided as the headline (as specified), one-sided reported beside it | Every injected anomaly is additive and real waste is too -- lights left on add power. The two-sided rule spends about half its alerts on under-consumption, which cannot be a true positive against these labels. | One-sided detection substantially improves precision for both detectors at almost no cost in recall. It does not change the T-vs-O conclusion. |
-| 39 | 7 | Dashboard reads saved output instead of refitting models | Refit models live on each selection; cache models in the session; export scored data once and read it | Export to parquet in src/dashboard.py; the app only reads and draws | A dashboard that refits is slow and unpredictable during a live demonstration, and it would let the numbers on screen drift away from the numbers in the report. | None on any reported number. The dashboard shows exactly the values the notebooks computed. |
-| 40 | 7 | Dashboard shows predictions across the whole record, not just test | Test period only; whole record with no marking; whole record with a split column | Whole record, with a `split` column marking train / validation / test | Restricting the dashboard to the test period would make most dates unselectable. Showing in-sample fit without labelling it would misrepresent how well the model performs. | Presentation only. The anomaly scale is calibrated on the test period and applied consistently, so a flag means the same thing at every date. |
+| 16 | 1 | Gap interpolation measures the whole gap, not consecutive values | pandas interpolate(limit=3) as originally written; measure each gap's full length and fill only short ones; drop interpolation entirely | Measure the whole run; fill only gaps whose entire length is within the 30-minute limit | pandas' limit= caps *consecutive* values filled, so a 200-day gap had its first 3 blocks filled along a straight line between readings months apart. That is the invented data the limit was meant to prevent. | Removes 5,301 fabricated blocks and keeps 2,498 legitimate ones. Interpolated blocks fall from 5,206 to 2,184 and usable coverage drops 0.02-0.41 percentage points per building -- lower, and correct. |
+| 17 | 1 | A short gap bridges a run of zeros instead of breaking it | Any gap breaks the run (original); gaps up to 30 min bridge it when zeros sit on both sides; ignore gaps entirely when measuring runs | Gaps up to 30 minutes bridge a zero-run when both neighbours read zero; the gap itself is never flagged | A single dropout inside a ten-hour outage split it into two five-hour runs, neither of which crossed the six-hour threshold, so the outage went unflagged and its zeros counted as real consumption. About 2,413 zero-blocks in Lecture were hidden this way. | Adds roughly 14 hours to Lecture's meter-off total and almost nothing elsewhere. Never flags a block we have no reading for, so it cannot invent dead time. |
+| 18 | 2 | Reporting effect size alongside every p-value | Report p-values only; report effect sizes only; report both and lead with effect size | Both, leading with Cohen's d and the percentage difference | Sample sizes run from 37,000 to 177,000 intervals. At that size every test returns p < 0.001 for differences of no practical importance, so a p-value alone would let us claim significance for everything. | Changes the conclusion of Step 7 from 'all differences are significant' to 'all differences are detectable but most are small', which is the honest reading. |
+| 19 | 2 | Which statistic decides the Normal vs Log-normal comparison | KS p-value; KS statistic; AIC; visual inspection only | KS statistic (an effect size), supported by Q-Q plots | With 176,752 readings the KS p-value rejects both candidates, so it cannot discriminate. The statistic measures the largest gap between fitted and observed distributions and remains meaningful. | Log-normal wins (KS 0.083 vs 0.171), but the Q-Q plots show neither fits well because the data is bimodal. That negative result is reported rather than hidden. |
+| 20 | 2 | Mode of a continuous variable | Report the raw mode; bin first; omit the mode | Round power to the nearest 1 kW before taking the mode | Power is a float to five decimal places, so every value occurs exactly once and the raw mode is an arbitrary first row. | Makes the mode column meaningful. Bin width is a choice: a different width would shift the reported mode slightly. |
+| 21 | 2 | Scatter plots drawn as small multiples on a subsample | One scatter with all 7 buildings overlaid; small multiples; hexbin density plots | One panel per building, each a random subsample of 6,000 points (seed 42) | Seven overlapping colours in one scatter cannot be told apart reliably, and 170,000 points per building render as a solid block that hides the structure. | Visual only -- all correlation statistics are computed on the complete data, not the subsample. |
+| 22 | 3 | Which days enter the PCA | All days, filling gaps; days with no missing intervals; days with no missing intervals and no meter-off period | Complete days only -- no gaps and no meter-off intervals | PCA has no concept of a missing value, and an interpolated or dead hour would become a fictitious 'shape' the components had to explain. | 1,312 of 1,356 (96.8%) of Academic days are used. Buildings with long outages contribute proportionally fewer days. |
+| 23 | 3 | Standardising the hour columns before PCA | Raw watts; centre only; centre and scale to unit variance | Centre and scale each hour column | Midday hours vary far more in absolute watts than 4 a.m. hours, so unscaled PCA would largely describe the middle of the day. | Components describe the *shape* of a day rather than its size. PC1 still captures overall level, but through the correlation structure rather than raw magnitude. |
+| 24 | 3 | Number of k-means clusters | k = 2, 3, 4, 5; choosing k by elbow or silhouette | k = 4, fixed, with seed 42 | Four is enough to separate the interpretable kinds of day (busy/quiet crossed with peaky/flat) without producing clusters too small to describe. Clustering is supporting analysis here, so a defensible fixed k is preferable to tuning a number nothing downstream depends on. | Affects only the day-type table and its chart. No later phase consumes the cluster labels. |
+| 25 | 3 | Using np.linalg.eig rather than np.linalg.eigh | eig (general); eigh (symmetric matrices); SVD | eig, taking the real part, then verified against sklearn | A covariance matrix is symmetric, so eigh would be faster and more stable and would return real values directly. eig is used because it is the general routine and makes the textbook derivation explicit; the verification against sklearn guards the choice. | None -- results assert equal to sklearn to within 1e-8 after sign alignment. |
+| 26 | 4 | Train/validation/test split | Random 80/20; random 70/15/15; chronological 70/15/15 | Chronological 70%/15%/15% via train_test_split(shuffle=False) | A shuffled split on a time series fits the model on later data to predict earlier data, which makes every error measure optimistic and meaningless. | Test metrics are much worse than a shuffled split would report -- and correctly so. It also exposes the concept drift that a shuffled split would have hidden entirely. |
+| 27 | 4 | Handling the 2014-2017 growth in consumption | Ignore it; detrend the whole series; refit on recent data only; apply a validation-calibrated offset | Report test metrics both uncorrected and with an offset equal to the mean error on the validation split | Mean power rose 32-48% across the record, so a model trained on 2014-2016 under-predicts 2017 by a near-constant amount. The validation split lies entirely before the test split, so using it introduces no leakage. | Lifts Academic model B test R-squared from 0.089 to 0.173. Phase 6 uses the corrected predictions, otherwise the drift alone would flag the whole test period as anomalous. |
+| 28 | 4 | Excluding lag features from models B and C | Include lag 1h and lag 1d (best accuracy); include neither; include lag 1d only | Neither -- calendar and occupancy features only | Lag 1h lifts validation R-squared from 0.55 to 0.83, but a model that knows recent power absorbs waste into its expectation and would predict that lights left on stay on. We need expected consumption, not best forecast. | Reported R-squared is far lower than it could be. This is deliberate: it is the price of a baseline that can detect sustained waste in Phase 6. |
+| 29 | 4 | One-hot encoding hour and month instead of using them as numbers | Raw integers; one-hot; sine/cosine cyclic encoding | One-hot with drop='first' | Hour and month are cyclic: hour 23 is adjacent to hour 0. As raw integers a linear model would treat 23:00 as twenty-three times 01:00. One-hot makes no ordering assumption and keeps the coefficients directly readable as 'the effect of this hour'. | Expands 7 raw columns to 44 encoded ones. Sine/cosine encoding would use fewer columns but impose a smooth shape on the day, which building load does not follow. |
+| 30 | 4 | Feature selection reported but not applied | Prune to SelectKBest's top k; prune by correlation threshold; report the ranking without pruning | Report the ranking; keep all features | With 44 encoded columns and 123,729 training rows there is no overfitting pressure to relieve, and both methods are univariate so they cannot see redundancy anyway. Dropping hour dummies would cost interpretability for no measurable gain. | None on the scores. The ranking is reported because it shows occupancy is the strongest single predictor. |
+| 31 | 4 | Random forest depth | Unlimited depth; tuned by grid search; fixed at 12 | max_depth = 12, min_samples_leaf = 5, 120 trees, random_state = 42 | The depth curve shows validation error flattening around depth 12 while training error keeps falling -- at unlimited depth the gap is 2.4x. Model D is a sanity check on whether non-linearity matters, not the deliverable, so a defensible fixed depth is preferable to tuning. | Model D scores slightly better than C on validation in most buildings, confirming some non-linearity, but not enough to displace the interpretable linear models that Phases 5 and 6 depend on. |
+| 32 | 5 | Reporting an intensity ratio alongside the energy share | Energy share only (as specified); intensity ratio only; both | Both, leading with the intensity ratio in the narrative | The energy share depends partly on how *often* a building is nearly empty, which is a fact about the campus timetable rather than about the building. The ratio of mean power when empty to mean power overall isolates the building's own behaviour. | Adds a column; changes no specified number. It is what lets the headline be stated as 'still draws 62-85% of average power' rather than only as a share. |
+| 33 | 5 | Computing the published clock-based definition on our own data | Quote the published figures beside ours; compute their definition on our data and compare like with like | Compute outside-08:00-18:00-weekdays share on our data as well | Our occupancy threshold captures only 6-28% of intervals while a clock rule captures about 70%. Comparing the two directly would be misleading, and the difference between the definitions is itself the point of an occupancy-aware analysis. | Yields 55.2% for Academic and 55.0% for Library against the published 56% -- a strong external check that the pipeline measures what it claims. |
+| 34 | 5 | Threshold held fixed across semester and vacation | Recompute p95 within each period; hold the whole-record threshold fixed | Fixed threshold from the whole record | Recomputing p95 within each period would move the definition of 'low' between the two groups -- a vacation p95 is lower, so its threshold would be lower -- and the comparison would measure the threshold rather than the behaviour. | Makes the semester/vacation comparison meaningful. With a per-period threshold both columns would tend towards the same value by construction. |
+| 35 | 5 | Defining responsiveness as the non-base-load share of mean power | Rank by slope b alone; rank by base load a alone; rank by (mean - a) / mean | (mean power - base load) / mean power | Slope b alone is not comparable across buildings whose occupancy ranges differ by a factor of twenty (Facilities peaks at 47 occupants, the Boys hostel at 614). Base load alone ignores building size. The ratio is dimensionless and comparable. | Determines the ranking in section 6.6. A slope-only ranking would put Facilities first purely because its small occupancy range forces a large coefficient. |
+| 36 | 6 | Standardising residuals with median/MAD rather than mean/SD | Mean and standard deviation; median and MAD; a rolling window statistic | Median and 1.4826 x MAD, identical for both detectors | The standard deviation is inflated by the very anomalies being hunted, so a few large events raise the threshold and hide themselves. The MAD is barely moved by a small proportion of extreme values. | Raises recall for both detectors equally. Because the procedure is identical on both sides, the T-vs-O comparison is unaffected by the choice. |
+| 37 | 6 | Adding a matched-alert-budget and threshold-free comparison | Report the fixed \|z\| > 3 threshold only, as planned; add a matched-budget comparison; add threshold-free scores | All three, and lead the conclusion with the fair ones | At a fixed threshold Detector O raises far more alerts purely because model C fits better, so its residual MAD is smaller. That buys recall and costs precision for reasons unrelated to occupancy, so the fixed-threshold comparison answers the wrong question. | Changes the answer to research question 3. At the fixed threshold O looks different from T (F1 0.280 vs 0.294); compared fairly they are equivalent (matched-budget F1 0.289 vs 0.287). |
+| 38 | 6 | Reporting event-level recall alongside interval-level recall | Interval-level only; event-level only; both | Both, with event-level as the operationally meaningful one | Interval recall penalises a detector that spots a six-hour waste event in its first hour and then treats the new level as normal. For an operator, noticing the event at all is what matters. | Event-level recall is far higher than interval-level for both detectors, and the T-vs-O ordering is unchanged. |
+| 39 | 6 | Fewer waste events injected than requested | Force 200 events by allowing overlap; shorten the events; accept the achieved count | Accept the achieved count and report it | Waste events run 2-6 hours and must sit inside low-occupancy periods, which are only 6% of the Academic record. Allowing overlaps would create compound events with ambiguous labels; shortening them would stop testing the sustained-waste case that is the point of the experiment. | Waste sample sizes vary by building (buildings with more low-occupancy time fit more events). All scores use the achieved counts, which are reported in full. |
+| 40 | 6 | Reporting a one-sided detection variant | Two-sided \|z\| > 3 only, as planned; one-sided only; both | Two-sided as the headline (as specified), one-sided reported beside it | Every injected anomaly is additive and real waste is too -- lights left on add power. The two-sided rule spends about half its alerts on under-consumption, which cannot be a true positive against these labels. | One-sided detection substantially improves precision for both detectors at almost no cost in recall. It does not change the T-vs-O conclusion. |
+| 41 | 7 | Dashboard reads saved output instead of refitting models | Refit models live on each selection; cache models in the session; export scored data once and read it | Export to parquet in src/dashboard.py; the app only reads and draws | A dashboard that refits is slow and unpredictable during a live demonstration, and it would let the numbers on screen drift away from the numbers in the report. | None on any reported number. The dashboard shows exactly the values the notebooks computed. |
+| 42 | 7 | Dashboard shows predictions across the whole record, not just test | Test period only; whole record with no marking; whole record with a split column | Whole record, with a `split` column marking train / validation / test | Restricting the dashboard to the test period would make most dates unselectable. Showing in-sample fit without labelling it would misrepresent how well the model performs. | Presentation only. The anomaly scale is calibrated on the test period and applied consistently, so a flag means the same thing at every date. |
 <!-- END:decision_log -->
 
 ---
@@ -1990,21 +1991,21 @@ exactly what it would change.
 > 85% of their average power.**
 
 - **Academic** uses **4.8%** of its energy while occupancy is at or below 13 devices, and even then still draws **74%** of its average power (21.2 kW against 28.8 kW).
-- **Boys Hostel** uses **4.4%** of its energy while occupancy is at or below 21 devices, and even then still draws **75%** of its average power (24.6 kW against 32.8 kW).
+- **Boys Hostel** uses **4.4%** of its energy while occupancy is at or below 21 devices, and even then still draws **75%** of its average power (24.5 kW against 32.8 kW).
 - **Girls Hostel** uses **5.0%** of its energy while occupancy is at or below 9 devices, and even then still draws **80%** of its average power (11.9 kW against 15.0 kW).
-- **Mess** uses **9.3%** of its energy while occupancy is at or below 9 devices, and even then still draws **74%** of its average power (17.5 kW against 23.5 kW).
+- **Mess** uses **9.3%** of its energy while occupancy is at or below 9 devices, and even then still draws **74%** of its average power (17.4 kW against 23.5 kW).
 - **Library** uses **17.4%** of its energy while occupancy is at or below 9 devices, and even then still draws **62%** of its average power (6.2 kW against 10.2 kW).
 - **Lecture** uses **19.1%** of its energy while occupancy is at or below 15 devices, and even then still draws **85%** of its average power (2.6 kW against 3.0 kW).
 - **Facilities** -- no interval in the record meets the standard threshold (it would be 0.9 occupants, below the minimum ever observed), so no share is quoted at the standard definition; see the sensitivity curve.
 
 **The campus-wide picture.** In every building the base load -- the power drawn
 whether or not anyone is present -- is the *larger* share of mean consumption,
-ranging from 49% down to 18% of load that actually varies with occupancy. On the
+ranging from 50% down to 18% of load that actually varies with occupancy. On the
 directly measured intensity ratio the most responsive building is Library (62%
 of average power when nearly empty) and the least is Lecture (85%).
 
 **In context.** Applying the clock-based definition used by Masoso & Grobler
-(2010) to this data gives 55.2% for the Academic building and 54.9% for the
+(2010) to this data gives 55.2% for the Academic building and 55.0% for the
 Library, against their published 56% for audited commercial buildings elsewhere.
 Our stricter occupancy-based figures are lower by construction and should be
 read as a conservative lower bound.
@@ -2013,13 +2014,13 @@ read as a conservative lower bound.
 
 | building | kind | threshold | coverage % | total kWh measured | low-occupancy kWh | low-occupancy energy share % | % of intervals low | mean power overall (kW) | mean power when low (kW) | intensity ratio | base load a (kW) | watts per occupant b |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Academic | commercial | 12.90 | 90.50 | 849,996.20 | 40,846.90 | 4.81 | 6.52 | 28.84 | 21.25 | 0.74 | 16.95 | 128.10 |
-| Boys_Hostel | residential | 21.05 | 61.90 | 661,097.60 | 29,281.60 | 4.43 | 5.92 | 32.80 | 24.56 | 0.75 | 16.62 | 65.50 |
-| Girls_Hostel | residential | 9 | 60.10 | 293,792.40 | 14,661 | 4.99 | 6.27 | 15 | 11.93 | 0.80 | 10.60 | 36.30 |
-| Mess | commercial | 8.85 | 80.60 | 617,587.90 | 57,622.30 | 9.33 | 12.57 | 23.52 | 17.46 | 0.74 | 18.85 | 61.70 |
-| Library | commercial | 9.10 | 60.80 | 201,337.20 | 35,126.20 | 17.45 | 28.37 | 10.16 | 6.25 | 0.61 | 7.24 | 68.60 |
-| Lecture | commercial | 14.85 | 18.90 | 18,588.80 | 3,542.30 | 19.06 | 22.41 | 3.02 | 2.56 | 0.85 | 2.13 | 7.40 |
-| Facilities | commercial | 0.90 | 85.80 | 282,436.20 | 0 | 0 | 0 | 11.31 | - | - | 9.27 | 232.30 |
+| Academic | commercial | 12.90 | 90.50 | 849,728.20 | 40,835.60 | 4.81 | 6.52 | 28.84 | 21.25 | 0.74 | 16.95 | 128.10 |
+| Boys_Hostel | residential | 21.05 | 61.50 | 656,715.30 | 29,099.70 | 4.43 | 5.93 | 32.80 | 24.52 | 0.75 | 16.32 | 66.60 |
+| Girls_Hostel | residential | 9 | 60 | 293,330.80 | 14,618 | 4.98 | 6.27 | 15.01 | 11.92 | 0.80 | 10.60 | 36.30 |
+| Mess | commercial | 8.85 | 80.50 | 617,014.90 | 57,595.30 | 9.33 | 12.58 | 23.52 | 17.45 | 0.74 | 18.85 | 61.70 |
+| Library | commercial | 9.10 | 60.80 | 201,095.10 | 35,060.80 | 17.43 | 28.36 | 10.16 | 6.25 | 0.61 | 7.24 | 68.50 |
+| Lecture | commercial | 14.90 | 18.90 | 18,583.30 | 3,541.80 | 19.06 | 22.41 | 3.03 | 2.57 | 0.85 | 2.14 | 7.30 |
+| Facilities | commercial | 0.90 | 85.70 | 281,884.90 | 0 | 0 | 0 | 11.30 | - | - | 9.27 | 232 |
 <!-- END:headline_findings -->
 
 ---
@@ -2043,24 +2044,24 @@ identical.
 
 | building | test intervals | spike events | waste events | spike intervals | waste intervals | % of intervals contaminated | low-occ intervals available |
 |---|---|---|---|---|---|---|---|
-| Academic | 26,522 | 199 | 63 | 324 | 1,362 | 6.36 | 772 |
-| Boys_Hostel | 18,138 | 198 | 31 | 326 | 582 | 5.01 | 544 |
-| Girls_Hostel | 17,627 | 198 | 26 | 325 | 552 | 4.98 | 393 |
-| Mess | 23,630 | 198 | 123 | 326 | 2,509 | 12 | 1,255 |
-| Library | 17,832 | 198 | 200 | 326 | 4,217 | 25.48 | 4,420 |
-| Lecture | 5,548 | 190 | 131 | 304 | 2,344 | 47.73 | 2,740 |
-| Facilities | 22,483 | 199 | 0 | 324 | 0 | 1.44 | 0 |
+| Academic | 26,514 | 200 | 70 | 325 | 1,438 | 6.65 | 772 |
+| Boys_Hostel | 18,018 | 198 | 30 | 326 | 620 | 5.25 | 523 |
+| Girls_Hostel | 17,595 | 196 | 27 | 331 | 518 | 4.83 | 393 |
+| Mess | 23,607 | 199 | 123 | 324 | 2,511 | 12.01 | 1,255 |
+| Library | 17,812 | 198 | 200 | 325 | 4,270 | 25.80 | 4,399 |
+| Lecture | 5,529 | 191 | 131 | 309 | 2,346 | 48.02 | 2,731 |
+| Facilities | 22,447 | 198 | 0 | 325 | 0 | 1.45 | 0 |
 
 #### Confusion matrices and scores, at the specified |z| > 3 threshold
 
 | detector | anomaly type | n anomaly intervals | true positives | false positives | false negatives | true negatives | precision | recall | f1 | accuracy |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T | all | 1,686 | 547 | 1,514 | 1,139 | 23,322 | 0.27 | 0.32 | 0.29 | 0.90 |
-| T | spike | 324 | 106 | 1,514 | 218 | 23,322 | 0.07 | 0.33 | 0.11 | 0.93 |
-| T | waste | 1,362 | 441 | 1,514 | 921 | 23,322 | 0.23 | 0.32 | 0.27 | 0.91 |
-| O | all | 1,686 | 646 | 2,883 | 1,040 | 21,953 | 0.18 | 0.38 | 0.25 | 0.85 |
-| O | spike | 324 | 123 | 2,883 | 201 | 21,953 | 0.04 | 0.38 | 0.07 | 0.88 |
-| O | waste | 1,362 | 523 | 2,883 | 839 | 21,953 | 0.15 | 0.38 | 0.22 | 0.86 |
+| T | all | 1,763 | 546 | 1,535 | 1,217 | 23,216 | 0.26 | 0.31 | 0.28 | 0.90 |
+| T | spike | 325 | 95 | 1,535 | 230 | 23,216 | 0.06 | 0.29 | 0.10 | 0.93 |
+| T | waste | 1,438 | 451 | 1,535 | 987 | 23,216 | 0.23 | 0.31 | 0.26 | 0.90 |
+| O | all | 1,763 | 643 | 2,859 | 1,120 | 21,892 | 0.18 | 0.36 | 0.24 | 0.85 |
+| O | spike | 325 | 116 | 2,859 | 209 | 21,892 | 0.04 | 0.36 | 0.07 | 0.88 |
+| O | waste | 1,438 | 527 | 2,859 | 911 | 21,892 | 0.16 | 0.37 | 0.22 | 0.86 |
 
 ![Confusion matrices for both detectors, Academic building  [SYNTHETIC]](../figures/fig_06_confusion_matrices.png)
 
@@ -2078,11 +2079,11 @@ information.
 | comparison | detector T | detector O | metric | difference (O - T) |
 |---|---|---|---|---|
 | fixed threshold \|z\| > 3 (as specified) | 0.29 | 0.28 | mean F1 | -0.01 |
-| matched alert budget | 0.29 | 0.29 | mean F1 | -0.00 |
-| threshold-free ranking | 0.41 | 0.42 | mean average precision | 0.01 |
+| matched alert budget | 0.29 | 0.29 | mean F1 | 0.00 |
+| threshold-free ranking | 0.41 | 0.43 | mean average precision | 0.02 |
 | threshold-free ranking | 0.68 | 0.70 | mean ROC AUC | 0.02 |
-| waste anomalies only, matched budget | 0.15 | 0.16 | mean F1 | 0.01 |
-| waste events noticed at all | 0.20 | 0.23 | event recall | 0.03 |
+| waste anomalies only, matched budget | 0.16 | 0.17 | mean F1 | 0.02 |
+| waste events noticed at all | 0.19 | 0.25 | event recall | 0.05 |
 
 ![Detector T against Detector O at a matched budget and threshold-free  [SYNTHETIC]](../figures/fig_06_detector_comparison.png)
 
@@ -2090,20 +2091,19 @@ information.
 
 **Answer to research question 3: a qualified yes -- occupancy helps
 consistently, but only a little.** The fixed-threshold comparison is discarded
-as a calibration artefact. On the 5 fair comparisons, 4 favour Detector O:
-matched-budget F1 0.289 -> 0.287, average precision 0.414 -> 0.423, ROC AUC
-0.675 -> 0.696, and waste-event recall 19.5% -> 22.9%.
+as a calibration artefact. On the 5 fair comparisons, 5 favour Detector O:
+matched-budget F1 0.287 -> 0.289, average precision 0.415 -> 0.430, ROC AUC
+0.677 -> 0.697, and waste-event recall 19.3% -> 24.8%.
 
-Every margin is one to three percentage points, and the one comparison that does
-not favour Detector O sits essentially on zero, so the direction is not
-unanimous. What gives the result weight is **where** the gains fall: the largest
-are on the waste anomalies specifically -- the case where occupancy ought to
-matter, because a sustained modest lift only looks wrong if you know the
-building was empty. Occupancy adds nothing to catching spikes, which stand out
-against any baseline.
+Every margin is one to three percentage points, and all of them point the same
+way, so the direction is at least consistent. What gives the result weight is
+**where** the gains fall: the largest are on the waste anomalies specifically --
+the case where occupancy ought to matter, because a sustained modest lift only
+looks wrong if you know the building was empty. Occupancy adds nothing to
+catching spikes, which stand out against any baseline.
 
 This modest result is consistent with everything else the project found:
-occupancy explains only 8-44% of power variation (Phase 2), adds +0.109 to
+occupancy explains only 8-44% of power variation (Phase 2), adds +0.106 to
 validation R-squared on average (Phase 4), and several buildings have a nearly
 flat daily profile (Phase 3). **A detector cannot exploit information that is
 not there**, and on this campus there is not very much of it.
@@ -2112,12 +2112,12 @@ not there**, and on this campus there is not very much of it.
 
 | rule | detector | alerts | precision | recall | f1 |
 |---|---|---|---|---|---|
-| IQR fences (cross-check) | O | 859.86 | 0.56 | 0.27 | 0.28 |
-| IQR fences (cross-check) | T | 658.29 | 0.57 | 0.25 | 0.27 |
-| one-sided z > 3 (positive only) | O | 963.14 | 0.63 | 0.27 | 0.28 |
-| one-sided z > 3 (positive only) | T | 784.86 | 0.65 | 0.26 | 0.29 |
-| two-sided \|z\| > 3 (as specified) | O | 1,035.29 | 0.53 | 0.27 | 0.28 |
-| two-sided \|z\| > 3 (as specified) | T | 806.29 | 0.56 | 0.26 | 0.29 |
+| IQR fences (cross-check) | O | 865.57 | 0.57 | 0.27 | 0.29 |
+| IQR fences (cross-check) | T | 659 | 0.58 | 0.25 | 0.28 |
+| one-sided z > 3 (positive only) | O | 953.71 | 0.64 | 0.27 | 0.28 |
+| one-sided z > 3 (positive only) | T | 782.86 | 0.65 | 0.26 | 0.29 |
+| two-sided \|z\| > 3 (as specified) | O | 1,023.43 | 0.53 | 0.27 | 0.28 |
+| two-sided \|z\| > 3 (as specified) | T | 803.57 | 0.56 | 0.26 | 0.29 |
 
 One-sided detection -- flagging only *excess* consumption -- improves precision
 substantially at almost no cost in recall, because every real or injected waste
@@ -2138,16 +2138,16 @@ once rather than twenty-four times.
 
 | # | building | start | end | duration hours | peak z | mean excess kW | total excess kWh |
 |---|---|---|---|---|---|---|---|
-| 1 | Academic | 2017-09-14 03:30:00+05:30 | 2017-09-14 10:30:00+05:30 | 7 | 8.40 | 37.37 | 261.61 |
-| 2 | Academic | 2017-09-15 03:20:00+05:30 | 2017-09-15 11:10:00+05:30 | 8 | 7.78 | 34.41 | 275.24 |
-| 3 | Academic | 2017-10-09 03:20:00+05:30 | 2017-10-09 10:10:00+05:30 | 7 | 7.23 | 38.73 | 271.08 |
+| 1 | Academic | 2017-09-14 03:30:00+05:30 | 2017-09-14 10:30:00+05:30 | 7 | 8.41 | 37.38 | 261.66 |
+| 2 | Academic | 2017-09-15 03:20:00+05:30 | 2017-09-15 11:10:00+05:30 | 8 | 7.78 | 34.41 | 275.26 |
+| 3 | Academic | 2017-10-09 03:20:00+05:30 | 2017-10-09 10:10:00+05:30 | 7 | 7.23 | 38.72 | 271.05 |
 | 4 | Academic | 2017-10-04 03:20:00+05:30 | 2017-10-04 11:10:00+05:30 | 7.50 | 7.15 | 36.86 | 276.42 |
-| 5 | Academic | 2017-09-25 03:20:00+05:30 | 2017-09-25 09:50:00+05:30 | 6.33 | 6.96 | 35.43 | 224.36 |
-| 6 | Academic | 2017-08-17 03:40:00+05:30 | 2017-08-17 10:40:00+05:30 | 6.83 | 6.93 | 35.80 | 244.64 |
-| 7 | Academic | 2017-10-03 03:30:00+05:30 | 2017-10-03 11:10:00+05:30 | 7.83 | 6.92 | 37.19 | 291.31 |
-| 8 | Academic | 2017-10-06 03:20:00+05:30 | 2017-10-06 11:20:00+05:30 | 8.17 | 6.89 | 36.99 | 302.06 |
-| 9 | Academic | 2017-08-18 03:30:00+05:30 | 2017-08-18 11:10:00+05:30 | 7.67 | 6.88 | 35.15 | 269.48 |
-| 10 | Academic | 2017-09-12 03:20:00+05:30 | 2017-09-12 11:10:00+05:30 | 7.67 | 6.87 | 34.11 | 261.51 |
+| 5 | Academic | 2017-09-25 03:20:00+05:30 | 2017-09-25 09:50:00+05:30 | 6.33 | 6.97 | 35.43 | 224.38 |
+| 6 | Academic | 2017-08-17 03:40:00+05:30 | 2017-08-17 10:40:00+05:30 | 6.83 | 6.94 | 35.80 | 244.63 |
+| 7 | Academic | 2017-10-03 03:30:00+05:30 | 2017-10-03 11:10:00+05:30 | 7.83 | 6.93 | 37.19 | 291.29 |
+| 8 | Academic | 2017-10-06 03:20:00+05:30 | 2017-10-06 11:20:00+05:30 | 8.17 | 6.89 | 36.98 | 302.04 |
+| 9 | Academic | 2017-09-12 03:20:00+05:30 | 2017-09-12 11:10:00+05:30 | 7.67 | 6.88 | 34.11 | 261.54 |
+| 10 | Academic | 2017-08-18 03:30:00+05:30 | 2017-08-18 11:10:00+05:30 | 7.67 | 6.88 | 35.14 | 269.43 |
 
 **Read that table with care: it is not ten findings, it is one finding ten
 times.** Almost every one of the most extreme episodes on the campus is the
@@ -2170,13 +2170,13 @@ recurring pattern occupies one row:
 
 | building | start | duration hours | peak z | mean excess kW | total excess kWh | total episodes |
 |---|---|---|---|---|---|---|
-| Academic | 2017-09-14 03:30:00+05:30 | 7 | 8.40 | 37.37 | 261.61 | 103 |
-| Boys_Hostel | 2017-10-10 14:00:00+05:30 | 5.17 | 6.75 | 38.43 | 198.55 | 64 |
-| Library | 2017-10-06 04:30:00+05:30 | 4.67 | 5 | 22.44 | 104.74 | 87 |
-| Lecture | 2017-08-14 04:50:00+05:30 | 0.17 | 4.66 | 3.06 | 0.51 | 8 |
-| Facilities | 2017-06-05 15:00:00+05:30 | 1.33 | 4.53 | 8.83 | 11.77 | 113 |
-| Mess | 2017-07-25 07:50:00+05:30 | 1.83 | 4.29 | 32.50 | 59.58 | 43 |
-| Girls_Hostel | 2017-10-10 17:40:00+05:30 | 0.17 | 3.07 | 12.42 | 2.07 | 2 |
+| Academic | 2017-09-14 03:30:00+05:30 | 7 | 8.41 | 37.38 | 261.66 | 103 |
+| Boys_Hostel | 2017-10-10 14:00:00+05:30 | 5 | 6.80 | 38.79 | 193.97 | 62 |
+| Library | 2017-10-06 04:30:00+05:30 | 4.67 | 5.02 | 22.45 | 104.74 | 86 |
+| Lecture | 2017-08-14 04:50:00+05:30 | 0.17 | 4.76 | 3.04 | 0.51 | 8 |
+| Facilities | 2017-06-05 15:00:00+05:30 | 1.33 | 4.52 | 8.84 | 11.79 | 117 |
+| Mess | 2017-07-25 07:50:00+05:30 | 1.83 | 4.28 | 32.47 | 59.53 | 43 |
+| Girls_Hostel | 2017-10-10 17:40:00+05:30 | 0.17 | 3.07 | 12.43 | 2.07 | 2 |
 <!-- END:anomaly_results -->
 
 ---
@@ -2239,7 +2239,7 @@ described only as patterns worth inspecting.
 #### 4. Very uneven data coverage
 
 Usable coverage ranges from **18.9%** to **90.5%**. The Lecture building is the
-extreme case: its meter is flagged off for **25,488 hours**, leaving only 18.9%
+extreme case: its meter is flagged off for **25,501 hours**, leaving only 18.9%
 of its intervals usable, so every Lecture figure rests on a much smaller sample
 than the others. The Boys hostel, Girls hostel and Library each lose several
 consecutive months to meter outages. This is a smaller sample, not a biased
@@ -2281,7 +2281,7 @@ this report now uses the published calendar (decision D01-03).
 Model A estimates base load as the power a fitted line predicts at zero
 occupancy. For buildings whose occupancy never approaches zero -- the two
 dormitories especially -- that point lies far outside the observed data, and the
-estimate departs from the directly measured night-time median by up to **50%**.
+estimate departs from the directly measured night-time median by up to **51%**.
 Section 6.6 reports both, ranks buildings on the *measured* quantity, and flags
 where the modelled one should not be trusted.
 
@@ -2334,7 +2334,7 @@ definition to our data reproduces its headline figure to within a percentage
 point, which is strong evidence the measurement is sound.
 
 **2. Occupancy is a weak predictor of power.** It explains between 8% and 44% of
-the variation, and adds only +0.109 to validation R-squared over a time-only
+the variation, and adds only +0.106 to validation R-squared over a time-only
 model. This arrived independently from three different directions -- correlation
 analysis, regression, and the flat daily profiles PCA produced -- and it agrees
 with the published LBNL result.
@@ -2642,10 +2642,10 @@ move. Also: the base load computed two independent ways agrees.
 
 **8. Does it match anyone else?** *Figure:* `fig_05_published_comparison.png`.
 Applying Masoso & Grobler's own clock-based definition to our data gives 55.2%
-and 54.9% against their published 56%. Different continent, fifteen years apart.
+and 55.0% against their published 56%. Different continent, fifteen years apart.
 **This is the credibility slide.**
 
-**9. Can we predict it? (RQ2)** Occupancy adds only +0.109 to validation
+**9. Can we predict it? (RQ2)** Occupancy adds only +0.106 to validation
 R-squared. Say the negative result plainly -- it matches published work, and
 three different analyses in this project reached it independently. *Figure:*
 `fig_04_model_comparison.png`.

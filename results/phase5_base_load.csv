@@ -1,8 +1,8 @@
 building,base load a from model A (kW),night 02:00-06:00 median (kW),difference (kW),difference %,mean power (kW),base load as % of mean
 Academic,16.95,19.74,-2.79,-14.1,28.84,58.8
-Boys_Hostel,16.62,33.49,-16.87,-50.4,32.8,50.7
-Girls_Hostel,10.6,15.43,-4.83,-31.3,15.0,70.7
+Boys_Hostel,16.32,33.49,-17.17,-51.3,32.8,49.7
+Girls_Hostel,10.6,15.43,-4.83,-31.3,15.01,70.6
 Mess,18.85,16.76,2.09,12.4,23.52,80.1
-Library,7.24,5.69,1.55,27.3,10.16,71.2
-Lecture,2.13,3.96,-1.83,-46.3,3.02,70.6
-Facilities,9.27,10.18,-0.91,-8.9,11.31,82.0
+Library,7.24,5.69,1.55,27.3,10.16,71.3
+Lecture,2.14,3.97,-1.83,-46.0,3.03,70.7
+Facilities,9.27,10.18,-0.91,-8.9,11.3,82.0

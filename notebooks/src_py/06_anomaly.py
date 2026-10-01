@@ -722,6 +722,36 @@ n_favour_o = int((fair["difference (O - T)"] > 0).sum())
 n_fair = len(fair)
 largest_gain = fair.loc[fair["difference (O - T)"].idxmax()]
 
+n_against = n_fair - n_favour_o
+
+# The direction has flipped twice as upstream fixes landed, so these sentences
+# are generated from the count rather than written for one outcome.
+if n_against == 0:
+    unanimity = (
+        "every one of them points the same way, which is what makes margins "
+        "this small worth reporting at all"
+    )
+    unanimity_short = (
+        "all of them point the same way, so the direction is at least "
+        "consistent"
+    )
+else:
+    plural = "comparison" if n_against == 1 else "comparisons"
+    unanimity = (
+        f"{n_against} of the {n_fair} {plural} sits on the other side of zero, "
+        "so the direction is not unanimous"
+        if n_against == 1 else
+        f"{n_against} of the {n_fair} {plural} sit on the other side of zero, "
+        "so the direction is not unanimous"
+    )
+    unanimity_short = (
+        f"the {n_against} that does not favour Detector O sits essentially on "
+        "zero, so the direction is not unanimous"
+        if n_against == 1 else
+        f"the {n_against} that do not favour Detector O sit essentially on "
+        "zero, so the direction is not unanimous"
+    )
+
 if n_favour_o == n_fair:
     verdict = (f"Detector O is ahead on all {n_fair} fair comparisons, though "
                "modestly")
@@ -843,7 +873,7 @@ investigate?) and with **threshold-free** measures.
 
 {report.md_table(pooled)}
 
-**{verdict.capitalize()}.** At the fixed threshold the mean F1 is {fixed_t:.3f}
+**{verdict[0].upper() + verdict[1:]}.** At the fixed threshold the mean F1 is {fixed_t:.3f}
 for T against {fixed_o:.3f} for O -- but that gap is the calibration artefact
 described above and should be disregarded. On the {n_fair} **fair** comparisons,
 {n_favour_o} favour Detector O:
@@ -856,10 +886,7 @@ described above and should be disregarded. On the {n_fair} **fair** comparisons,
 
 **The pattern is what theory predicts, but the size is small enough that it has
 to be read carefully.** Every margin is between one and three percentage points,
-and {n_fair - n_favour_o} of the {n_fair} comparisons
-{"sits on the other side of zero" if n_fair - n_favour_o == 1 else "sit on the other side of zero"}
--- close enough to nothing that it would be wrong to call the direction
-unanimous.
+and {unanimity}.
 
 What gives the result what weight it has is **where** the gains fall: the
 largest are on the **waste** anomalies, the case designed to favour occupancy,
@@ -957,9 +984,8 @@ Detector O: matched-budget F1 {matched_t:.3f} -> {matched_o:.3f}, average
 precision {ap_t:.3f} -> {ap_o:.3f}, ROC AUC {auc_t:.3f} -> {auc_o:.3f}, and
 waste-event recall {waste_event_t:.1%} -> {waste_event_o:.1%}.
 
-Every margin is one to three percentage points, and the one comparison that does
-not favour Detector O sits essentially on zero, so the direction is not
-unanimous. What gives the result weight is **where** the gains fall: the largest
+Every margin is one to three percentage points, and {unanimity_short}. What
+gives the result weight is **where** the gains fall: the largest
 are on the waste anomalies specifically -- the case where occupancy ought to
 matter, because a sustained modest lift only looks wrong if you know the building
 was empty. Occupancy adds nothing to catching spikes, which stand out against any

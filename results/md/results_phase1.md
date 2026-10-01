@@ -6,18 +6,18 @@ occupancy known -- varies from **18.9%** to **90.5%**:
 
 | building | rows | usable rows | pct usable | pct power missing | pct occupancy missing | hours meter off | total kwh |
 |---|---|---|---|---|---|---|---|
-| Academic | 195,406 | 176,807 | 90.48 | 1.93 | 8.04 | 10.50 | 849,996.20 |
-| Boys_Hostel | 195,407 | 120,915 | 61.88 | 30.23 | 7.96 | 0 | 661,097.60 |
-| Girls_Hostel | 195,406 | 117,508 | 60.14 | 32.27 | 8.05 | 0 | 293,792.40 |
-| Mess | 195,405 | 157,526 | 80.62 | 11.10 | 8.69 | 0 | 617,587.90 |
-| Library | 195,406 | 118,872 | 60.83 | 30.34 | 11.46 | 0 | 201,337.20 |
-| Lecture | 195,397 | 36,978 | 18.92 | 79.04 | 22.46 | 25,487.50 | 18,588.80 |
-| Facilities | 174,600 | 149,883 | 85.84 | 4.51 | 9.71 | 0 | 282,436.20 |
+| Academic | 195,406 | 176,756 | 90.46 | 1.96 | 8.04 | 10.50 | 849,728.20 |
+| Boys_Hostel | 195,407 | 120,114 | 61.47 | 30.65 | 7.96 | 0 | 656,715.30 |
+| Girls_Hostel | 195,406 | 117,292 | 60.02 | 32.39 | 8.05 | 0 | 293,330.80 |
+| Mess | 195,405 | 157,376 | 80.54 | 11.18 | 8.69 | 0 | 617,014.90 |
+| Library | 195,406 | 118,742 | 60.77 | 30.41 | 11.46 | 0 | 201,095.10 |
+| Lecture | 195,397 | 36,854 | 18.86 | 80.24 | 22.46 | 25,501 | 18,583.30 |
+| Facilities | 174,600 | 149,637 | 85.70 | 4.66 | 9.71 | 0 | 281,884.90 |
 
 Three observations matter for everything that follows.
 
 1. **Lecture is only 18.9% usable.** Its meter is flagged off
-   for **25,488 hours** -- about
+   for **25,501 hours** -- about
    2.9 years of the 3.7-year window. Its
    results rest on a far smaller sample than any other building, and every table
    it appears in says so.

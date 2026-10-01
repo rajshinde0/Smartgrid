@@ -37,10 +37,10 @@ move. Also: the base load computed two independent ways agrees.
 
 **8. Does it match anyone else?** *Figure:* `fig_05_published_comparison.png`.
 Applying Masoso & Grobler's own clock-based definition to our data gives 55.2%
-and 54.9% against their published 56%. Different continent, fifteen years apart.
+and 55.0% against their published 56%. Different continent, fifteen years apart.
 **This is the credibility slide.**
 
-**9. Can we predict it? (RQ2)** Occupancy adds only +0.109 to validation
+**9. Can we predict it? (RQ2)** Occupancy adds only +0.106 to validation
 R-squared. Say the negative result plainly -- it matches published work, and
 three different analyses in this project reached it independently. *Figure:*
 `fig_04_model_comparison.png`.
