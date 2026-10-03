@@ -657,8 +657,10 @@ for the Academic building.
 **Reducing to hourly.** Each row is reshaped from 144 into (24, 6) and averaged
 along the last axis -- a vectorized operation. The same calculation written as
 three nested Python loops gives identical numbers (largest difference 0.0e+00)
-and is 78x slower, which is the practical argument for vectorisation throughout
-the project.
+and is 100x slower (the exact ratio varies run to run -- it is a wall-clock
+measurement on a shared machine -- so it is quoted here to the nearest order of
+magnitude), which is the practical argument for vectorisation throughout the
+project.
 
 **Standardisation.** Each hour column is centred and scaled to unit variance.
 Without it PCA would mostly describe the midday hours, because they vary most in

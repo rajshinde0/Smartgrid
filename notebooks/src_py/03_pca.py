@@ -657,8 +657,10 @@ or any interval flagged `meter_off`, are excluded: {complete.sum():,} of
 along the last axis -- a vectorized operation. The same calculation written as
 three nested Python loops gives identical numbers
 (largest difference {np.abs(hourly_vec - hourly_loop).max():.1e}) and is
-{time_loop / time_vec:.0f}x slower, which is the practical argument for
-vectorisation throughout the project.
+{10 ** round(__import__('math').log10(time_loop / time_vec)):,.0f}x slower
+(the exact ratio varies run to run -- it is a wall-clock measurement on a shared
+machine -- so it is quoted here to the nearest order of magnitude), which is the
+practical argument for vectorisation throughout the project.
 
 **Standardisation.** Each hour column is centred and scaled to unit variance.
 Without it PCA would mostly describe the midday hours, because they vary most in
