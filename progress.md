@@ -486,7 +486,7 @@ Boys_Hostel, panel on and off: six runs, no errors.
 pointers had quietly gone stale as the project grew past them.
 
 **Done.**
-- `src/__init__.py` was empty; it now carries a map of all 18 modules grouped
+- `src/__init__.py` was empty; it now carries a map of all 17 modules grouped
   by pipeline layer, with the dependency order. The package has no cycles and
   the map says so.
 - Docstring coverage is now complete: every module and every public top-level
