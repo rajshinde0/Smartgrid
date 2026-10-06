@@ -14,10 +14,11 @@ buildings with WiFi-derived occupancy counts, and ask three questions:
 3. Does an anomaly detector that knows about occupancy beat one that only knows
    the time?
 
-> **The whole project is written up in [`docs/PROJECT_REPORT.md`](docs/PROJECT_REPORT.md).**
-> That file is designed to be read on its own — you do not need to open the
-> notebooks to follow it. [`docs/README.md`](docs/README.md) says where to enter
-> it depending on what you want.
+> **Start with [`docs/PROJECT_SUMMARY.md`](docs/PROJECT_SUMMARY.md)** — the whole
+> project in about 5,800 words, figures included. The full working document is
+> [`docs/PROJECT_REPORT.md`](docs/PROJECT_REPORT.md) (~30,900 words, every number
+> generated from code). Both are designed to be read on their own; you do not
+> need to open the notebooks to follow either.
 
 ## What we found
 

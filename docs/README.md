@@ -1,12 +1,24 @@
 # Documentation index
 
-Four kinds of document live here. Start with the first one — the others exist to
+Five kinds of document live here. Start with the summary — the others exist to
 answer questions it deliberately does not stop to answer.
+
+## The summary
+
+**[`PROJECT_SUMMARY.md`](PROJECT_SUMMARY.md)** — the whole project in ~5,800
+words: the findings, how they were produced, what went wrong on the way, and
+what not to conclude from them.
+
+This is the one to hand someone. It carries the eleven figures that matter and
+links through to the full report wherever the detail lives there. The same
+document is also published as a page at
+<https://claude.ai/code/artifact/21d8c3a5-34b9-4961-b9a6-344d4a76ca88>.
 
 ## The report
 
 **[`PROJECT_REPORT.md`](PROJECT_REPORT.md)** — the master document, ~30,900
-words in 14 sections plus an appendix.
+words in 14 sections plus an appendix. Everything the summary states, with the
+workings.
 
 It is written to be read on its own. A teammate or an examiner who has never
 opened a notebook should be able to follow it start to finish, and every number
