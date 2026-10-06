@@ -35,8 +35,13 @@ Separately, campus consumption **grew 32% to 48% between 2014 and 2017**, which
 required explicit handling of concept drift and which reappears in the anomaly
 results as a recurring false alarm.
 
-The main limitation is the absence of weather data *for this period*: the
-weather record shipped with I-BLEND covers March-June 2018 and does not overlap
-the analysis window at all. Delhi's summer vacation is also its hottest season,
-so cooling an empty building is counted as low-occupancy consumption without
-being separable from it.
+Because the weather record shipped with I-BLEND covers March-June 2018 and does
+not overlap the analysis window, outdoor temperature was taken from Delhi
+airport METAR, which does. That settles what the low-occupancy consumption
+actually is: cooling accounts for only **1.1%-9.0%** of it where the split is
+identifiable, because the empty hours are also the cool hours, so the waste is
+overwhelmingly a controls and scheduling problem rather than an air-conditioning
+artefact. The same data shows roughly a quarter of occupancy's apparent
+predictive value (+0.107 validation R-squared falling to +0.078) was seasonality
+in disguise. The airport lies 25 km from campus, so this is a measured proxy
+rather than campus weather.

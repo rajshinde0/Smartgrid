@@ -3,27 +3,41 @@ Academic,A: power ~ occupancy,0.563,,-0.171,,,11.66,18.06
 Academic,B: time only,0.623,0.509,0.089,0.173,7.57,11.18,15.94
 Academic,C: time + occupancy,0.728,0.518,0.013,0.074,7.71,10.73,16.59
 Academic,D: random forest (time + occupancy),0.842,0.591,0.011,0.109,6.53,10.36,16.6
+Academic,E: time + weather,0.642,0.513,0.061,0.149,7.59,11.39,16.2
+Academic,F: time + weather + occupancy,0.747,0.474,-0.025,0.039,8.06,10.96,16.93
 Boys_Hostel,A: power ~ occupancy,0.41,,0.107,,,8.59,12.04
 Boys_Hostel,B: time only,0.683,0.235,0.007,0.293,9.13,9.69,12.7
 Boys_Hostel,C: time + occupancy,0.779,0.423,0.076,0.27,8.26,9.36,12.25
 Boys_Hostel,D: random forest (time + occupancy),0.745,0.588,0.163,0.217,6.52,8.56,11.66
+Boys_Hostel,E: time + weather,0.69,0.279,-0.013,0.264,8.85,9.82,12.84
+Boys_Hostel,F: time + weather + occupancy,0.783,0.455,0.064,0.258,8.0,9.45,12.34
 Girls_Hostel,A: power ~ occupancy,0.207,,-0.877,,,3.61,4.52
 Girls_Hostel,B: time only,0.692,-0.629,-0.84,-0.648,3.47,3.62,4.47
 Girls_Hostel,C: time + occupancy,0.734,-0.234,-0.86,-0.57,2.96,3.68,4.5
 Girls_Hostel,D: random forest (time + occupancy),0.694,-0.416,-0.711,-0.497,3.2,3.46,4.31
+Girls_Hostel,E: time + weather,0.7,-0.517,-0.892,-0.674,3.33,3.66,4.54
+Girls_Hostel,F: time + weather + occupancy,0.744,-0.144,-0.918,-0.62,2.85,3.73,4.57
 Mess,A: power ~ occupancy,0.154,,-0.083,,,7.53,10.07
 Mess,B: time only,0.427,0.324,-0.045,0.055,4.65,7.65,9.89
 Mess,C: time + occupancy,0.443,0.33,-0.031,0.074,4.61,7.61,9.83
 Mess,D: random forest (time + occupancy),0.541,0.222,-0.051,0.0,4.86,7.64,9.92
+Mess,E: time + weather,0.427,0.374,-0.043,0.057,4.48,7.69,9.89
+Mess,F: time + weather + occupancy,0.444,0.378,-0.031,0.078,4.46,7.64,9.83
 Library,A: power ~ occupancy,0.303,,-0.046,,,6.82,8.53
 Library,B: time only,0.364,-0.261,0.039,-0.029,4.49,6.73,8.17
 Library,C: time + occupancy,0.461,-0.063,-0.093,-0.122,4.02,7.03,8.72
 Library,D: random forest (time + occupancy),0.623,0.159,-0.081,-0.079,3.11,6.6,8.67
+Library,E: time + weather,0.404,-0.17,0.013,-0.055,4.35,6.78,8.29
+Library,F: time + weather + occupancy,0.502,-0.026,-0.133,-0.162,3.91,7.06,8.88
 Lecture,A: power ~ occupancy,0.17,,-0.318,,,1.35,1.57
 Lecture,B: time only,0.481,-0.199,0.233,-0.127,1.26,0.83,1.2
 Lecture,C: time + occupancy,0.486,-0.193,0.224,-0.128,1.27,0.86,1.21
 Lecture,D: random forest (time + occupancy),0.701,-0.053,0.217,-0.064,1.23,0.82,1.21
+Lecture,E: time + weather,0.494,-0.202,0.226,-0.133,1.26,0.83,1.2
+Lecture,F: time + weather + occupancy,0.499,-0.195,0.217,-0.135,1.27,0.86,1.21
 Facilities,A: power ~ occupancy,0.061,,-0.667,,,2.97,3.94
 Facilities,B: time only,0.267,0.305,0.031,0.198,1.92,2.24,3.0
 Facilities,C: time + occupancy,0.28,0.243,0.04,0.156,2.03,2.21,2.99
 Facilities,D: random forest (time + occupancy),0.437,0.329,-0.072,0.045,1.87,2.32,3.16
+Facilities,E: time + weather,0.295,0.461,0.022,0.21,1.72,2.27,3.01
+Facilities,F: time + weather + occupancy,0.31,0.343,0.022,0.161,1.95,2.24,3.01

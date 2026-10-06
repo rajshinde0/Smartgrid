@@ -13,28 +13,38 @@ Section 6.6's corrected-occupancy check shows that subtracting the documented
 baseline raises the low-occupancy share in every building, which means **our
 headline figures are a conservative lower bound** rather than an overstatement.
 
-#### 2. No weather data covering the analysis period
+#### 2. Weather: measured, but by proxy
 
-I-BLEND *does* ship a weather record -- `IIITD_and_airport_data.csv`, with
-temperature and humidity measured both at IIIT-Delhi and at Delhi airport. It is
-unusable here for one decisive reason: **it covers 1 March to 29 June 2018, and
-our analysis window is February 2014 to November 2017.** The overlap is exactly
-**zero rows**. It was published to quantify how well a campus sensor agrees with
-the airport station, not as a weather history for the energy record.
+**This was the project's largest limitation and Phase 8 closed most of it.**
 
-So the limitation stands, but in a sharper form than "there is no weather data".
-In Delhi this matters more than it would almost anywhere else, because the long
-summer vacation coincides with the hottest months. Phase 2 found that Facilities
-uses **17% more** power during vacation than during term, and the Academic
-building slightly more, which is almost certainly air conditioning rather than
-people.
+I-BLEND *does* ship a weather record, but it covers 1 March to 29 June 2018
+against our February 2014 - November 2017 window: the overlap is exactly **zero
+rows**. It was published to show how well a campus sensor agrees with the
+airport station, not as a weather history for the energy record.
 
-So some of what we call low-occupancy consumption is **cooling an empty
-building**. That is still waste, but a different kind with a different remedy --
-setback temperatures rather than switching off lights -- and we cannot separate
-the two. Weather for 2014-2017 would have to come from an external source such
-as a Delhi airport METAR archive; it remains the single most valuable addition
-this project could receive.
+Outdoor conditions therefore come from **METAR** for Delhi Indira Gandhi
+International, which covers the analysis window at 30-minute resolution and
+reaches 96% of intervals. What that bought is in section 6.8: cooling accounts
+for only **1.1%-9.0%** of low-occupancy consumption where it can be measured,
+and about **4%** on average, because the empty hours are the cool hours. The
+waste is overwhelmingly a controls problem, not a cooling artefact.
+
+**What still limits it:**
+
+* **The airport is not the campus.** VIDP sits about **25 km** away. Urban heat
+  island, shading and built form all differ, so this is a *measured proxy*
+  replacing an *unmeasured confound* -- better, not perfect. The I-BLEND 2018
+  file exists precisely to quantify campus-versus-airport agreement and would
+  bound the error, but it covers no part of our window.
+* **Two buildings cannot be decomposed at all.** In Library, Lecture, Facilities the
+  low-occupancy intervals are themselves seasonal -- both are shut during the
+  hot months -- so temperature and usage are confounded within that sample and
+  the fitted cooling slope comes out negative. Reported as not identifiable
+  rather than given a nonsensical number.
+* **A daily-to-hourly proxy cannot see a room.** Outdoor temperature says
+  nothing about which spaces were actually conditioned, or to what setpoint.
+  Separating "cooling an empty building" from "cooling an empty *room*" needs
+  sub-metering, not better weather.
 
 #### 3. The injected anomalies are synthetic
 

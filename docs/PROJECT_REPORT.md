@@ -64,11 +64,16 @@ Separately, campus consumption **grew 32% to 48% between 2014 and 2017**, which
 required explicit handling of concept drift and which reappears in the anomaly
 results as a recurring false alarm.
 
-The main limitation is the absence of weather data *for this period*: the
-weather record shipped with I-BLEND covers March-June 2018 and does not overlap
-the analysis window at all. Delhi's summer vacation is also its hottest season,
-so cooling an empty building is counted as low-occupancy consumption without
-being separable from it.
+Because the weather record shipped with I-BLEND covers March-June 2018 and does
+not overlap the analysis window, outdoor temperature was taken from Delhi
+airport METAR, which does. That settles what the low-occupancy consumption
+actually is: cooling accounts for only **1.1%-9.0%** of it where the split is
+identifiable, because the empty hours are also the cool hours, so the waste is
+overwhelmingly a controls and scheduling problem rather than an air-conditioning
+artefact. The same data shows roughly a quarter of occupancy's apparent
+predictive value (+0.107 validation R-squared falling to +0.078) was seasonality
+in disguise. The airport lies 25 km from campus, so this is a measured proxy
+rather than campus weather.
 <!-- END:abstract -->
 
 ---
@@ -817,7 +822,54 @@ budget** and with **threshold-free** measures (ROC AUC and average precision).
 **Notebook:** `notebooks/06_anomaly.ipynb`.
 <!-- END:method_phase6 -->
 
-### 5.8 Phase 7 — Delivery
+### 5.8 Phase 8 — Weather integration
+
+<!-- BEGIN:method_phase8 -->
+Phase 8 closes the project's largest limitation.
+
+**The data.** I-BLEND ships a weather file, but it covers March-June 2018 and
+has no overlap with the analysis window. Outdoor conditions therefore come from
+**METAR** -- the routine report every airport issues -- for Delhi Indira Gandhi
+International (ICAO `VIDP`), archived free by Iowa State University. It covers
+2014-02-15 to 2017-11-03 at roughly 30-minute resolution, already in
+Asia/Kolkata, and reaches **96.13%** of the analysis intervals. It is resampled
+onto the 10-minute grid by time interpolation, filling only short gaps under the
+same whole-run rule used for power.
+
+**The honest caveat.** VIDP is about **25 km** from the campus. Airport weather
+is not campus weather. This replaces an *unmeasured* confound with a *measured
+proxy* -- better, not perfect, and every number below carries that.
+
+**Cooling degree hours.** Building power does not track raw temperature so much
+as `max(0, T - T_base)`: below the base a building needs no cooling, above it
+load rises roughly linearly. `T_base` is **fitted per building** by scanning
+16-30 °C and keeping the value that explains most variation, rather than being
+assigned a textbook setpoint.
+
+**A physics check before any result.** Mean power is tabulated against
+temperature band per building. Cooled buildings must rise with heat and a
+building that is mostly switched off must not. Nothing downstream would have
+been reported had that failed.
+
+**The 2x2.** Four models are fitted on **identical rows** -- the 94% with a
+temperature -- so no comparison is confounded by a different sample: B (time), C
+(time + occupancy), E (time + weather), F (both). `C - B` is what occupancy is
+worth with weather unknown; `F - E` is what it is worth once weather is known.
+The published B and C are untouched; these are re-fits for comparison only.
+
+**The decomposition.** Within low-occupancy intervals, `power = intercept +
+slope x CDH + hour-of-day effects`. Hour of day **must** be controlled for:
+nearly half of all low-occupancy intervals fall between midnight and 6 a.m.,
+when the building is both empty and cool, and without hour dummies the fit
+confuses "cooler at night" with "needs less cooling" -- R-squared roughly
+trebles once it is included. Buildings whose fitted slope comes out negative are
+reported as **not identifiable**, with the reason, rather than given a
+nonsensical negative cooling share.
+
+**Notebook:** `notebooks/08_weather.ipynb`.
+<!-- END:method_phase8 -->
+
+### 5.9 Phase 7 — Delivery
 
 <!-- BEGIN:method_phase7 -->
 Phase 7 delivers the project and verifies it.
@@ -1348,30 +1400,44 @@ which is why model selection uses the validation split.
 | Academic | B: time only | 0.62 | 0.51 | 0.09 | 0.17 | 7.57 | 11.18 | 15.94 |
 | Academic | C: time + occupancy | 0.73 | 0.52 | 0.01 | 0.07 | 7.71 | 10.73 | 16.59 |
 | Academic | D: random forest (time + occupancy) | 0.84 | 0.59 | 0.01 | 0.11 | 6.53 | 10.36 | 16.60 |
+| Academic | E: time + weather | 0.64 | 0.51 | 0.06 | 0.15 | 7.59 | 11.39 | 16.20 |
+| Academic | F: time + weather + occupancy | 0.75 | 0.47 | -0.03 | 0.04 | 8.06 | 10.96 | 16.93 |
 | Boys_Hostel | A: power ~ occupancy | 0.41 | - | 0.11 | - | - | 8.59 | 12.04 |
 | Boys_Hostel | B: time only | 0.68 | 0.23 | 0.01 | 0.29 | 9.13 | 9.69 | 12.70 |
 | Boys_Hostel | C: time + occupancy | 0.78 | 0.42 | 0.08 | 0.27 | 8.26 | 9.36 | 12.25 |
 | Boys_Hostel | D: random forest (time + occupancy) | 0.74 | 0.59 | 0.16 | 0.22 | 6.52 | 8.56 | 11.66 |
+| Boys_Hostel | E: time + weather | 0.69 | 0.28 | -0.01 | 0.26 | 8.85 | 9.82 | 12.84 |
+| Boys_Hostel | F: time + weather + occupancy | 0.78 | 0.46 | 0.06 | 0.26 | 8 | 9.45 | 12.34 |
 | Girls_Hostel | A: power ~ occupancy | 0.21 | - | -0.88 | - | - | 3.61 | 4.52 |
 | Girls_Hostel | B: time only | 0.69 | -0.63 | -0.84 | -0.65 | 3.47 | 3.62 | 4.47 |
 | Girls_Hostel | C: time + occupancy | 0.73 | -0.23 | -0.86 | -0.57 | 2.96 | 3.68 | 4.50 |
 | Girls_Hostel | D: random forest (time + occupancy) | 0.69 | -0.42 | -0.71 | -0.50 | 3.20 | 3.46 | 4.31 |
+| Girls_Hostel | E: time + weather | 0.70 | -0.52 | -0.89 | -0.67 | 3.33 | 3.66 | 4.54 |
+| Girls_Hostel | F: time + weather + occupancy | 0.74 | -0.14 | -0.92 | -0.62 | 2.85 | 3.73 | 4.57 |
 | Mess | A: power ~ occupancy | 0.15 | - | -0.08 | - | - | 7.53 | 10.07 |
 | Mess | B: time only | 0.43 | 0.32 | -0.04 | 0.06 | 4.65 | 7.65 | 9.89 |
 | Mess | C: time + occupancy | 0.44 | 0.33 | -0.03 | 0.07 | 4.61 | 7.61 | 9.83 |
 | Mess | D: random forest (time + occupancy) | 0.54 | 0.22 | -0.05 | 0 | 4.86 | 7.64 | 9.92 |
+| Mess | E: time + weather | 0.43 | 0.37 | -0.04 | 0.06 | 4.48 | 7.69 | 9.89 |
+| Mess | F: time + weather + occupancy | 0.44 | 0.38 | -0.03 | 0.08 | 4.46 | 7.64 | 9.83 |
 | Library | A: power ~ occupancy | 0.30 | - | -0.05 | - | - | 6.82 | 8.53 |
 | Library | B: time only | 0.36 | -0.26 | 0.04 | -0.03 | 4.49 | 6.73 | 8.17 |
 | Library | C: time + occupancy | 0.46 | -0.06 | -0.09 | -0.12 | 4.02 | 7.03 | 8.72 |
 | Library | D: random forest (time + occupancy) | 0.62 | 0.16 | -0.08 | -0.08 | 3.11 | 6.60 | 8.67 |
+| Library | E: time + weather | 0.40 | -0.17 | 0.01 | -0.06 | 4.35 | 6.78 | 8.29 |
+| Library | F: time + weather + occupancy | 0.50 | -0.03 | -0.13 | -0.16 | 3.91 | 7.06 | 8.88 |
 | Lecture | A: power ~ occupancy | 0.17 | - | -0.32 | - | - | 1.35 | 1.57 |
 | Lecture | B: time only | 0.48 | -0.20 | 0.23 | -0.13 | 1.26 | 0.83 | 1.20 |
 | Lecture | C: time + occupancy | 0.49 | -0.19 | 0.22 | -0.13 | 1.27 | 0.86 | 1.21 |
 | Lecture | D: random forest (time + occupancy) | 0.70 | -0.05 | 0.22 | -0.06 | 1.23 | 0.82 | 1.21 |
+| Lecture | E: time + weather | 0.49 | -0.20 | 0.23 | -0.13 | 1.26 | 0.83 | 1.20 |
+| Lecture | F: time + weather + occupancy | 0.50 | -0.20 | 0.22 | -0.14 | 1.27 | 0.86 | 1.21 |
 | Facilities | A: power ~ occupancy | 0.06 | - | -0.67 | - | - | 2.97 | 3.94 |
 | Facilities | B: time only | 0.27 | 0.30 | 0.03 | 0.20 | 1.92 | 2.24 | 3 |
 | Facilities | C: time + occupancy | 0.28 | 0.24 | 0.04 | 0.16 | 2.03 | 2.21 | 2.99 |
 | Facilities | D: random forest (time + occupancy) | 0.44 | 0.33 | -0.07 | 0.04 | 1.87 | 2.32 | 3.16 |
+| Facilities | E: time + weather | 0.29 | 0.46 | 0.02 | 0.21 | 1.72 | 2.27 | 3.01 |
+| Facilities | F: time + weather + occupancy | 0.31 | 0.34 | 0.02 | 0.16 | 1.95 | 2.24 | 3.01 |
 
 #### Does occupancy help? (Research question 2)
 
@@ -1926,6 +1992,123 @@ Phase 2 established that these residuals are heavy-tailed.
 period, the model cannot distinguish a genuine fault from a hot day.*
 <!-- END:results_phase6 -->
 
+### 6.8 Phase 8 — Weather: how much of the waste is cooling?
+
+<!-- BEGIN:results_phase8 -->
+#### The weather data behaves like weather
+
+| building | 0-15C | 15-20C | 20-25C | 25-30C | 30-35C | 35-40C | 40-50C | hot vs mild % | r(power, temp) |
+|---|---|---|---|---|---|---|---|---|---|
+| Academic | 19.90 | 22.70 | 24.30 | 27.30 | 34.10 | 38.70 | 41.80 | 51.40 | 0.42 |
+| Boys_Hostel | 27.90 | 28.10 | 31.20 | 35.80 | 35.80 | 31.30 | 26.10 | 12 | 0.14 |
+| Girls_Hostel | 12.60 | 13 | 13.90 | 16 | 16.40 | 15.10 | 13.40 | 16.20 | 0.23 |
+| Mess | 18.70 | 20.50 | 21 | 23.10 | 27.40 | 28.70 | 27.20 | 33.10 | 0.37 |
+| Library | 9.90 | 9.80 | 8.80 | 8.90 | 11 | 12.40 | 13.20 | 25.30 | 0.12 |
+| Lecture | 4.10 | 3.50 | 3.40 | 3.10 | 3.10 | 2.80 | 2.10 | -12.40 | -0.18 |
+| Facilities | 8.50 | 8.10 | 8.90 | 11 | 13.20 | 15 | 17.20 | 61.90 | 0.48 |
+
+![Mean power against outdoor temperature, and the cost of hotter weather](../figures/fig_08_temperature_response.png)
+
+*Facilities climbs +62% from mild to hot weather while Lecture falls -12% -- a
+cooled building and a switched-off one behaving exactly as they should.*
+
+The check passes convincingly. **Facilities (+62%)** and Academic climb steeply
+with temperature; **Lecture (-12%)** does the opposite, which is the negative
+control working -- a building that is mostly switched off cannot respond to
+heat. The hostels rise then fall above 35 °C, which is also right: their hottest
+hours fall in the vacation, when the students have gone home.
+
+#### Was occupancy's contribution partly summer heat?
+
+| building | B (time) | C (+occ) | E (+weather) | F (+both) | occupancy alone (C-B) | occupancy given weather (F-E) | weather alone (E-B) |
+|---|---|---|---|---|---|---|---|
+| Academic | 0.50 | 0.51 | 0.51 | 0.47 | 0.01 | -0.04 | 0.01 |
+| Boys_Hostel | 0.23 | 0.42 | 0.28 | 0.46 | 0.19 | 0.18 | 0.05 |
+| Girls_Hostel | -0.62 | -0.22 | -0.52 | -0.14 | 0.41 | 0.37 | 0.11 |
+| Mess | 0.32 | 0.33 | 0.37 | 0.38 | 0.01 | 0.00 | 0.05 |
+| Library | -0.27 | -0.06 | -0.17 | -0.03 | 0.20 | 0.14 | 0.09 |
+| Lecture | -0.20 | -0.20 | -0.20 | -0.20 | 0.01 | 0.01 | 0.00 |
+| Facilities | 0.28 | 0.22 | 0.46 | 0.34 | -0.07 | -0.12 | 0.18 |
+
+![What occupancy is worth before and after accounting for weather](../figures/fig_08_occupancy_vs_weather.png)
+
+*Occupancy's mean contribution falls from +0.107 to +0.078 in validation
+R-squared once temperature is known.*
+
+**Yes -- about a quarter of it.** Occupancy and temperature are both seasonal,
+and the campus empties in exactly the months Delhi is hottest. Fitted on
+identical rows, occupancy is worth **+0.107** in validation R-squared when the
+weather is unknown and only **+0.078** once it is known -- a **27% shrinkage**.
+Weather alone is worth **+0.070**, comparable to occupancy.
+
+The per-building pattern splits the campus cleanly. The two dormitories and the
+Library stay genuinely occupancy-driven even with weather known. **Facilities is
+the opposite**: occupancy is worth **-0.118** there once temperature is known,
+while weather alone is worth **+0.175**. That resolves something Phase 4 could
+only note -- Facilities was the building where adding occupancy made the model
+*worse*, and the reason is that it is a weather-driven building where occupancy
+was standing in for a season it only partly tracks.
+
+#### How much of the waste is cooling?
+
+| building | n | base c | r2 | mean power kw | schedule kw | weather kw | weather share pct |
+|---|---|---|---|---|---|---|---|
+| Academic | 11,191 | 27 | 0.19 | 21.37 | 20.52 | 0.85 | 4 |
+| Boys_Hostel | 7,015 | 16 | 0.28 | 24.52 | 22.30 | 2.21 | 9 |
+| Girls_Hostel | 7,250 | 30 | 0.21 | 11.92 | 11.79 | 0.13 | 1.10 |
+| Mess | 19,227 | 30 | 0.22 | 17.51 | 17.29 | 0.22 | 1.30 |
+
+![What nearly-empty buildings are actually drawing power for](../figures/fig_08_waste_decomposition.png)
+
+*Cooling accounts for 1.1%-9.0% of low-occupancy consumption where it can be
+measured. The rest is drawn regardless of the weather.*
+
+**The limitation turns out to have been mild, and that strengthens the main
+finding.** Where the split can be measured, cooling accounts for between **1.1%
+and 9.0%** of low-occupancy consumption, a mean of about **4%**. The other
+91-99% is drawn regardless of the weather.
+
+The reason is almost obvious once stated: **the empty hours are the cool
+hours.** Nearly half of all low-occupancy intervals fall between midnight and 6
+a.m. A building sitting at 20 kW at 4 a.m. in February is not air conditioning
+anything. So the waste measured in Phase 5 is overwhelmingly a **controls and
+scheduling problem**, not a cooling artefact -- a more actionable conclusion
+than the limitation feared, and one that has now been tested rather than
+assumed.
+
+**Two buildings cannot be measured, and saying so matters.** In Library,
+Lecture, Facilities the low-occupancy intervals are themselves seasonal: both
+are closed during the hot vacation months, so within that sample high
+temperature coincides with a shut building and the fitted slope comes out
+negative. That is a confound between season and usage, not a cooling response,
+and a negative "cooling share" would be nonsense. They are reported as not
+identifiable, with the reason.
+
+#### Does weather explain the Facilities vacation anomaly?
+
+Phase 2 found Facilities to be the **only** building using more power on
+low-activity days than on high-activity ones -- every other building falls by
+13% to 50% -- and offered Delhi's heat as the explanation. Comparing the two
+periods *within the same 28-34 °C band* settles it: a raw gap of +3.0% on this
+sample becomes **-4.9%** once temperature is held constant, so holding the
+weather fixed does not merely remove the gap, it reverses it. The building does
+not draw more because the campus is empty; it draws more because the days when
+the campus is quiet are the days when Delhi is hottest, and Facilities is the
+most weather-sensitive building on site.
+
+#### Does weather help an anomaly detector?
+
+| detector | roc auc | average precision |
+|---|---|---|
+| OW (time+occ+weather) | 0.70 | 0.43 |
+| T (time) | 0.67 | 0.41 |
+| W (time+weather) | 0.67 | 0.42 |
+
+Scored on the same synthetic anomalies as Phase 6, with the same seed and the
+same one-sided rule. This addresses the caveat Phase 6 had to leave standing --
+that its real-data findings could not be told apart from hot days.
+<!-- END:results_phase8 -->
+
 ---
 
 ## 7. Decision log
@@ -1981,6 +2164,9 @@ exactly what it would change.
 | 40 | 6 | Reporting a one-sided detection variant | Two-sided \|z\| > 3 only, as planned; one-sided only; both | Two-sided as the headline (as specified), one-sided reported beside it | Every injected anomaly is additive and real waste is too -- lights left on add power. The two-sided rule spends about half its alerts on under-consumption, which cannot be a true positive against these labels. | One-sided detection substantially improves precision for both detectors at almost no cost in recall. It does not change the T-vs-O conclusion. |
 | 41 | 7 | Dashboard reads saved output instead of refitting models | Refit models live on each selection; cache models in the session; export scored data once and read it | Export to parquet in src/dashboard.py; the app only reads and draws | A dashboard that refits is slow and unpredictable during a live demonstration, and it would let the numbers on screen drift away from the numbers in the report. | None on any reported number. The dashboard shows exactly the values the notebooks computed. |
 | 42 | 7 | Dashboard shows predictions across the whole record, not just test | Test period only; whole record with no marking; whole record with a split column | Whole record, with a `split` column marking train / validation / test | Restricting the dashboard to the test period would make most dates unselectable. Showing in-sample fit without labelling it would misrepresent how well the model performs. | Presentation only. The anomaly scale is calibrated on the test period and applied consistently, so a flag means the same thing at every date. |
+| 43 | 8 | Source of outdoor weather for 2014-2017 | The weather file shipped with I-BLEND; a reanalysis product such as ERA5; Delhi airport METAR | METAR from VIDP (Delhi IGI), via the Iowa State archive, cached to data/weather/ and fetched not committed | The I-BLEND weather file covers March-June 2018 and has zero overlap with the analysis window. METAR covers it exactly, at 30-minute resolution, free and without a key. | Reaches 96.13% of analysis intervals. VIDP is ~25 km from campus, so this is a measured proxy rather than campus weather -- stated wherever a weather number appears. |
+| 44 | 8 | Models B and C left unchanged; weather added as new models E and F | Add weather to B and C directly; add E and F as separate models; replace B and C entirely | B and C keep their published definitions; E and F are new, and all four are re-fitted on identical rows for the comparison | RQ2 and RQ3 are already answered and verified against B and C. Redefining them would invalidate correct results. Re-fitting all four on the same rows stops the weather comparison being confounded by the 4% of rows that lack a temperature. | RQ2 and RQ3 are unchanged. The 2x2 adds a sharper finding: occupancy is worth +0.107 with weather unknown and +0.078 once known, a 27% shrinkage. |
+| 45 | 8 | Controlling for hour of day in the waste decomposition | Fit power on CDH alone within low-occupancy intervals; add hour-of-day dummies; fit on all intervals and apply the slope | CDH plus hour-of-day dummies, within low-occupancy intervals only | Nearly half of low-occupancy intervals fall between midnight and 6 a.m., when the building is both empty and cool. Without hour dummies the fit confuses 'cooler at night' with 'needs less cooling'. Fitting on all intervals instead would let occupancy-driven load inflate the cooling slope. | R-squared roughly trebles (Academic 0.07 to 0.19) and the fitted slopes turn positive and physically sensible. Two buildings still come out negative and are reported as not identifiable rather than given a number. |
 <!-- END:decision_log -->
 
 ---
@@ -2201,28 +2387,38 @@ Section 6.6's corrected-occupancy check shows that subtracting the documented
 baseline raises the low-occupancy share in every building, which means **our
 headline figures are a conservative lower bound** rather than an overstatement.
 
-#### 2. No weather data covering the analysis period
+#### 2. Weather: measured, but by proxy
 
-I-BLEND *does* ship a weather record -- `IIITD_and_airport_data.csv`, with
-temperature and humidity measured both at IIIT-Delhi and at Delhi airport. It is
-unusable here for one decisive reason: **it covers 1 March to 29 June 2018, and
-our analysis window is February 2014 to November 2017.** The overlap is exactly
-**zero rows**. It was published to quantify how well a campus sensor agrees with
-the airport station, not as a weather history for the energy record.
+**This was the project's largest limitation and Phase 8 closed most of it.**
 
-So the limitation stands, but in a sharper form than "there is no weather data".
-In Delhi this matters more than it would almost anywhere else, because the long
-summer vacation coincides with the hottest months. Phase 2 found that Facilities
-uses **17% more** power during vacation than during term, and the Academic
-building slightly more, which is almost certainly air conditioning rather than
-people.
+I-BLEND *does* ship a weather record, but it covers 1 March to 29 June 2018
+against our February 2014 - November 2017 window: the overlap is exactly **zero
+rows**. It was published to show how well a campus sensor agrees with the
+airport station, not as a weather history for the energy record.
 
-So some of what we call low-occupancy consumption is **cooling an empty
-building**. That is still waste, but a different kind with a different remedy --
-setback temperatures rather than switching off lights -- and we cannot separate
-the two. Weather for 2014-2017 would have to come from an external source such
-as a Delhi airport METAR archive; it remains the single most valuable addition
-this project could receive.
+Outdoor conditions therefore come from **METAR** for Delhi Indira Gandhi
+International, which covers the analysis window at 30-minute resolution and
+reaches 96% of intervals. What that bought is in section 6.8: cooling accounts
+for only **1.1%-9.0%** of low-occupancy consumption where it can be measured,
+and about **4%** on average, because the empty hours are the cool hours. The
+waste is overwhelmingly a controls problem, not a cooling artefact.
+
+**What still limits it:**
+
+* **The airport is not the campus.** VIDP sits about **25 km** away. Urban heat
+  island, shading and built form all differ, so this is a *measured proxy*
+  replacing an *unmeasured confound* -- better, not perfect. The I-BLEND 2018
+  file exists precisely to quantify campus-versus-airport agreement and would
+  bound the error, but it covers no part of our window.
+* **Two buildings cannot be decomposed at all.** In Library, Lecture, Facilities the
+  low-occupancy intervals are themselves seasonal -- both are shut during the
+  hot months -- so temperature and usage are confounded within that sample and
+  the fitted cooling slope comes out negative. Reported as not identifiable
+  rather than given a nonsensical number.
+* **A daily-to-hourly proxy cannot see a room.** Outdoor temperature says
+  nothing about which spaces were actually conditioned, or to what setpoint.
+  Separating "cooling an empty building" from "cooling an empty *room*" needs
+  sub-metering, not better weather.
 
 #### 3. The injected anomalies are synthetic
 
@@ -2368,11 +2564,11 @@ the others could do.
 
 #### Future scope
 
-1. **Add weather data for 2014-2017.** The single highest-value addition. The
-   record shipped with I-BLEND covers only March-June 2018, so this means an
-   external source such as a Delhi airport METAR archive. It would separate
-   cooling load from occupancy-driven load and turn "some of this is air
-   conditioning an empty building" from a caveat into a number.
+1. **On-campus weather, not airport weather.** Phase 8 closed the weather gap
+   with METAR from an airport 25 km away. A sensor on the campus itself -- or
+   the I-BLEND 2018 comparison file extended backwards -- would remove the
+   remaining proxy error and let the two buildings that cannot currently be
+   decomposed be measured properly.
 2. **Sub-metering.** One meter per building can say *how much* is wasted but never
    *what* is wasting it. Circuit-level metering would make the findings
    actionable.
@@ -2441,6 +2637,8 @@ section where it is implemented.
 | VI | 2D and 3D visualization | 03_pca.ipynb, Steps 7-8 (PC1-PC2 scatter; 3D PC1-PC3) |
 | VI | Linear regression; multiple linear regression | 04_regression.ipynb, Steps 6 and 9 (models A, B, C) |
 | VI | Dashboards and communicating results | dashboard/app.py; docs/PROJECT_REPORT.md |
+| III | Integrating an external data source; confounding variables | 08_weather.ipynb, Steps 1-4 (METAR join; separating weather from occupancy with a 2x2 on identical rows) |
+| V | Controlling for a confounder in a regression | 08_weather.ipynb, Step 4 (hour-of-day dummies in the cooling-degree fit) |
 <!-- END:syllabus_units -->
 
 ### 12.2 Tutorials 1–8

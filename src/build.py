@@ -15,7 +15,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from . import clean, config as C, features, ingest, occupancy as occ
+from . import clean, config as C, features, ingest, occupancy as occ, weather
 
 # 10-minute blocks per hour, used to convert block counts into hours
 BLOCKS_PER_HOUR = 6
@@ -103,6 +103,23 @@ def build_building(
     # period is where they overlap. This is decision D00-01.
     merged = combined.join(occupancy, how="inner")
 
+    # ---- weather ----------------------------------------------------------
+    # LEFT join, deliberately. Occupancy defines the analysis window because
+    # every research question needs it; weather is explanatory, so a missing
+    # temperature must never remove a building-hour from the study. Rows with
+    # no weather simply carry NaN and drop out of weather-based models only.
+    try:
+        conditions = weather.load_weather(fetch=False)
+        merged = merged.join(conditions, how="left")
+        merged["cdh"] = weather.cooling_degree_hours(
+            merged["temp_c"], C.CDH_BASE_DEFAULT
+        )
+    except FileNotFoundError:
+        # The pipeline still runs without weather -- it just loses Phase 8.
+        merged["temp_c"] = np.nan
+        merged["relh"] = np.nan
+        merged["cdh"] = np.nan
+
     # ---- features ---------------------------------------------------------
     merged = features.add_all_features(merged, power_col="power_w")
     merged["building"] = building
@@ -165,6 +182,7 @@ LONG_COLUMNS = [
     "meter_off", "is_missing", "usable", "outlier_iqr",
     "outlier_zscore", "power_lag_1h", "power_lag_1d", "power_roll24h_mean",
     "power_roll24h_std", "voltage", "power_factor",
+    "temp_c", "relh", "cdh",
 ]
 
 

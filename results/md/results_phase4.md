@@ -33,30 +33,44 @@ which is why model selection uses the validation split.
 | Academic | B: time only | 0.62 | 0.51 | 0.09 | 0.17 | 7.57 | 11.18 | 15.94 |
 | Academic | C: time + occupancy | 0.73 | 0.52 | 0.01 | 0.07 | 7.71 | 10.73 | 16.59 |
 | Academic | D: random forest (time + occupancy) | 0.84 | 0.59 | 0.01 | 0.11 | 6.53 | 10.36 | 16.60 |
+| Academic | E: time + weather | 0.64 | 0.51 | 0.06 | 0.15 | 7.59 | 11.39 | 16.20 |
+| Academic | F: time + weather + occupancy | 0.75 | 0.47 | -0.03 | 0.04 | 8.06 | 10.96 | 16.93 |
 | Boys_Hostel | A: power ~ occupancy | 0.41 | - | 0.11 | - | - | 8.59 | 12.04 |
 | Boys_Hostel | B: time only | 0.68 | 0.23 | 0.01 | 0.29 | 9.13 | 9.69 | 12.70 |
 | Boys_Hostel | C: time + occupancy | 0.78 | 0.42 | 0.08 | 0.27 | 8.26 | 9.36 | 12.25 |
 | Boys_Hostel | D: random forest (time + occupancy) | 0.74 | 0.59 | 0.16 | 0.22 | 6.52 | 8.56 | 11.66 |
+| Boys_Hostel | E: time + weather | 0.69 | 0.28 | -0.01 | 0.26 | 8.85 | 9.82 | 12.84 |
+| Boys_Hostel | F: time + weather + occupancy | 0.78 | 0.46 | 0.06 | 0.26 | 8 | 9.45 | 12.34 |
 | Girls_Hostel | A: power ~ occupancy | 0.21 | - | -0.88 | - | - | 3.61 | 4.52 |
 | Girls_Hostel | B: time only | 0.69 | -0.63 | -0.84 | -0.65 | 3.47 | 3.62 | 4.47 |
 | Girls_Hostel | C: time + occupancy | 0.73 | -0.23 | -0.86 | -0.57 | 2.96 | 3.68 | 4.50 |
 | Girls_Hostel | D: random forest (time + occupancy) | 0.69 | -0.42 | -0.71 | -0.50 | 3.20 | 3.46 | 4.31 |
+| Girls_Hostel | E: time + weather | 0.70 | -0.52 | -0.89 | -0.67 | 3.33 | 3.66 | 4.54 |
+| Girls_Hostel | F: time + weather + occupancy | 0.74 | -0.14 | -0.92 | -0.62 | 2.85 | 3.73 | 4.57 |
 | Mess | A: power ~ occupancy | 0.15 | - | -0.08 | - | - | 7.53 | 10.07 |
 | Mess | B: time only | 0.43 | 0.32 | -0.04 | 0.06 | 4.65 | 7.65 | 9.89 |
 | Mess | C: time + occupancy | 0.44 | 0.33 | -0.03 | 0.07 | 4.61 | 7.61 | 9.83 |
 | Mess | D: random forest (time + occupancy) | 0.54 | 0.22 | -0.05 | 0 | 4.86 | 7.64 | 9.92 |
+| Mess | E: time + weather | 0.43 | 0.37 | -0.04 | 0.06 | 4.48 | 7.69 | 9.89 |
+| Mess | F: time + weather + occupancy | 0.44 | 0.38 | -0.03 | 0.08 | 4.46 | 7.64 | 9.83 |
 | Library | A: power ~ occupancy | 0.30 | - | -0.05 | - | - | 6.82 | 8.53 |
 | Library | B: time only | 0.36 | -0.26 | 0.04 | -0.03 | 4.49 | 6.73 | 8.17 |
 | Library | C: time + occupancy | 0.46 | -0.06 | -0.09 | -0.12 | 4.02 | 7.03 | 8.72 |
 | Library | D: random forest (time + occupancy) | 0.62 | 0.16 | -0.08 | -0.08 | 3.11 | 6.60 | 8.67 |
+| Library | E: time + weather | 0.40 | -0.17 | 0.01 | -0.06 | 4.35 | 6.78 | 8.29 |
+| Library | F: time + weather + occupancy | 0.50 | -0.03 | -0.13 | -0.16 | 3.91 | 7.06 | 8.88 |
 | Lecture | A: power ~ occupancy | 0.17 | - | -0.32 | - | - | 1.35 | 1.57 |
 | Lecture | B: time only | 0.48 | -0.20 | 0.23 | -0.13 | 1.26 | 0.83 | 1.20 |
 | Lecture | C: time + occupancy | 0.49 | -0.19 | 0.22 | -0.13 | 1.27 | 0.86 | 1.21 |
 | Lecture | D: random forest (time + occupancy) | 0.70 | -0.05 | 0.22 | -0.06 | 1.23 | 0.82 | 1.21 |
+| Lecture | E: time + weather | 0.49 | -0.20 | 0.23 | -0.13 | 1.26 | 0.83 | 1.20 |
+| Lecture | F: time + weather + occupancy | 0.50 | -0.20 | 0.22 | -0.14 | 1.27 | 0.86 | 1.21 |
 | Facilities | A: power ~ occupancy | 0.06 | - | -0.67 | - | - | 2.97 | 3.94 |
 | Facilities | B: time only | 0.27 | 0.30 | 0.03 | 0.20 | 1.92 | 2.24 | 3 |
 | Facilities | C: time + occupancy | 0.28 | 0.24 | 0.04 | 0.16 | 2.03 | 2.21 | 2.99 |
 | Facilities | D: random forest (time + occupancy) | 0.44 | 0.33 | -0.07 | 0.04 | 1.87 | 2.32 | 3.16 |
+| Facilities | E: time + weather | 0.29 | 0.46 | 0.02 | 0.21 | 1.72 | 2.27 | 3.01 |
+| Facilities | F: time + weather + occupancy | 0.31 | 0.34 | 0.02 | 0.16 | 1.95 | 2.24 | 3.01 |
 
 #### Does occupancy help? (Research question 2)
 

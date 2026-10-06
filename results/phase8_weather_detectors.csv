@@ -1,0 +1,22 @@
+building,detector,roc_auc,average_precision,baseline_precision
+Academic,T (time),0.6619,0.2903,0.0647
+Academic,W (time+weather),0.6683,0.2878,0.0647
+Academic,OW (time+occ+weather),0.6878,0.2861,0.0647
+Boys_Hostel,T (time),0.6714,0.2427,0.0535
+Boys_Hostel,W (time+weather),0.673,0.2414,0.0535
+Boys_Hostel,OW (time+occ+weather),0.7914,0.3239,0.0535
+Girls_Hostel,T (time),0.683,0.399,0.0476
+Girls_Hostel,W (time+weather),0.6784,0.3938,0.0476
+Girls_Hostel,OW (time+occ+weather),0.7522,0.4367,0.0476
+Mess,T (time),0.5537,0.2667,0.1163
+Mess,W (time+weather),0.5557,0.2692,0.1163
+Mess,OW (time+occ+weather),0.5611,0.2836,0.1163
+Library,T (time),0.5612,0.4664,0.2597
+Library,W (time+weather),0.5757,0.468,0.2597
+Library,OW (time+occ+weather),0.534,0.4313,0.2597
+Lecture,T (time),0.5859,0.5025,0.4745
+Lecture,W (time+weather),0.5911,0.5058,0.4745
+Lecture,OW (time+occ+weather),0.5811,0.5055,0.4745
+Facilities,T (time),0.9675,0.7269,0.0146
+Facilities,W (time+weather),0.9708,0.7406,0.0146
+Facilities,OW (time+occ+weather),0.9675,0.7177,0.0146

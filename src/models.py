@@ -48,12 +48,26 @@ TIME_CATEGORICAL = ["hour", "weekday", "month"]
 TIME_BINARY = ["is_weekend", "is_semester", "is_working_day"]
 OCCUPANCY = ["occupancy"]
 
+# Outdoor conditions (Phase 8). `cdh` is cooling degree hours at the default
+# base: zero on a mild day, rising linearly once cooling starts. Temperature
+# alone is close to linear in the response; CDH encodes the threshold, and
+# including both lets the model use whichever fits the building.
+WEATHER = ["temp_c", "cdh"]
+
 
 def usable_frame(df: pd.DataFrame) -> pd.DataFrame:
     """Rows a model may legitimately learn from."""
     needed = ["power_w", "occupancy", "hour", "weekday", "month", "is_weekend",
               "is_semester", "is_working_day"]
+    weather_cols = [c for c in WEATHER if c in df.columns]
+
+    # Weather is deliberately NOT in the required set: models B and C must keep
+    # the exact sample they were published on, so a missing temperature cannot
+    # remove a row from them. Weather columns ride along and the weather models
+    # drop their own NaNs at fit time.
     out = df.loc[df["usable"], needed].dropna()
+    if weather_cols:
+        out = out.join(df.loc[df["usable"], weather_cols], how="left")
     out = out.copy()
     out["weekday"] = out["weekday"].astype(str)   # one-hot wants plain labels
     return out
@@ -138,7 +152,9 @@ def fit_model_a(frame: pd.DataFrame) -> dict:
 # ---------------------------------------------------------------------------
 # Models B, C, D -- pipelines
 # ---------------------------------------------------------------------------
-def make_preprocessor(include_occupancy: bool) -> ColumnTransformer:
+def make_preprocessor(
+    include_occupancy: bool, include_weather: bool = False
+) -> ColumnTransformer:
     """One-hot the cyclic/categorical time features, standardise the numeric ones.
 
     `hour` and `month` are numbers but they are **cyclic categories**: hour 23 is
@@ -159,12 +175,16 @@ def make_preprocessor(include_occupancy: bool) -> ColumnTransformer:
     ]
     if include_occupancy:
         transformers.append(("numeric", StandardScaler(), OCCUPANCY))
+    if include_weather:
+        transformers.append(("weather", StandardScaler(), WEATHER))
     return ColumnTransformer(transformers, remainder="drop")
 
 
-def make_linear_model(include_occupancy: bool) -> Pipeline:
+def make_linear_model(
+    include_occupancy: bool, include_weather: bool = False
+) -> Pipeline:
     return Pipeline([
-        ("prep", make_preprocessor(include_occupancy)),
+        ("prep", make_preprocessor(include_occupancy, include_weather)),
         ("model", LinearRegression()),
     ])
 
@@ -179,13 +199,20 @@ def make_forest(include_occupancy: bool, *, max_depth: int | None = 12) -> Pipel
     ])
 
 
-def feature_columns(include_occupancy: bool) -> list[str]:
-    cols = TIME_CATEGORICAL + TIME_BINARY
-    return cols + OCCUPANCY if include_occupancy else cols
+def feature_columns(
+    include_occupancy: bool, include_weather: bool = False
+) -> list[str]:
+    cols = list(TIME_CATEGORICAL + TIME_BINARY)
+    if include_occupancy:
+        cols += OCCUPANCY
+    if include_weather:
+        cols += WEATHER
+    return cols
 
 
 def validation_bias(
-    pipeline: Pipeline, val: pd.DataFrame, *, include_occupancy: bool
+    pipeline: Pipeline, val: pd.DataFrame, *, include_occupancy: bool,
+    include_weather: bool = False,
 ) -> float:
     """Mean prediction error on the validation split.
 
@@ -200,7 +227,7 @@ def validation_bias(
     on the test split would be leakage; using the period before it is exactly
     what a deployed system could do.
     """
-    cols = feature_columns(include_occupancy)
+    cols = feature_columns(include_occupancy, include_weather)
     return float((val["power_w"] - pipeline.predict(val[cols])).mean())
 
 
@@ -211,13 +238,14 @@ def fit_and_score(
     test: pd.DataFrame,
     *,
     include_occupancy: bool,
+    include_weather: bool = False,
 ) -> dict:
     """Fit on train, then score on train, validation and test.
 
     Test metrics are reported twice: as-is, and after the validation-estimated
     bias correction described in `validation_bias`.
     """
-    cols = feature_columns(include_occupancy)
+    cols = feature_columns(include_occupancy, include_weather)
     pipeline.fit(train[cols], train["power_w"])
 
     out = {"pipeline": pipeline}
@@ -226,7 +254,10 @@ def fit_and_score(
         for key, value in metrics(part["power_w"], prediction).items():
             out[f"{name}_{key}"] = value
 
-    bias = validation_bias(pipeline, val, include_occupancy=include_occupancy)
+    bias = validation_bias(
+        pipeline, val, include_occupancy=include_occupancy,
+        include_weather=include_weather,
+    )
     out["val_bias_w"] = bias
     corrected = pipeline.predict(test[cols]) + bias
     for key, value in metrics(test["power_w"], corrected).items():
@@ -389,9 +420,15 @@ def run_building(
                           include_occupancy=True)
         results["D"] = {"model": "D: random forest (time + occupancy)", **d}
 
+    weather_models = fit_weather_models(train, val, test)
+    if weather_models.get("available"):
+        results["E"] = weather_models["E"]
+        results["F"] = weather_models["F"]
+
     return {
         "building": building,
         "skipped": False,
+        "weather": weather_models,
         "n_total": len(frame),
         "n_train": len(train),
         "n_val": len(val),
@@ -405,11 +442,80 @@ def run_building(
     }
 
 
+def fit_weather_models(
+    train: pd.DataFrame, val: pd.DataFrame, test: pd.DataFrame
+) -> dict:
+    """Fit models E (time + weather) and F (time + weather + occupancy).
+
+    These are **additional** models, not replacements. B and C keep their
+    published definitions so that RQ2 and RQ3 stay answered against exactly the
+    data and features they were answered on.
+
+    What they add is a sharper question. Occupancy and outdoor temperature are
+    *both* seasonal, so part of the contribution credited to occupancy in C-vs-B
+    may be summer heat in disguise. **F against E** asks whether occupancy still
+    helps once the weather is already known, which is the harder and more honest
+    form of the question.
+
+    Rows without a temperature reading are dropped here and only here -- about
+    4% of the record, from gaps longer than two hours in the METAR archive.
+    """
+    weather_cols = WEATHER
+
+    def usable(part: pd.DataFrame) -> pd.DataFrame:
+        return part.dropna(subset=weather_cols)
+
+    train_w, val_w, test_w = usable(train), usable(val), usable(test)
+    if min(len(train_w), len(val_w), len(test_w)) < 500:
+        return {"available": False, "reason": "too few intervals with weather"}
+
+    out = {
+        "available": True,
+        "n_train": len(train_w), "n_val": len(val_w), "n_test": len(test_w),
+        "pct_rows_with_weather": round(100 * len(train_w) / max(len(train), 1), 1),
+    }
+
+    # All four models are fitted on the **same** rows -- the ones that have a
+    # temperature. Comparing E against the published B would otherwise confound
+    # the effect of adding weather with the effect of dropping 4% of the sample.
+    # The published B and C are untouched; these are re-fits for comparison only.
+    grid = {
+        "B_w": dict(occ=False, wx=False, name="B on weather rows: time only"),
+        "C_w": dict(occ=True, wx=False, name="C on weather rows: time + occupancy"),
+        "E": dict(occ=False, wx=True, name="E: time + weather"),
+        "F": dict(occ=True, wx=True, name="F: time + weather + occupancy"),
+    }
+
+    for label, spec in grid.items():
+        pipeline = make_linear_model(spec["occ"], include_weather=spec["wx"])
+        scored = fit_and_score(
+            pipeline, train_w, val_w, test_w,
+            include_occupancy=spec["occ"], include_weather=spec["wx"],
+        )
+        out[label] = {"model": spec["name"], **scored}
+
+    # The 2x2 that answers the refined question. Each gain is measured against
+    # the model that differs from it by exactly one feature group.
+    out["gains"] = {
+        "weather_gain_without_occupancy": round(
+            out["E"]["val_R2"] - out["B_w"]["val_R2"], 4),
+        "weather_gain_with_occupancy": round(
+            out["F"]["val_R2"] - out["C_w"]["val_R2"], 4),
+        "occupancy_gain_without_weather": round(
+            out["C_w"]["val_R2"] - out["B_w"]["val_R2"], 4),
+        "occupancy_gain_given_weather": round(
+            out["F"]["val_R2"] - out["E"]["val_R2"], 4),
+    }
+
+    return out
+
+
 def residual_frame(
     pipeline: Pipeline,
     part: pd.DataFrame,
     *,
     include_occupancy: bool,
+    include_weather: bool = False,
     bias: float = 0.0,
 ) -> pd.DataFrame:
     """Actual, predicted and residual for one split -- the input to Phase 6.
@@ -418,7 +524,7 @@ def residual_frame(
     training period and the test period would show up as a large constant
     residual, and an anomaly detector would flag the whole test period.
     """
-    cols = feature_columns(include_occupancy)
+    cols = feature_columns(include_occupancy, include_weather)
     predicted = pipeline.predict(part[cols]) + bias
     out = pd.DataFrame(
         {

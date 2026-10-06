@@ -63,6 +63,17 @@ print("run it with:  streamlit run dashboard/app.py")
 # ## Step 2: the abstract, rewritten with real findings
 
 # %%
+# Phase 8 results, read rather than typed, so limitation 2 cannot go stale.
+_decomp = pd.read_csv(R / "phase8_waste_decomposition.csv")
+_wxgain = pd.read_csv(R / "phase8_occupancy_vs_weather.csv")
+_ok = _decomp[_decomp["identifiable"]]
+cool_lo, cool_hi = _ok["weather_share_pct"].min(), _ok["weather_share_pct"].max()
+cool_mean = _ok["weather_share_pct"].mean()
+occ_alone = _wxgain["occupancy alone (C-B)"].mean()
+occ_given = _wxgain["occupancy given weather (F-E)"].mean()
+not_ident = ", ".join(_decomp.loc[~_decomp["identifiable"], "building"]
+                      .str.replace("_", " "))
+
 ratio_valid = headline[headline["intensity ratio"].notna()]
 acad_ooh = float(published.set_index("building").loc["Academic",
                                                     "out-of-hours share % (clock rule)"])
@@ -122,11 +133,16 @@ Separately, campus consumption **grew {growth_series.min():.0f}% to
 handling of concept drift and which reappears in the anomaly results as a
 recurring false alarm.
 
-The main limitation is the absence of weather data *for this period*: the weather
-record shipped with I-BLEND covers March-June 2018 and does not overlap the
-analysis window at all. Delhi's summer vacation is also its hottest season, so
-cooling an empty building is counted as low-occupancy consumption without being
-separable from it.
+Because the weather record shipped with I-BLEND covers March-June 2018 and does
+not overlap the analysis window, outdoor temperature was taken from Delhi
+airport METAR, which does. That settles what the low-occupancy consumption
+actually is: cooling accounts for only **{cool_lo:.1f}%-{cool_hi:.1f}%** of it
+where the split is identifiable, because the empty hours are also the cool
+hours, so the waste is overwhelmingly a controls and scheduling problem rather
+than an air-conditioning artefact. The same data shows roughly a quarter of
+occupancy's apparent predictive value ({occ_alone:+.3f} validation R-squared
+falling to {occ_given:+.3f}) was seasonality in disguise. The airport lies 25 km
+from campus, so this is a measured proxy rather than campus weather.
 """
 
 print(blocks["abstract"][:700], "...")
@@ -158,28 +174,39 @@ Section 6.6's corrected-occupancy check shows that subtracting the documented
 baseline raises the low-occupancy share in every building, which means **our
 headline figures are a conservative lower bound** rather than an overstatement.
 
-### 2. No weather data covering the analysis period
+### 2. Weather: measured, but by proxy
 
-I-BLEND *does* ship a weather record -- `IIITD_and_airport_data.csv`, with
-temperature and humidity measured both at IIIT-Delhi and at Delhi airport. It is
-unusable here for one decisive reason: **it covers 1 March to 29 June 2018, and
-our analysis window is February 2014 to November 2017.** The overlap is exactly
-**zero rows**. It was published to quantify how well a campus sensor agrees with
-the airport station, not as a weather history for the energy record.
+**This was the project's largest limitation and Phase 8 closed most of it.**
 
-So the limitation stands, but in a sharper form than "there is no weather data".
-In Delhi this matters more than it would almost anywhere else, because the long
-summer vacation coincides with the hottest months. Phase 2 found that Facilities
-uses **17% more** power during vacation than during term, and the Academic
-building slightly more, which is almost certainly air conditioning rather than
-people.
+I-BLEND *does* ship a weather record, but it covers 1 March to 29 June 2018
+against our February 2014 - November 2017 window: the overlap is exactly **zero
+rows**. It was published to show how well a campus sensor agrees with the
+airport station, not as a weather history for the energy record.
 
-So some of what we call low-occupancy consumption is **cooling an empty
-building**. That is still waste, but a different kind with a different remedy --
-setback temperatures rather than switching off lights -- and we cannot separate
-the two. Weather for 2014-2017 would have to come from an external source such
-as a Delhi airport METAR archive; it remains the single most valuable addition
-this project could receive.
+Outdoor conditions therefore come from **METAR** for Delhi Indira Gandhi
+International, which covers the analysis window at 30-minute resolution and
+reaches 96% of intervals. What that bought is in section 6.8: cooling accounts
+for only **{cool_lo:.1f}%-{cool_hi:.1f}%** of low-occupancy consumption where it
+can be measured, and about **{cool_mean:.0f}%** on average, because the empty
+hours are the cool hours. The waste is overwhelmingly a controls problem, not a
+cooling artefact.
+
+**What still limits it:**
+
+* **The airport is not the campus.** VIDP sits about **25 km** away. Urban heat
+  island, shading and built form all differ, so this is a *measured proxy*
+  replacing an *unmeasured confound* -- better, not perfect. The I-BLEND 2018
+  file exists precisely to quantify campus-versus-airport agreement and would
+  bound the error, but it covers no part of our window.
+* **Two buildings cannot be decomposed at all.** In {not_ident} the
+  low-occupancy intervals are themselves seasonal -- both are shut during the
+  hot months -- so temperature and usage are confounded within that sample and
+  the fitted cooling slope comes out negative. Reported as not identifiable
+  rather than given a nonsensical number.
+* **A daily-to-hourly proxy cannot see a room.** Outdoor temperature says
+  nothing about which spaces were actually conditioned, or to what setpoint.
+  Separating "cooling an empty building" from "cooling an empty *room*" needs
+  sub-metering, not better weather.
 
 ### 3. The injected anomalies are synthetic
 
@@ -332,11 +359,11 @@ others could do.
 
 ### Future scope
 
-1. **Add weather data for 2014-2017.** The single highest-value addition. The
-   record shipped with I-BLEND covers only March-June 2018, so this means an
-   external source such as a Delhi airport METAR archive. It would separate
-   cooling load from occupancy-driven load and turn "some of this is air
-   conditioning an empty building" from a caveat into a number.
+1. **On-campus weather, not airport weather.** Phase 8 closed the weather gap
+   with METAR from an airport 25 km away. A sensor on the campus itself -- or
+   the I-BLEND 2018 comparison file extended backwards -- would remove the
+   remaining proxy error and let the two buildings that cannot currently be
+   decomposed be measured properly.
 2. **Sub-metering.** One meter per building can say *how much* is wasted but never
    *what* is wasting it. Circuit-level metering would make the findings
    actionable.
@@ -439,6 +466,11 @@ units = pd.DataFrame([
      "04_regression.ipynb, Steps 6 and 9 (models A, B, C)"),
     ("VI", "Dashboards and communicating results",
      "dashboard/app.py; docs/PROJECT_REPORT.md"),
+    ("III", "Integrating an external data source; confounding variables",
+     "08_weather.ipynb, Steps 1-4 (METAR join; separating weather from "
+     "occupancy with a 2x2 on identical rows)"),
+    ("V", "Controlling for a confounder in a regression",
+     "08_weather.ipynb, Step 4 (hour-of-day dummies in the cooling-degree fit)"),
 ], columns=["Unit", "Topic", "Where it is implemented"])
 
 display(units)

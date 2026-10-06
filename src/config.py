@@ -28,6 +28,7 @@ OCCUPANCY_DIR = DATASET_DIR / "IIITD_occupancy_dataset"
 
 DATA_DIR = PROJECT_ROOT / "data"
 PROCESSED_DIR = DATA_DIR / "processed"          # parquet cache (gitignored)
+WEATHER_DIR = DATA_DIR / "weather"              # METAR cache (gitignored)
 FIGURES_DIR = PROJECT_ROOT / "figures"          # every chart used in the report
 RESULTS_DIR = PROJECT_ROOT / "results"          # small CSV/JSON tables (committed)
 DOCS_DIR = PROJECT_ROOT / "docs"
@@ -80,6 +81,36 @@ IDLE_DEVICE_BASELINE = {
     "Lecture": 20,
     "Facilities": 20,
 }
+
+# ---------------------------------------------------------------------------
+# Weather (Phase 8)
+# ---------------------------------------------------------------------------
+# I-BLEND ships a weather file, but it covers March-June 2018 and does not
+# overlap the analysis window at all. So outdoor temperature comes from METAR --
+# the routine report every airport issues -- for Delhi Indira Gandhi
+# International, archived free by Iowa State University.
+#
+# VIDP is about 25 km from the IIIT-Delhi campus, so this is a *proxy*: better
+# than the unmeasured confound it replaces, but not campus weather. Every
+# result derived from it says so.
+METAR_STATION = "VIDP"                  # Delhi Indira Gandhi International
+METAR_CSV = WEATHER_DIR / f"{METAR_STATION.lower()}_metar.csv"
+
+# Fetch a little either side of the analysis window so interpolation onto the
+# 10-minute grid has real readings to work from at both ends.
+WEATHER_START = "2014-02-15"
+WEATHER_END = "2017-11-04"
+
+# Candidate base temperatures for the cooling-degree-hour fit. Each building is
+# allowed to pick its own rather than being assigned a textbook setpoint: the
+# value that comes out is itself a reportable property of the building.
+CDH_BASE_SCAN = range(16, 31)
+
+# A single default base for the `cdh` column written during the build, so every
+# building shares one comparable scale. Phase 8 refits the base per building for
+# the decomposition; this default is only the modelling feature. 24 C is the
+# usual Indian commercial cooling setpoint (ECBC guidance).
+CDH_BASE_DEFAULT = 24.0
 
 # ---------------------------------------------------------------------------
 # Modelling (Phase 4) and anomaly experiment (Phase 6)
@@ -252,7 +283,7 @@ SEMESTER_NOTE_FALLBACK = (
 
 def ensure_dirs() -> None:
     """Create every output directory we write to (safe to call repeatedly)."""
-    for d in (PROCESSED_DIR, FIGURES_DIR, RESULTS_DIR, DOCS_DIR):
+    for d in (PROCESSED_DIR, WEATHER_DIR, FIGURES_DIR, RESULTS_DIR, DOCS_DIR):
         d.mkdir(parents=True, exist_ok=True)
 
 

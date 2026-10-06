@@ -115,9 +115,11 @@ Four decisions logged. New module `src/stats.py`.
 - **Manual NumPy statistics match pandas to 4.5e-15** (assertion in the notebook).
 - **Response to occupation is very uneven, and that is the key finding.**
   Semester vs vacation: Lecture d = 1.24 and Boys hostel d = 0.89 (large), but
-  Academic d = -0.08 and Mess d = 0.09 (negligible), and **Facilities uses 17%
-  MORE in vacation** (d = -0.45) because Delhi's summer break is its hottest
-  season. Weekday vs weekend: Library -64%, Academic -45% (medium), both
+  Academic d = -0.08 and Mess d = 0.09 (negligible), and **Facilities is the only
+  building that uses MORE on low-activity days** (+3.5%, d = -0.08) -- every
+  other falls 13-50%. Phase 8 later showed this is outdoor temperature. (The
+  original +17% predated the official calendar, whose low-activity label
+  includes weekends year-round.) Weekday vs weekend: Library -64%, Academic -45% (medium), both
   hostels flat. Buildings *can* respond — so the ones that do not are making a
   choice.
 - With n = 37k-177k every p-value is < 1e-300; only effect sizes are informative.
@@ -402,3 +404,58 @@ Also fixed a `.capitalize()` that was rendering "Detector o".
 
 **Next.** Nothing outstanding. Team names in docs/PROJECT_REPORT.md are still
 placeholders.
+
+---
+
+## Phase 8 - Weather integration (6 Oct 2026) - done
+
+**Why.** Closing the project's largest limitation: no weather data covered the
+analysis window, so we could measure that nearly-empty buildings draw 62-85% of
+average power but not say how much of it was air conditioning.
+
+**Data.** I-BLEND's own weather file covers Mar-Jun 2018, zero overlap. Used
+METAR for Delhi IGI (VIDP) from the Iowa State archive instead: 58,639
+observations, 2014-02-16 to 2017-11-02, 0.06% missing, 2-49 C. Reaches 96.1% of
+analysis intervals. Fetched not committed (`tools/get_data.py --weather`).
+**VIDP is 25 km from campus - a measured proxy, not campus weather.**
+
+**Found.**
+- **Physics check passed first.** Facilities +64% and Academic +52% hot-vs-mild;
+  **Lecture -16%**, the negative control working (a switched-off building cannot
+  respond to heat). Nothing downstream would have been reported had this failed.
+- **Cooling is only 1.1%-9.0% of low-occupancy consumption** (mean ~4%) where
+  identifiable. **The empty hours are the cool hours** - 46% of low-occupancy
+  intervals fall between midnight and 6 a.m. So the waste is overwhelmingly a
+  **controls and scheduling problem**, not a cooling artefact. The limitation
+  turned out milder than feared, which strengthens the main finding.
+- **A quarter of occupancy's apparent value was summer heat.** Fitted on
+  identical rows: occupancy worth +0.107 validation R2 with weather unknown,
+  **+0.078** once known (27% shrinkage). Weather alone worth +0.070.
+- **Facilities is a weather-driven building.** Occupancy worth -0.118 there once
+  temperature is known; weather alone +0.176. That explains at last why adding
+  occupancy made its model *worse* in Phase 4.
+- **Library and Lecture cannot be decomposed** - both are shut in the hot months,
+  so season and usage are confounded within their low-occupancy sample and the
+  fitted slope goes negative. Reported as not identifiable rather than given a
+  nonsensical negative cooling share.
+- **Hour-of-day must be controlled for** (D08-03): without it the fit confuses
+  "cooler at night" with "needs less cooling". R2 roughly trebles with it
+  (Academic 0.07 -> 0.19).
+
+**Stale number caught.** "Facilities uses 17% more in vacation" (quoted in 4
+files) predated the official calendar, whose low-activity label includes
+weekends year-round. The real current figure is **+3.5%** (d = -0.08), and
+Facilities is the only building that rises at all - every other falls 13-50%.
+Corrected everywhere and the report blocks now compute it.
+
+**Published results untouched.** Models B and C kept their definitions (D08-02),
+so `phase4_occupancy_contribution.csv`, `phase5_headline.csv` and
+`phase6_pooled_answer.csv` are **bit-identical** after the full re-run. Verified
+by diff, not assumption.
+
+**State.** 9 notebooks, 47 figures, 50 result tables, 45 decisions, 30,319-word
+report, 0 pending sections, 0 broken figure links.
+
+**Possible next.** The dashboard does not yet surface temperature; team names in
+docs/PROJECT_REPORT.md are still placeholders.
+

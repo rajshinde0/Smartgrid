@@ -46,11 +46,11 @@ the others could do.
 
 #### Future scope
 
-1. **Add weather data for 2014-2017.** The single highest-value addition. The
-   record shipped with I-BLEND covers only March-June 2018, so this means an
-   external source such as a Delhi airport METAR archive. It would separate
-   cooling load from occupancy-driven load and turn "some of this is air
-   conditioning an empty building" from a caveat into a number.
+1. **On-campus weather, not airport weather.** Phase 8 closed the weather gap
+   with METAR from an airport 25 km away. A sensor on the campus itself -- or
+   the I-BLEND 2018 comparison file extended backwards -- would remove the
+   remaining proxy error and let the two buildings that cannot currently be
+   decomposed be measured properly.
 2. **Sub-metering.** One meter per building can say *how much* is wasted but never
    *what* is wasting it. Circuit-level metering would make the findings
    actionable.

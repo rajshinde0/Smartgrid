@@ -38,3 +38,5 @@
 | VI | 2D and 3D visualization | 03_pca.ipynb, Steps 7-8 (PC1-PC2 scatter; 3D PC1-PC3) |
 | VI | Linear regression; multiple linear regression | 04_regression.ipynb, Steps 6 and 9 (models A, B, C) |
 | VI | Dashboards and communicating results | dashboard/app.py; docs/PROJECT_REPORT.md |
+| III | Integrating an external data source; confounding variables | 08_weather.ipynb, Steps 1-4 (METAR join; separating weather from occupancy with a 2x2 on identical rows) |
+| V | Controlling for a confounder in a regression | 08_weather.ipynb, Step 4 (hour-of-day dummies in the cooling-degree fit) |

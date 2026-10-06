@@ -427,10 +427,12 @@ weekend_df.to_csv(C.RESULTS_DIR / "phase2_test_weekday_weekend.csv", index=False
 #   whole purpose empties out when term ends.
 # * The **Academic building and the Mess barely move** (d = 0.08 and 0.09,
 #   negligible). Whatever they are doing, term time is not what drives it.
-# * **Facilities actually uses 17% *more* power in vacation** (d = -0.45), and so
-#   does the Academic building very slightly. This is not a mistake: the Indian
-#   summer vacation coincides with Delhi's hottest months, so cooling load rises
-#   just as occupation falls.
+# * **Facilities is the only building that uses *more* power on low-activity
+#   days than on high-activity ones** -- every other building falls by 13% to
+#   50%, while Facilities rises slightly. This is not a mistake: the official
+#   calendar counts weekends and holidays as low-activity too, and Facilities
+#   runs campus services that do not care what day it is. Phase 8 shows the
+#   residual gap is explained by outdoor temperature.
 #
 # **Weekday versus weekend** splits it the other way.
 #
@@ -1078,8 +1080,9 @@ print("figures referenced but missing:", report.check_figures())
 # 3. **Buildings respond to occupation very unevenly.** The Library drops 65% at
 #    weekends and the Boys hostel 42% in vacation -- so responding *is* possible.
 #    But the Academic building and the Mess barely move between semester and
-#    vacation, and Facilities uses 17% *more* in vacation, because Delhi's summer
-#    break is also its hottest season. Buildings that do not respond are making a
+#    low-activity days, and Facilities is the only building that uses *more* --
+#    it runs campus services regardless of the calendar, and Phase 8 shows the
+#    rest of its gap is outdoor temperature. Buildings that do not respond are making a
 #    choice rather than obeying a constraint.
 # 4. **Power is bimodal and right-skewed**, so methods assuming normality should
 #    be used with care, and MAE belongs beside RMSE in Phase 4.
