@@ -10,9 +10,14 @@ words: the findings, how they were produced, what went wrong on the way, and
 what not to conclude from them.
 
 This is the one to hand someone. It carries the eleven figures that matter and
-links through to the full report wherever the detail lives there. The same
-document is also published as a page at
-<https://claude.ai/code/artifact/21d8c3a5-34b9-4961-b9a6-344d4a76ca88>.
+links through to the full report wherever the detail lives there.
+
+**This file is canonical.** It is also published as a page at
+<https://claude.ai/code/artifact/21d8c3a5-34b9-4961-b9a6-344d4a76ca88>, which is
+a view of this file rather than a second copy of it: edit here, then push the
+change to the page, never the other way round. The page carries the same numbers
+in its own form — the repo figures are local paths that cannot resolve there, so
+it draws the headline chart and the architecture diagram natively instead.
 
 ## The report
 
