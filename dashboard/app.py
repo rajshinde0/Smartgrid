@@ -54,6 +54,8 @@ def load_results() -> dict[str, pd.DataFrame]:
         "published": "phase5_published_comparison.csv",
         "detectors": "phase6_pooled_answer.csv",
         "quality": "phase1_data_quality.csv",
+        "decomposition": "phase8_waste_decomposition.csv",
+        "temp_response": "phase8_temperature_response.csv",
     }
     out = {}
     for key, filename in wanted.items():
@@ -118,6 +120,12 @@ with st.sidebar:
 
     show_expected = st.checkbox("Show expected power", value=True)
     show_low_occ = st.checkbox("Shade low-occupancy periods", value=True)
+    has_weather = "temp_c" in data.columns and data["temp_c"].notna().any()
+    show_weather = st.checkbox(
+        "Show outdoor temperature", value=True, disabled=not has_weather,
+        help="Delhi airport METAR. The airport is about 25 km from campus, so "
+             "this is a proxy for campus weather rather than a measurement of it.",
+    ) if has_weather else False
 
     st.divider()
     st.caption(
@@ -144,7 +152,11 @@ window = data.loc[lower:upper]
 headline = results.get("headline", pd.DataFrame())
 row = headline[headline["building"] == building]
 
-col1, col2, col3, col4 = st.columns(4)
+# Phase 8 output is read once here: both the fifth metric and the temperature
+# panel use it, and the panel is drawn outside the `row.empty` guard below.
+decomposition = results.get("decomposition")
+
+col1, col2, col3, col4, col5 = st.columns(5)
 
 if not row.empty:
     entry = row.iloc[0]
@@ -174,6 +186,25 @@ if not row.empty:
         help="Model A slope: how much each additional occupant adds.",
     )
 
+    # Phase 8: of the power drawn while nearly empty, how much is cooling?
+    cooling_label, cooling_help = "n/a", "Phase 8 decomposition not available."
+    if decomposition is not None:
+        match = decomposition[decomposition["building"] == building]
+        if not match.empty:
+            found = match.iloc[0]
+            if bool(found["identifiable"]):
+                cooling_label = f"{found['weather_share_pct']:.1f}%"
+                cooling_help = (
+                    "Of the power drawn while nearly empty, the share explained "
+                    f"by outdoor temperature. Cooling starts around "
+                    f"{found['base_c']:.0f} C in this building. The rest is "
+                    "drawn regardless of the weather."
+                )
+            else:
+                cooling_label = "not identifiable"
+                cooling_help = str(found["reason"])
+    col5.metric("Of that, cooling", cooling_label, help=cooling_help)
+
 if not row.empty and pd.isna(row.iloc[0]["intensity ratio"]):
     st.warning(
         f"**{building.replace('_', ' ')}** has no interval at or below the "
@@ -185,14 +216,18 @@ if not row.empty and pd.isna(row.iloc[0]["intensity ratio"]):
     )
 
 # ---------------------------------------------------------------------------
-# Main chart -- two panels sharing a time axis, never two y-axes
+# Main chart -- stacked panels sharing a time axis, never shared y-axes
 # ---------------------------------------------------------------------------
-st.subheader("Power and occupancy")
+st.subheader("Power and occupancy" + (", with outdoor temperature" if show_weather else ""))
 
 if window.empty:
     st.info("No data in the selected range.")
 else:
-    fig, ax_p, ax_o = viz.power_occupancy_panels(figsize=(13, 5.5))
+    if show_weather:
+        fig, ax_p, ax_o, ax_t = viz.power_occupancy_weather_panels(figsize=(13, 7))
+    else:
+        fig, ax_p, ax_o = viz.power_occupancy_panels(figsize=(13, 5.5))
+        ax_t = None
 
     ax_p.plot(window.index, window["power_w"] / 1000, color=viz.INK,
               linewidth=1.3, label="actual power")
@@ -225,15 +260,41 @@ else:
     if threshold_row is not None:
         ax_o.axhline(threshold_row, color=viz.INK_MUTED, linestyle="--",
                      linewidth=1)
-    plt.setp(ax_o.get_xticklabels(), rotation=20, ha="right")
+
+    bottom = ax_o
+    if ax_t is not None:
+        ax_t.plot(window.index, window["temp_c"], color=viz.CATEGORICAL[1],
+                  linewidth=1.2)
+        # Mark where cooling starts for this building, so the panel shows not
+        # just how hot it was but whether it was hot enough to matter here.
+        if decomposition is not None:
+            match = decomposition[decomposition["building"] == building]
+            if not match.empty and pd.notna(match.iloc[0]["base_c"]):
+                base = float(match.iloc[0]["base_c"])
+                ax_t.axhline(base, color=viz.INK_MUTED, linestyle="--",
+                             linewidth=1)
+                # Anchored to the line in data coordinates, so the label
+                # travels with it instead of landing on the panel floor.
+                ax_t.annotate(
+                    f"cooling starts ~{base:.0f} C", xy=(0.01, base),
+                    xycoords=("axes fraction", "data"),
+                    xytext=(0, 3), textcoords="offset points",
+                    va="bottom", fontsize=8, color=viz.INK_MUTED)
+        bottom = ax_t
+        plt.setp(ax_o.get_xticklabels(), visible=False)
+
+    plt.setp(bottom.get_xticklabels(), rotation=20, ha="right")
     st.pyplot(fig, width="stretch")
     plt.close(fig)
 
     st.caption(
-        "Two stacked panels rather than two y-axes: watts and people are "
-        "different quantities, and a shared axis would invent a relationship "
-        "that does not exist. Shaded columns are low-occupancy intervals; the "
-        "dashed line on the lower panel is the threshold."
+        "Stacked panels rather than shared y-axes: watts, people and degrees "
+        "are different quantities, and putting them on one axis would invent "
+        "relationships that are not in the data. Shaded columns are "
+        "low-occupancy intervals; the dashed line on the occupancy panel is the "
+        "threshold, and on the temperature panel it is where this building "
+        "starts cooling. Temperature is Delhi airport METAR, about 25 km from "
+        "campus -- a proxy, not campus weather."
     )
 
     window_rate = 100 * float(window["band"].eq("ANOMALY").mean())
@@ -251,8 +312,16 @@ else:
     )
     summary[2].metric("Low-occupancy intervals",
                       f"{int(window['low_occupancy'].sum()):,}")
-    summary[3].metric("Energy in window",
-                      f"{window['power_w'].sum() / 1000 * (10 / 60):,.0f} kWh")
+    if show_weather and window["temp_c"].notna().any():
+        summary[3].metric(
+            "Temperature in window",
+            f"{window['temp_c'].mean():.0f} C avg",
+            delta=f"{window['temp_c'].min():.0f} to {window['temp_c'].max():.0f} C",
+            delta_color="off",
+        )
+    else:
+        summary[3].metric("Energy in window",
+                          f"{window['power_w'].sum() / 1000 * (10 / 60):,.0f} kWh")
 
     # If this window is flagging far more than the building normally does, say
     # why rather than letting the reader assume the building is on fire.
@@ -331,6 +400,26 @@ with st.expander("Comparison with published figures"):
             "Applying Masoso & Grobler's clock-based definition to this data "
             "gives 55.2% for the Academic building and 55.0% for the Library, "
             "against their published 56%."
+        )
+
+with st.expander("How much of the waste is cooling? (Phase 8)"):
+    if decomposition is not None:
+        st.dataframe(decomposition, width="stretch", hide_index=True)
+        st.caption(
+            "Within low-occupancy intervals, power is fitted against cooling "
+            "degree hours with hour-of-day controlled for. The intercept is "
+            "drawn regardless of weather (a controls problem); the slope times "
+            "the degree hours is cooling an empty building (a setpoint "
+            "problem). Where the fitted slope comes out negative the building "
+            "is shut during the hot months, so season and usage are confounded "
+            "and no split is reported."
+        )
+    response = results.get("temp_response")
+    if response is not None:
+        st.dataframe(response, width="stretch", hide_index=True)
+        st.caption(
+            "Mean power by outdoor temperature band. Cooled buildings climb; "
+            "the Lecture building falls, which is the negative control working."
         )
 
 with st.expander("Data quality"):

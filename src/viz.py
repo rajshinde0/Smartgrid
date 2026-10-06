@@ -181,6 +181,28 @@ def power_occupancy_panels(figsize=(11, 5.5)):
     return fig, ax_p, ax_o
 
 
+def power_occupancy_weather_panels(figsize=(13, 7)):
+    """Three stacked panels sharing one time axis: power, occupancy, temperature.
+
+    The same principle as `power_occupancy_panels`, extended. Watts, people and
+    degrees are three different quantities; stacking them keeps the clock shared
+    and every scale honest, where a second or third y axis would invent
+    relationships that are not in the data.
+
+    Reading down the three panels is the whole point: it is how you see that a
+    building's overnight power is flat while the temperature swings, or that a
+    hot afternoon and a power peak line up.
+    """
+    fig, (ax_p, ax_o, ax_t) = plt.subplots(
+        3, 1, figsize=figsize, sharex=True,
+        gridspec_kw={"height_ratios": [3, 1.2, 1.2], "hspace": 0.12},
+    )
+    ax_p.set_ylabel("Power (kW)")
+    ax_o.set_ylabel("Occupancy\n(devices seen)")
+    ax_t.set_ylabel("Outdoor\ntemperature (C)")
+    return fig, ax_p, ax_o, ax_t
+
+
 def thousands(ax, axis: str = "y") -> None:
     """Readable thousands separators on an axis."""
     fmt = mpl.ticker.FuncFormatter(lambda v, _: f"{v:,.0f}")

@@ -692,6 +692,24 @@ report.log_decision(
                       "reported as not identifiable rather than given a number.",
 )
 
+report.log_decision(
+    id="D08-04", phase="8",
+    decision="How temperature is shown on the dashboard",
+    options_considered="Overlay temperature on the power panel with a second "
+                       "y-axis; colour the power line by temperature; add a "
+                       "third stacked panel sharing the time axis",
+    chosen="A third stacked panel, optional, with a dashed line at the "
+           "building's fitted base temperature",
+    reason="The no-dual-axis rule applies here exactly as it does to watts and "
+           "people: a shared axis between kilowatts and degrees would invent a "
+           "correlation the reader could read off the crossing points. The "
+           "base-temperature line is what turns the panel from 'how hot was "
+           "it' into 'was it hot enough to matter in this building'.",
+    effect_on_results="Presentation only; no number changes. Buildings whose "
+                      "cooling response is not identifiable show that phrase "
+                      "and the reason, never a share.",
+)
+
 report.publish_decision_log()
 print()
 print("blocks still pending:", len(report.pending_blocks()))

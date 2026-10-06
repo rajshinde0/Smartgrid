@@ -12,6 +12,7 @@ would let the displayed numbers drift away from the ones in the report.
 
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
 from . import anomaly as A, build, config as C, models as M, waste as W
@@ -68,6 +69,13 @@ def export_building(building: str, *, verbose: bool = True) -> pd.DataFrame | No
     out["band"] = A.classify(out["z"])
     # One-sided: only excess consumption is a candidate for waste (decision D06-05)
     out.loc[out["z"] < 0, "band"] = "NORMAL"
+
+    # Outdoor conditions, so the dashboard can show what the weather was doing
+    # alongside the power. About 4% of intervals have no reading -- gaps longer
+    # than two hours in the METAR archive -- and those stay NaN so the chart
+    # breaks the line rather than drawing through them.
+    for column in ("temp_c", "cdh"):
+        out[column] = frame[column] if column in frame.columns else np.nan
 
     threshold = W.low_occupancy_share(df)["threshold"]
     out["low_occupancy"] = out["occupancy"] <= threshold

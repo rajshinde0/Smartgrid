@@ -1,17 +1,23 @@
 Phase 7 delivers the project and verifies it.
 
 **Dashboard.** `dashboard/app.py` is a Streamlit page with a building selector,
-a date-range picker, a power-and-occupancy chart with anomaly bands coloured,
-the key numbers for the selected building, and the threshold-sensitivity curve
-with that building highlighted. It **reads saved output only** -- the parquet
-files written by `src/dashboard.py` and the CSV tables in `results/` -- and
-trains nothing. Refitting inside a dashboard would be slow during a
-demonstration and, worse, would let the numbers on screen drift away from the
-numbers in this report.
+a date-range picker, a power-occupancy-temperature chart with anomaly bands
+coloured, the key numbers for the selected building, and the
+threshold-sensitivity curve with that building highlighted. It **reads saved
+output only** -- the parquet files written by `src/dashboard.py` and the CSV
+tables in `results/` -- and trains nothing. Refitting inside a dashboard would
+be slow during a demonstration and, worse, would let the numbers on screen drift
+away from the numbers in this report.
 
-The chart uses two stacked panels sharing one time axis rather than two y-axes.
-Watts and people are different quantities, and a shared axis would invent a
-visual relationship that does not exist.
+The chart uses stacked panels sharing one time axis rather than shared y-axes.
+Watts, people and degrees are different quantities, and putting them on one axis
+would invent visual relationships that are not in the data. The temperature
+panel is optional and carries a dashed line at the building's fitted base
+temperature, so the reader sees not just how hot it was but whether it was hot
+enough to matter in that building. Alongside it, a fifth headline metric reports
+the Phase 8 cooling share of low-occupancy consumption, and an expander carries
+the full decomposition and temperature-response tables. Buildings whose cooling
+response is not identifiable say so rather than showing a number.
 
 **Report assembly.** Every section of this report is generated. The file
 contains named placeholder blocks which the notebooks fill through

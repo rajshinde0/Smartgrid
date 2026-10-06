@@ -875,17 +875,23 @@ nonsensical negative cooling share.
 Phase 7 delivers the project and verifies it.
 
 **Dashboard.** `dashboard/app.py` is a Streamlit page with a building selector,
-a date-range picker, a power-and-occupancy chart with anomaly bands coloured,
-the key numbers for the selected building, and the threshold-sensitivity curve
-with that building highlighted. It **reads saved output only** -- the parquet
-files written by `src/dashboard.py` and the CSV tables in `results/` -- and
-trains nothing. Refitting inside a dashboard would be slow during a
-demonstration and, worse, would let the numbers on screen drift away from the
-numbers in this report.
+a date-range picker, a power-occupancy-temperature chart with anomaly bands
+coloured, the key numbers for the selected building, and the
+threshold-sensitivity curve with that building highlighted. It **reads saved
+output only** -- the parquet files written by `src/dashboard.py` and the CSV
+tables in `results/` -- and trains nothing. Refitting inside a dashboard would
+be slow during a demonstration and, worse, would let the numbers on screen drift
+away from the numbers in this report.
 
-The chart uses two stacked panels sharing one time axis rather than two y-axes.
-Watts and people are different quantities, and a shared axis would invent a
-visual relationship that does not exist.
+The chart uses stacked panels sharing one time axis rather than shared y-axes.
+Watts, people and degrees are different quantities, and putting them on one axis
+would invent visual relationships that are not in the data. The temperature
+panel is optional and carries a dashed line at the building's fitted base
+temperature, so the reader sees not just how hot it was but whether it was hot
+enough to matter in that building. Alongside it, a fifth headline metric reports
+the Phase 8 cooling share of low-occupancy consumption, and an expander carries
+the full decomposition and temperature-response tables. Buildings whose cooling
+response is not identifiable say so rather than showing a number.
 
 **Report assembly.** Every section of this report is generated. The file
 contains named placeholder blocks which the notebooks fill through
@@ -2167,6 +2173,7 @@ exactly what it would change.
 | 43 | 8 | Source of outdoor weather for 2014-2017 | The weather file shipped with I-BLEND; a reanalysis product such as ERA5; Delhi airport METAR | METAR from VIDP (Delhi IGI), via the Iowa State archive, cached to data/weather/ and fetched not committed | The I-BLEND weather file covers March-June 2018 and has zero overlap with the analysis window. METAR covers it exactly, at 30-minute resolution, free and without a key. | Reaches 96.13% of analysis intervals. VIDP is ~25 km from campus, so this is a measured proxy rather than campus weather -- stated wherever a weather number appears. |
 | 44 | 8 | Models B and C left unchanged; weather added as new models E and F | Add weather to B and C directly; add E and F as separate models; replace B and C entirely | B and C keep their published definitions; E and F are new, and all four are re-fitted on identical rows for the comparison | RQ2 and RQ3 are already answered and verified against B and C. Redefining them would invalidate correct results. Re-fitting all four on the same rows stops the weather comparison being confounded by the 4% of rows that lack a temperature. | RQ2 and RQ3 are unchanged. The 2x2 adds a sharper finding: occupancy is worth +0.107 with weather unknown and +0.078 once known, a 27% shrinkage. |
 | 45 | 8 | Controlling for hour of day in the waste decomposition | Fit power on CDH alone within low-occupancy intervals; add hour-of-day dummies; fit on all intervals and apply the slope | CDH plus hour-of-day dummies, within low-occupancy intervals only | Nearly half of low-occupancy intervals fall between midnight and 6 a.m., when the building is both empty and cool. Without hour dummies the fit confuses 'cooler at night' with 'needs less cooling'. Fitting on all intervals instead would let occupancy-driven load inflate the cooling slope. | R-squared roughly trebles (Academic 0.07 to 0.19) and the fitted slopes turn positive and physically sensible. Two buildings still come out negative and are reported as not identifiable rather than given a number. |
+| 46 | 8 | How temperature is shown on the dashboard | Overlay temperature on the power panel with a second y-axis; colour the power line by temperature; add a third stacked panel sharing the time axis | A third stacked panel, optional, with a dashed line at the building's fitted base temperature | The no-dual-axis rule applies here exactly as it does to watts and people: a shared axis between kilowatts and degrees would invent a correlation the reader could read off the crossing points. The base-temperature line is what turns the panel from 'how hot was it' into 'was it hot enough to matter in this building'. | Presentation only; no number changes. Buildings whose cooling response is not identifiable show that phrase and the reason, never a share. |
 <!-- END:decision_log -->
 
 ---
