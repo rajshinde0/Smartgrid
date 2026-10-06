@@ -21,6 +21,7 @@ DASH_PREFIX = "dashboard_"
 
 
 def dashboard_path(building: str):
+    """Where one building's scored table lives. The app reads only these."""
     return C.PROCESSED_DIR / f"{DASH_PREFIX}{building}.parquet"
 
 

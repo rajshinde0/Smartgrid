@@ -19,7 +19,17 @@ score beautifully while learning nothing about *why* the building uses energy --
 and it would track waste rather than flagging it, because a building that has
 been wasting for an hour would be predicted to keep wasting. We want a baseline
 of *expected* consumption given the time and the occupancy, not the best possible
-forecast. Model E exists only to demonstrate the trap.
+forecast. Phase 4 fits a lag model once, purely to show the trap, and then never
+uses it again.
+
+Phase 8 adds two more, fitted only inside `fit_weather_models`:
+
+    E  power ~ time + weather            knows the weather but not the people
+    F  power ~ time + weather + occupancy  the full model
+
+They exist to ask the sharper version of RQ2 -- does occupancy still help once
+the weather is known? -- and they leave A-D untouched, because RQ2 and RQ3 are
+already answered against those.
 
 **Why the split is chronological.** `train_test_split(shuffle=True)` on a time
 series lets the model see Thursday while being tested on Wednesday. Every split
@@ -183,6 +193,13 @@ def make_preprocessor(
 def make_linear_model(
     include_occupancy: bool, include_weather: bool = False
 ) -> Pipeline:
+    """Linear regression behind the standard preprocessor.
+
+    The flags select the model: neither is B (time only), occupancy alone is C,
+    weather alone is E, and both is F. Everything is inside one `Pipeline` so
+    the encoder and scaler are fitted on the training fold only -- fitting them
+    on the full frame first would leak the test set into training.
+    """
     return Pipeline([
         ("prep", make_preprocessor(include_occupancy, include_weather)),
         ("model", LinearRegression()),
@@ -190,6 +207,13 @@ def make_linear_model(
 
 
 def make_forest(include_occupancy: bool, *, max_depth: int | None = 12) -> Pipeline:
+    """Model D: a random forest on the same features as the linear models.
+
+    It answers one question -- would a non-linear model do much better? -- and
+    supplies feature importances. The depth is capped and leaves are kept at
+    five rows or more, because an unconstrained forest on 170,000 correlated
+    time steps memorises the record instead of learning its shape.
+    """
     return Pipeline([
         ("prep", make_preprocessor(include_occupancy)),
         ("model", RandomForestRegressor(
@@ -202,6 +226,12 @@ def make_forest(include_occupancy: bool, *, max_depth: int | None = 12) -> Pipel
 def feature_columns(
     include_occupancy: bool, include_weather: bool = False
 ) -> list[str]:
+    """The exact input columns a model expects, in a fixed order.
+
+    Single source of truth, shared by fitting, scoring and prediction. Building
+    the list twice is how a model quietly ends up scored on columns in a
+    different order from the ones it was fitted on.
+    """
     cols = list(TIME_CATEGORICAL + TIME_BINARY)
     if include_occupancy:
         cols += OCCUPANCY

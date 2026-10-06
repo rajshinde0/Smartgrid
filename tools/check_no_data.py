@@ -47,6 +47,11 @@ def tracked_files() -> list[str]:
 
 
 def main() -> int:
+    """Check that nothing forbidden is tracked. Returns an exit code.
+
+    Non-zero means a data file, a parquet, or a file over 50 MB has been
+    staged, and the commit should not go out.
+    """
     problems: list[str] = []
 
     try:

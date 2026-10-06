@@ -114,6 +114,7 @@ def build(py_path: str | Path, ipynb_path: str | Path) -> Path:
 
 
 def main(argv: list[str]) -> int:
+    """Command-line entry point. Returns a process exit code."""
     if len(argv) != 3:
         print(__doc__)
         return 2

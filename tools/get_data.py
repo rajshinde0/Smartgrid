@@ -1,7 +1,7 @@
 """Download the I-BLEND dataset into Dataset/.
 
     python tools/get_data.py            # energy + occupancy (what the analysis needs)
-    python tools/get_data.py --all      # also weather and the semester calendar
+    python tools/get_data.py --all      # also the 2018 campus weather file
     python tools/get_data.py --list     # show what is available, download nothing
 
 Why this script exists
@@ -51,6 +51,7 @@ TIMEOUT = 120
 
 
 def fetch_json(url: str):
+    """GET a URL and parse the response as JSON."""
     with urllib.request.urlopen(url, timeout=TIMEOUT) as response:
         import json
 
@@ -74,6 +75,14 @@ def collection_files() -> list[dict]:
 
 
 def wanted(entry: dict, include_extra: bool) -> bool:
+    """Should this figshare article be downloaded?
+
+    Matching is on the article title because figshare item ids are not
+    stable across collection revisions. CORE is the energy, occupancy and
+    calendar data the analysis cannot run without; EXTRA is the 2018
+    campus weather file, which is useful context but has no overlap with
+    the analysis window, so it is opt-in via --all.
+    """
     title = entry["article"]
     if any(key.lower() in title.lower() for key in CORE):
         return True
@@ -156,9 +165,11 @@ def unzip_into_dataset(archive: Path) -> None:
 
 
 def main(argv: list[str]) -> int:
+    """Command-line entry point. Returns a process exit code."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--all", action="store_true",
-                        help="also fetch weather data and the semester calendar")
+                        help="also fetch the 2018 campus weather file (the "
+                             "semester calendar is always fetched)")
     parser.add_argument("--list", action="store_true",
                         help="list what the collection contains, download nothing")
     parser.add_argument("--keep-zips", action="store_true",

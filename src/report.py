@@ -272,7 +272,17 @@ def log_decision(
     else:
         log = pd.DataFrame([row])
 
-    log = log.sort_values(["phase", "id"]).reset_index(drop=True)
+    # Sort on `id` alone, and as text. Every id is D<phase>-<n> zero-padded, so
+    # lexicographic order *is* phase-then-number -- and it stays stable no
+    # matter which notebook is re-run.
+    #
+    # Sorting on ["phase", "id"] looked equivalent and was not: `phase` is
+    # passed in as a string but comes back from read_csv as int64, so the
+    # column held mixed types and the sort silently fell back to insertion
+    # order. Re-running one notebook moved its decisions to the bottom of the
+    # published table.
+    log["phase"] = log["phase"].astype(str)
+    log = log.sort_values("id", kind="stable").reset_index(drop=True)
     log.to_csv(DECISIONS_CSV, index=False)
 
 

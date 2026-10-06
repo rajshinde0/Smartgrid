@@ -416,7 +416,8 @@ average power but not say how much of it was air conditioning.
 **Data.** I-BLEND's own weather file covers Mar-Jun 2018, zero overlap. Used
 METAR for Delhi IGI (VIDP) from the Iowa State archive instead: 58,639
 observations, 2014-02-16 to 2017-11-02, 0.06% missing, 2-49 C. Reaches 96.1% of
-analysis intervals. Fetched not committed (`tools/get_data.py --weather`).
+analysis intervals. Fetched not committed; `src/weather.py` pulls it on
+first use.
 **VIDP is 25 km from campus - a measured proxy, not campus weather.**
 
 **Found.**
@@ -456,6 +457,68 @@ by diff, not assumption.
 **State.** 9 notebooks, 47 figures, 50 result tables, 45 decisions, 30,319-word
 report, 0 pending sections, 0 broken figure links.
 
-**Possible next.** The dashboard does not yet surface temperature; team names in
-docs/PROJECT_REPORT.md are still placeholders.
+## Dashboard - outdoor temperature (7 Oct 2026) - done
+
+**Why.** Phase 8's weather work existed only in the report. The dashboard is
+what actually gets demonstrated, so the temperature belonged there too.
+
+**What.** A third stacked panel on the shared clock - never a second y-axis
+(D08-04), because watts, people and degrees are three different quantities and
+one shared axis would let a reader take a correlation off the crossing points.
+The panel carries a dashed line at the building's own fitted base temperature,
+so it answers "was it hot enough to matter *here*", not just "how hot was it".
+Alongside it, a fifth headline metric for the cooling share, and an expander
+with the full decomposition and temperature-response tables.
+
+**Two bugs caught in verification.** `decomposition` was bound inside the
+`if not row.empty` guard but read later in the chart block - so Facilities, the
+one building with no qualifying interval, would have raised `NameError` on
+exactly the page most worth looking at. And the "cooling starts" label was
+pinned to the panel floor, where it collided with its own line in buildings
+with a low base. Both fixed before commit.
+
+**Verified** with a stubbed-Streamlit harness over Academic, Facilities and
+Boys_Hostel, panel on and off: six runs, no errors.
+
+## Documentation tidy-up (7 Oct 2026) - done
+
+**Why.** The code was documented but the *navigation* was not, and several
+pointers had quietly gone stale as the project grew past them.
+
+**Done.**
+- `src/__init__.py` was empty; it now carries a map of all 18 modules grouped
+  by pipeline layer, with the dependency order. The package has no cycles and
+  the map says so.
+- Docstring coverage is now complete: every module and every public top-level
+  function in `src/` and `tools/` (7 were missing, including `make_linear_model`
+  and `feature_columns` in a 549-line module).
+- README rewritten: it had no mention of Phase 8 at all, listed 6 of 18 `src`
+  modules, and still told the reader to download 1.6 GB by hand when
+  `tools/get_data.py` had automated it.
+- New `docs/README.md` index, and the three planning documents moved from the
+  repo root into `docs/planning/` (`git mv`, history preserved).
+
+**Three stale or wrong things found while tidying.**
+1. **A model-name collision.** Phase 4 prose called the lag-feature
+   demonstration "model E"; Phase 8 then published E and F as the weather
+   models. Two different models, one letter. It never reached the report or any
+   result table - the lag demo is only a local variable - so the fix was to
+   drop the letter from the prose.
+2. **`get_data.py --all` help was wrong.** It claimed to fetch "weather data
+   and the semester calendar", but the calendar is in `CORE` and always
+   fetched. progress.md also cited a `--weather` flag that does not exist.
+3. **The decision log's order was not deterministic** - the real find.
+   `log_decision` sorted on `["phase", "id"]`, but `phase` is passed as a
+   string and comes back from `read_csv` as int64, so the column held mixed
+   types and the sort silently fell back to insertion order. Re-running
+   notebook 04 alone moved D04-06 below D08-04 in the published table. Now
+   sorted on `id` as text, which is canonical because every id is a zero-padded
+   `D<phase>-<n>`. The report's table is bit-identical again, and stays that
+   way whichever notebook is re-run.
+
+**State.** 9 notebooks, 47 figures, 50 result tables, 46 decisions,
+30,853-word report, 0 pending sections, 0 broken figure links. Every module and
+public function documented.
+
+**Possible next.** Team names in docs/PROJECT_REPORT.md are still placeholders.
 

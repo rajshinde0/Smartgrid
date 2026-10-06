@@ -47,6 +47,10 @@ def report_failure(ipynb: Path) -> None:
 
 
 def main(argv: list[str]) -> int:
+    """Build and execute one notebook. Returns a process exit code.
+
+    Non-zero means the notebook raised, and nothing should be committed.
+    """
     if len(argv) != 2:
         print(__doc__)
         return 2

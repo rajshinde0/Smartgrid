@@ -212,7 +212,7 @@ print(f"adding the lag lifts validation R2 from {plain_scores['R2']:.3f} "
       f"to {trap_scores['R2']:.3f}")
 
 # %% [markdown]
-# **Takeaway -- and this is why model E is not used.** The lag feature is
+# **Takeaway -- and this is why no lag model is used.** The lag feature is
 # enormously powerful: validation R² jumps from about 0.29 to over 0.9. If our
 # goal were forecasting, we would use it without hesitation.
 #
