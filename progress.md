@@ -552,12 +552,40 @@ fetched and the dashboard ran. Harness clean across three buildings x panel
 on/off. Every portable floor resolves on PyPI. `check_no_data.py` passes - the
 Release keeps data out of the tree.
 
-**Not done.** Opening an individual phase notebook directly in the Colab UI still
-breaks: all nine do `sys.path.insert(0, Path.cwd().parent)`, which assumes cwd is
-`notebooks/`. Running them through `tools/build_and_run.py` works fine because
-nbconvert sets cwd to the notebook's directory, and that is what the Colab runner
-does. Fixing the direct-open case means a one-line change x9 and a full cold run.
+## Phase notebooks open directly in Colab (7 Oct 2026) - done
+
+**The gap.** All nine notebooks did `sys.path.insert(0, Path.cwd().parent)`,
+which assumes the working directory is `notebooks/`. That holds under
+`build_and_run.py` because nbconvert sets cwd to the notebook's own directory,
+but Colab runs everything from `/content`.
+
+**The bigger half of the problem.** The path line was not actually the main
+obstacle. Opening a notebook straight from GitHub in Colab gives you the
+`.ipynb` and *nothing else* - no `src/`, no data - so fixing the path alone
+would have produced a notebook that resolved a root that was not there.
+
+**Two changes per notebook.**
+1. A Colab bootstrap cell ahead of the imports: clones the repo, installs
+   `requirements-portable.txt`, and fetches what that phase needs - raw data for
+   Phases 0 and 1, Phase 1's saved output for the rest. Guarded on
+   `"google.colab" in sys.modules`, so it is a no-op everywhere else.
+2. The path line became a root finder that checks the working directory, its
+   parents **and its immediate children** - covering the local case (root above)
+   and Colab (clone below) without either needing to know about the other.
+
+**Tested** against five launch positions before rebuilding: cwd at `notebooks/`,
+cwd at the repo root, cwd at a simulated `/content` with the clone below, cwd
+inside the clone, and a directory with no project at all - which must raise
+rather than resolve something wrong. All five behave correctly.
+
+Then all nine notebooks rebuilt and re-executed, with `results/` diffed against
+the committed copies to confirm no number moved.
+
+**One correction made while patching.** Phases 0 and 1 first fetched with
+`get_data.py --all`. The extra I-BLEND file is a 2018 weather record with zero
+overlap with the analysis window -- the report discusses it, no phase loads it --
+so the bootstrap now fetches only what it needs.
 
 **Possible next.** Team names in docs/PROJECT_REPORT.md are still placeholders;
-the Streamlit Community Cloud deploy needs doing from the browser (see below).
+the Streamlit Community Cloud deploy needs doing from a browser.
 

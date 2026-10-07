@@ -666,6 +666,12 @@ That check exists because this project's central claim is that every number came
 from executed code on a known stack. Colab's stack is different, so the
 difference is measured rather than assumed.
 
+Individual phases open on their own too — any notebook under `notebooks/` can be
+opened from GitHub in Colab and run cell by cell. Its first cell clones the repo
+and fetches what that phase needs, and is a no-op anywhere else. The
+[repository README](https://github.com/rajshinde0/Smartgrid#readme) carries a
+link per phase.
+
 ### Locally
 
 ```bash

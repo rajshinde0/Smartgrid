@@ -11,6 +11,21 @@ Technology, Pune.
 fetches the data, executes the analysis and checks its own numbers against the
 published ones. No setup, no account beyond a Google login.
 
+Each phase also opens on its own. Any notebook under `notebooks/` can be opened
+straight from GitHub in Colab and run cell by cell — the first cell clones the
+repo and fetches what that phase needs, and does nothing outside Colab:
+
+| Phase | | Phase | |
+|---|---|---|---|
+| 0 Explore | [open](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/notebooks/00_explore.ipynb) | 5 Wasted energy | [open](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/notebooks/05_waste.ipynb) |
+| 1 Data preparation | [open](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/notebooks/01_data_prep.ipynb) | 6 Anomaly experiment | [open](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/notebooks/06_anomaly.ipynb) |
+| 2 Statistics and EDA | [open](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/notebooks/02_stats_eda.ipynb) | 7 Delivery | [open](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/notebooks/07_final.ipynb) |
+| 3 PCA | [open](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/notebooks/03_pca.ipynb) | 8 Weather | [open](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/notebooks/08_weather.ipynb) |
+| 4 Regression | [open](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/notebooks/04_regression.ipynb) | | |
+
+Phases 0 and 1 fetch the raw 1.6 GB; the rest fetch Phase 1's saved output and
+start immediately.
+
 We pair four years of 1-minute electricity readings from seven IIIT-Delhi
 buildings with WiFi-derived occupancy counts, and ask three questions:
 

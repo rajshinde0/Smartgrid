@@ -39,11 +39,54 @@
 # This replaces an *unmeasured* confound with a *measured proxy*. Better, not
 # perfect, and every number below carries that.
 
+# %% [markdown]
+# ### Opening this notebook in Colab
+#
+# Colab hands you this `.ipynb` and nothing else -- no `src/`, no data. The cell
+# below clones the repository, installs the portable dependency set and fetches
+# Phase 1's saved output (278 MB from the GitHub Release).
+#
+# It does nothing at all outside Colab, so running this notebook locally, or
+# through `tools/build_and_run.py`, is unaffected.
+
+# %%
+import subprocess
+import sys
+from pathlib import Path
+
+if "google.colab" in sys.modules:
+    REPO = Path("/content/Smartgrid")
+    if not REPO.is_dir():
+        subprocess.run(
+            ["git", "clone", "--depth", "1",
+             "https://github.com/rajshinde0/Smartgrid.git", str(REPO)],
+            check=True,
+        )
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", "-q",
+             "-r", str(REPO / "requirements-portable.txt")],
+            check=True,
+        )
+        subprocess.run(
+            [sys.executable, str(REPO / "tools" / "get_cache.py"), "--full"],
+            check=True,
+        )
+    print("Colab: repository and data ready")
+
 # %%
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path.cwd().parent))
+# Find the project root. Locally, nbconvert runs this with the working directory
+# set to notebooks/, so the root is one level up. In Colab everything runs from
+# /content with the clone one level down. Looking here, above and below covers
+# both, so neither case has to know about the other.
+_here = Path.cwd()
+_search = [_here, *_here.parents, *(p for p in _here.iterdir() if p.is_dir())]
+ROOT = next((p for p in _search if (p / "src" / "config.py").is_file()), None)
+if ROOT is None:
+    raise RuntimeError(f"SMARTGRID-X project root not found from {_here}")
+sys.path.insert(0, str(ROOT))
 
 import numpy as np
 import pandas as pd
