@@ -12,8 +12,9 @@ diffable and the .ipynb is a build artefact rather than hand-edited JSON.
 # **Occupancy-aware energy-waste and anomaly analysis of the I-BLEND campus
 # dataset** — IIIT Delhi, 7 buildings, Feb 2014 to Nov 2017.
 #
-# This notebook runs the project end to end on a free Colab runtime. Nothing
-# needs to be installed or downloaded by hand.
+# This notebook runs the project end to end on a free Colab runtime and then
+# walks through everything it produced. Nothing needs to be installed or
+# downloaded by hand.
 #
 # ---
 #
@@ -24,7 +25,7 @@ diffable and the .ipynb is a build artefact rather than hand-edited JSON.
 # | 1 | Clone the repository and install dependencies |
 # | 2 | Fetch the data |
 # | 3 | Execute the analysis phases |
-# | 4 | Show the findings |
+# | 4 | Walk the whole project, phase by phase, with its figures and tables |
 # | 5 | **Check the numbers against the published ones** |
 # | 6 | *(optional)* Serve the dashboard on a public URL |
 #
@@ -187,9 +188,163 @@ pd.DataFrame(timings, columns=["phase", "seconds", "exit code"]).style.format(
 )
 
 # %% [markdown]
-# ## 4. The findings
+# ## 4. The project, phase by phase
 #
-# ### RQ1 — the main result
+# Everything below was produced by the cells above — these are this run's own
+# figures and tables, read off disk, not pictures pasted in.
+
+# %%
+from IPython.display import Image, Markdown, display
+
+
+def figure(name: str, caption: str = "") -> None:
+    """Show a figure this run produced, with a caption."""
+    display(Image(f"figures/{name}"))
+    if caption:
+        display(Markdown(f"*{caption}*"))
+
+
+def table(name: str, note: str = "", **kw) -> None:
+    """Print a result table this run produced."""
+    frame = pd.read_csv(f"results/{name}")
+    print(frame.to_string(index=False, **kw))
+    if note:
+        display(Markdown(f"*{note}*"))
+
+
+print("helpers ready")
+
+# %% [markdown]
+# ### Phases 0 and 1 — the data, and what is wrong with it
+#
+# Seven buildings, 1-minute meters, Feb 2014 to Nov 2017, paired with
+# WiFi-derived occupancy counts. The buildings are **not** equally trustworthy
+# and the analysis says so per building rather than averaging the problem away.
+
+# %%
+table("phase1_data_quality.csv")
+
+# %%
+figure("fig_01_missing_heatmap.png",
+       "Missing data by building and month. Coverage is the first thing to "
+       "establish, because every later number is conditional on it.")
+
+# %% [markdown]
+# **Lecture is the problem case, and it is kept deliberately.** Its meter reads
+# zero for 25,501 hours. A dead meter and a genuinely switched-off building look
+# identical in the data and mean opposite things for a waste analysis.
+
+# %%
+figure("fig_01_zero_run_lengths_lecture.png",
+       "How long Lecture's zero-runs are. The classification was logged as a "
+       "decision and checked against a 24-hour alternative threshold.")
+
+# %% [markdown]
+# **The guiding rule is flag, never delete.** An outlier in an energy meter
+# might be an error — or exactly the abnormal event Phase 6 exists to detect.
+# Deleting it would delete the thing being studied, so every judgement becomes
+# an extra column and the original value stays.
+
+# %%
+figure("fig_01_outlier_flags_academic.png",
+       "Outliers flagged by IQR and Z-score on the Academic building. Flagged, "
+       "counted, reported -- none removed.")
+
+# %% [markdown]
+# ### Phase 2 — statistics and exploratory analysis
+#
+# Descriptive statistics first, computed with pandas and then again by hand in
+# NumPy with the two asserted equal.
+
+# %%
+table("phase2_descriptive_statistics.csv")
+
+# %% [markdown]
+# Two hypothesis tests, each reporting an **effect size** beside its p-value.
+# With 170,000 intervals a tiny p-value means "we have a lot of data", not
+# "this matters", so the effect size leads.
+
+# %%
+table("phase2_test_weekday_weekend.csv")
+print()
+table("phase2_test_semester_vacation.csv")
+
+# %%
+figure("fig_02_hourly_profile_all.png",
+       "Mean power by hour of day. The overnight floor never reaches zero in "
+       "any building -- that floor is the whole subject of this project.")
+
+# %%
+figure("fig_02_scatter_power_occupancy.png",
+       "Power against occupancy. The relationship is real but loose, which "
+       "Phase 4 then quantifies.")
+
+# %%
+figure("fig_02_distribution_fit.png",
+       "Fitting a distribution to power: Normal against Log-normal, with Q-Q "
+       "plots and a KS test.")
+
+# %% [markdown]
+# ### Phase 3 — principal component analysis
+#
+# Each day becomes a 144-point vector (10-minute blocks), giving a days x 144
+# matrix. PCA is computed by hand with `np.linalg.eig` and verified against
+# scikit-learn.
+
+# %%
+figure("fig_03_scree_academic.png",
+       "Scree plot. A handful of components carry most of the variation in "
+       "daily load shape.")
+
+# %%
+figure("fig_03_day_types_academic.png",
+       "Day types found by clustering in component space.")
+
+# %%
+table("phase3_day_types_academic.csv",
+      "Each cluster described by what it actually is -- note the night floor "
+      "column, which never approaches zero.")
+
+# %% [markdown]
+# ### Phase 4 — regression (RQ2)
+#
+# Four models. **A** is power on occupancy alone, and its intercept is the base
+# load RQ1 needs. **B** is time-only. **C** adds occupancy to B. **D** is a
+# random forest on C's features, checking whether non-linearity matters.
+
+# %%
+table("phase4_model_scores.csv")
+
+# %%
+figure("fig_04_model_comparison.png",
+       "Validation scores by building. Negative R-squared means worse than "
+       "predicting the mean -- real information, left visible.")
+
+# %%
+table("phase4_occupancy_contribution.csv",
+      "What occupancy is worth over a time-only baseline. It helps in the "
+      "dormitories and the Library, barely anywhere else, and makes Facilities "
+      "actively worse -- which Phase 8 later explains.")
+
+# %% [markdown]
+# **Why there are no lag features.** Power an hour ago correlates with current
+# power at about r = 0.95, and adding it lifts validation R-squared from 0.55 to
+# 0.83. The project refuses it anyway: a lag model would *track* waste instead
+# of flagging it, since lights on since 2 a.m. would simply be predicted to stay
+# on. The low R-squared is the price of a baseline that can still see waste.
+
+# %%
+figure("fig_04_overfitting_curves.png",
+       "Training against validation error as model complexity rises -- where "
+       "the forest depth was fixed, and why.")
+
+# %%
+table("phase4_concept_drift.csv",
+      "Consumption grew 32-48% across the record, so a model fitted on "
+      "2014-2016 is genuinely stale by late 2017. Measured, not assumed.")
+
+# %% [markdown]
+# ### Phase 5 — wasted energy (RQ1, the headline)
 #
 # What share of each building's energy is spent while it is nearly empty, and
 # how hard is it still working when nobody is there?
@@ -208,63 +363,142 @@ view = view.rename(columns={
 })
 view.sort_values("power when empty, % of average", ascending=False)
 
+# %%
+figure("fig_05_headline.png",
+       "Left: share of energy spent at low occupancy. Right: power when nearly "
+       "empty as a share of that building's own average.")
+
 # %% [markdown]
 # **When these buildings are at their emptiest they still draw 62–85% of their
-# average power.** In every one of them the base load — the part drawn whether
-# or not anyone is present — is the larger share of consumption.
+# average power.** In every one of them the base load — drawn whether or not
+# anyone is present — is the larger share of consumption.
 #
 # Facilities is blank: its low-occupancy threshold works out below its own
 # minimum observed occupancy, so it has no qualifying interval. The rule was
 # kept identical for every building rather than bent for one.
 
-# %%
-from IPython.display import Image, display
+# %% [markdown]
+# **Does the finding depend on where the threshold was drawn?** "Low occupancy"
+# is defined relative to each building — at or below 5% of its own
+# 95th-percentile. That choice is the most consequential definition in the
+# project, so it is swept across its whole range rather than asserted.
 
-display(Image("figures/fig_05_headline.png"))
+# %%
+figure("fig_05_sensitivity_curve.png",
+       "The headline across every threshold from 0% to 20%. The finding holds "
+       "across the range; it does not balance on one cutoff.")
 
 # %% [markdown]
-# ### The external check
+# **The external check.** A 2010 study (Masoso & Grobler) measured out-of-hours
+# consumption in commercial buildings and reported 56%. Running *their*
+# clock-based definition on *our* data tests whether this pipeline measures what
+# it claims to.
+
+# %%
+table("phase5_published_comparison.csv",
+      "55.2% for Academic and 55.0% for Library against a published 56%.")
+
+# %% [markdown]
+# ### Phase 6 — the anomaly experiment (RQ3)
 #
-# A 2010 study (Masoso & Grobler) measured out-of-hours consumption in
-# commercial buildings and reported 56%. Running *their* clock-based definition
-# on *our* data is an independent test of whether this pipeline measures what it
-# claims to.
+# Real faults are not labelled in I-BLEND, so anomalies of known shape are
+# injected into the held-out test period: **spikes**, and **waste events** —
+# sustained elevated consumption while a building is nearly empty, which is the
+# thing the project actually cares about.
 
 # %%
-print(pd.read_csv("results/phase5_published_comparison.csv").to_string(index=False))
+figure("fig_06_injected_waste_example.png",
+       "An injected waste event against the expected-power baseline.")
 
 # %% [markdown]
-# ### RQ3 — does knowing the occupancy catch more waste?
+# Two detectors read two models' residuals. **Detector T** uses model B (time
+# only); **Detector O** uses model C (time + occupancy).
 
 # %%
-print(pd.read_csv("results/phase6_pooled_answer.csv").to_string(index=False))
+table("phase6_pooled_answer.csv")
 
 # %% [markdown]
-# The first row is the comparison this project originally specified, and the
-# occupancy-aware detector comes out **worse** on it. That result is reported
-# first rather than buried: a fixed threshold lets the two detectors fire at
-# different rates, so it measures how *often* each one alarms as much as how
-# well it ranks them. Give both the same alert budget, or drop thresholds
-# entirely, and the occupancy-aware detector wins every time — by one to three
-# points, and by 5.5 on whether a sustained waste event is noticed at all.
+# **The first row is the interesting one.** On the comparison this project
+# originally specified — a fixed z > 3 cutoff — the occupancy-aware detector
+# comes out **worse**. That is reported first rather than buried, then
+# explained: a fixed threshold lets the two detectors fire at different rates,
+# so it measures how *often* each alarms as much as how well it ranks.
+#
+# Fix the comparison rather than the threshold — same alert budget, or no
+# threshold at all — and Detector O wins every time. By one to three points, and
+# by **5.5** on whether a sustained waste event is noticed at all. That last row
+# is the one worth keeping: occupancy does little for spikes, but it is exactly
+# what distinguishes a steady 20 kW draw at 2 p.m. from the same draw at 2 a.m.
+
+# %%
+figure("fig_06_detector_comparison.png",
+       "Detector T against Detector O across all four framings.")
 
 # %% [markdown]
 # ### Phase 8 — how much of the waste is just air conditioning?
+#
+# This phase exists to close the project's largest caveat. The physics check
+# came first: cooled buildings should climb above roughly 25 °C, and a building
+# that is mostly switched off should not.
 
 # %%
-display(Image("figures/fig_08_waste_decomposition.png"))
-print(pd.read_csv("results/phase8_waste_decomposition.csv").to_string(index=False))
+figure("fig_08_temperature_response.png",
+       "Facilities climbs +62% from mild to hot weather; Lecture falls -12%. "
+       "That is the negative control working.")
+
+# %%
+table("phase8_temperature_response.csv")
+
+# %% [markdown]
+# Within low-occupancy intervals only, power is regressed on **cooling degree
+# hours** with hour of day controlled for. The intercept is consumption drawn
+# regardless of weather — a controls problem. The slope times the degree hours
+# is cooling an empty building — a setpoint problem.
+
+# %%
+figure("fig_08_waste_decomposition.png")
+table("phase8_waste_decomposition.csv")
 
 # %% [markdown]
 # **Cooling accounts for only 1–9%** of the power drawn while a building is
 # nearly empty, in the four buildings where the split can be identified at all.
-# So the waste is a scheduling and controls problem — equipment left running on
-# a timetable nobody revisits — rather than a thermostat problem.
+# So the waste is a scheduling and controls problem — equipment running on a
+# timetable nobody revisits — rather than a thermostat problem, and the remedy
+# is correspondingly cheaper.
 #
 # Library and Lecture report "not identifiable" rather than a number: both are
-# shut during the hot months, so within their low-occupancy sample the season
-# and the usage are confounded and the fitted slope goes negative. A negative
-# cooling share would be nonsense, so it is not reported as one.
+# shut during the hot months, so within their low-occupancy sample season and
+# usage are confounded and the fitted slope goes negative. A negative cooling
+# share would be nonsense, so it is not reported as one.
+
+# %% [markdown]
+# **And it sharpened RQ2.** Occupancy and heat are both seasonal, and this
+# campus empties in exactly the months Delhi is hottest — so part of what looked
+# like an occupancy effect was summer in disguise.
+
+# %%
+figure("fig_08_occupancy_vs_weather.png",
+       "Occupancy is worth +0.107 validation R-squared when the weather is "
+       "unknown, and only +0.078 once it is known -- a 27% shrinkage.")
+
+# %% [markdown]
+# ### Every judgement call, logged
+#
+# Section 7 of the report is a table with one row per decision: the options
+# considered, the one chosen, the reason, and the effect on the results. Logging
+# all of them — including the dull ones — removes the option of quietly picking
+# whichever choice made a finding look better. Several entries record decisions
+# that made the result *smaller*.
+
+# %%
+decisions = pd.read_csv("results/decision_log.csv")
+print(f"{len(decisions)} decisions logged across {decisions['phase'].nunique()} phases\n")
+print(decisions.groupby("phase").size().to_string())
+print("\nA sample:\n")
+for _, row in decisions.sample(3, random_state=0).iterrows():
+    print(f"  [{row['id']}] {row['decision']}")
+    print(f"      chosen: {row['chosen']}")
+    print()
 
 # %% [markdown]
 # ## 5. Did running on a different stack change any number?
