@@ -36,7 +36,7 @@ Where to enter it, depending on what you want:
 |---|---|
 | The finding, in one page | §1 Abstract, then §8 Headline findings |
 | Whether to believe it | §4 Data quality, §10 Limitations |
-| Why it was done this way | §7 Decision log — 46 entries, every judgement call |
+| Why it was done this way | §7 Decision log — 48 entries, every judgement call |
 | To run it yourself | §13 How to reproduce |
 | The anomaly experiment | §9 |
 | Course mapping (Units I–VI, Tutorials 1–8) | §12 |

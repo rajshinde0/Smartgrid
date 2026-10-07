@@ -39,7 +39,7 @@ One thing was found without being looked for: **campus consumption grew 32–48%
 between 2014 and 2017.**
 
 The project is 9 executed notebooks, 17 analysis modules, 47 figures, 50 result
-tables, a 46-row decision log and a 30,900-word report, with a Streamlit
+tables, a 48-row decision log and a 30,900-word report, with a Streamlit
 dashboard over the top.
 
 ---
@@ -492,7 +492,7 @@ diagram because it imports nothing from the package.
 
 ## The decision log
 
-Section 7 of the report is a **46-row table**, one row per judgement call, with
+Section 7 of the report is a **48-row table**, one row per judgement call, with
 columns for the options considered, the one chosen, the reason, and the effect
 on the results. It is generated from the notebooks like everything else, so a
 decision is recorded where it is made rather than remembered afterwards.
@@ -652,6 +652,22 @@ reason, never a number.
 
 ## Reproducing it
 
+### Without installing anything
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/colab/SMARTGRID_X.ipynb)
+
+The Colab notebook clones the repo, fetches the data, executes the analysis and
+then **checks its own numbers against the published ones** — a cell-by-cell diff
+of every regenerated table against the committed copy, naming anything that
+moved. It defaults to skipping Phase 1 (the 1.6 GB ingest) by downloading that
+phase's saved output; one variable switches it to a full cold run.
+
+That check exists because this project's central claim is that every number came
+from executed code on a known stack. Colab's stack is different, so the
+difference is measured rather than assumed.
+
+### Locally
+
 ```bash
 pip install -r requirements.txt
 python -m ipykernel install --user --name python3
@@ -704,7 +720,8 @@ quietly:
 | `dashboard/app.py` | The Streamlit dashboard |
 | `results/` | 50 CSV tables, including the decision log |
 | `figures/` | 47 charts, every one referenced by the report |
-| `tools/` | Data fetch, notebook build-and-run, the no-data guard |
+| `tools/` | Data fetch, derived-cache fetch, notebook build-and-run, the no-data guard |
+| `colab/SMARTGRID_X.ipynb` | Runs the whole project on a free Colab runtime |
 | `progress.md` | Running log: done, found, next |
 
 ### Sources

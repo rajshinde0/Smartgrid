@@ -783,6 +783,43 @@ report.log_decision(
                       "same thing at every date.",
 )
 
+report.log_decision(
+    id="D07-03", phase="7",
+    decision="How the hosted dashboard and the Colab runner get their data",
+    options_considered="Commit the 39 MB of derived parquet; regenerate it on "
+                       "every boot from the raw 1.6 GB; publish it as GitHub "
+                       "Release assets and fetch at runtime",
+    chosen="GitHub Release assets, fetched by tools/get_cache.py",
+    reason="A hosted deploy is a fresh checkout with no data/ directory, so it "
+           "needs the parquet from somewhere. Committing it would break the "
+           "project's own rule that nothing data-shaped enters the tree, and "
+           "regenerating on boot would mean downloading 1.6 GB before the page "
+           "could load. Release assets allow 2 GB per file, are versioned by "
+           "tag, and leave tools/check_no_data.py passing.",
+    effect_on_results="None on any number. The assets are a snapshot of one "
+                      "verified run, so get_cache.py prints the release tag on "
+                      "every fetch -- a tag older than your last pipeline run "
+                      "means the cache is stale.",
+)
+
+report.log_decision(
+    id="D07-04", phase="7",
+    decision="Two dependency files instead of relaxing the canonical pins",
+    options_considered="Relax requirements.txt to lower bounds; keep exact pins "
+                       "and accept the project runs nowhere else; keep the pins "
+                       "and add a portable sibling file",
+    chosen="requirements.txt stays exactly pinned; requirements-portable.txt "
+           "expresses the same stack as lower bounds",
+    reason="The exact pins are what let a reader reproduce every number in the "
+           "report bit for bit, and that property is the point of the file. But "
+           "they require Python 3.13+, which no hosted notebook platform offers, "
+           "so a single file cannot do both jobs.",
+    effect_on_results="None locally. Results computed against the portable file "
+                      "are not guaranteed identical, so the Colab notebook ends "
+                      "by diffing every regenerated results/*.csv against the "
+                      "committed copy and naming anything that moved.",
+)
+
 report.publish_decision_log()
 
 # %% [markdown]

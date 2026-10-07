@@ -26,10 +26,15 @@ import streamlit as st
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+# Streamlit puts the script's own directory on sys.path, but nothing else does
+# -- so say it explicitly rather than depending on the runner.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from src import config as C          # noqa: E402
 from src import dashboard as D       # noqa: E402
 from src import viz                  # noqa: E402
+
+import bootstrap                     # noqa: E402  (dashboard/bootstrap.py)
 
 viz.setup_style()
 
@@ -65,12 +70,21 @@ def load_results() -> dict[str, pd.DataFrame]:
     return out
 
 
+# On a local clone the parquet is already here and this is a no-op. On a fresh
+# deploy there is no data/ directory at all, so the first boot fetches it.
+if not bootstrap.data_is_present():
+    with st.spinner("First run on this machine -- fetching the saved tables..."):
+        bootstrap.ensure_data()
+
 available = D.available_buildings()
 if not available:
     st.error(
-        "No dashboard data found. Run the notebooks first, then:\n\n"
+        "No dashboard data found, and it could not be fetched.\n\n"
+        "Either run the notebooks and export:\n\n"
         "```\npython -c \"import sys; sys.path.insert(0, '.'); "
-        "from src import dashboard; dashboard.export_all()\"\n```"
+        "from src import dashboard; dashboard.export_all()\"\n```\n\n"
+        "or pull the saved copy:\n\n"
+        "```\npython tools/get_cache.py --dashboard\n```"
     )
     st.stop()
 

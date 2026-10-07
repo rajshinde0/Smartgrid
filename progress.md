@@ -520,5 +520,44 @@ pointers had quietly gone stale as the project grew past them.
 30,853-word report, 0 pending sections, 0 broken figure links. Every module and
 public function documented.
 
-**Possible next.** Team names in docs/PROJECT_REPORT.md are still placeholders.
+## Colab + hosted dashboard (7 Oct 2026) - done
+
+**Why.** The teacher asked to see the project *execute on a platform*. It ran in
+exactly one place: a local clone on Python 3.14.3 with exact pins. `pip install
+-r requirements.txt` fails on anything below 3.13, so nothing hosted could run it.
+
+**What exists now.**
+- `colab/SMARTGRID_X.ipynb` - clones, installs, fetches, executes, shows the
+  findings, and diffs its own output against the published numbers. Authored in
+  percent format like every other notebook and built with `src/nbbuild.py`.
+- `requirements-portable.txt` - the same stack as lower bounds, installs on
+  3.10-3.12. `requirements.txt` is untouched and stays canonical (D07-04).
+- `tools/get_cache.py` + GitHub Release `data-v1` - the derived parquet, served
+  rather than committed (D07-03). Two assets: 34 MB for the dashboard, 278 MB
+  for the full Phase 1 output.
+- `dashboard/bootstrap.py` + `dashboard/requirements.txt` - the app fetches its
+  own data on a fresh deploy, so Streamlit Cloud needs no data in the tree.
+
+**The part that mattered.** Colab runs a different pandas/numpy/sklearn, and
+this project's whole claim is that every number came from executed code on a
+known stack. So the notebook ends with a cell-by-cell diff of every regenerated
+`results/*.csv` against the committed copy, floats compared to tolerance, naming
+anything that moved. Tested locally against all 50 tables plus five synthetic
+mutations (sub-tolerance nudge, real change, dropped row, renamed cell, NaN
+columns) - all six cases classify correctly.
+
+**Verified.** Release round-trip: downloaded, unzipped, row counts match
+`phase1_build_stats.csv` exactly. Cold boot: parquet moved away, `ensure_data()`
+fetched and the dashboard ran. Harness clean across three buildings x panel
+on/off. Every portable floor resolves on PyPI. `check_no_data.py` passes - the
+Release keeps data out of the tree.
+
+**Not done.** Opening an individual phase notebook directly in the Colab UI still
+breaks: all nine do `sys.path.insert(0, Path.cwd().parent)`, which assumes cwd is
+`notebooks/`. Running them through `tools/build_and_run.py` works fine because
+nbconvert sets cwd to the notebook's directory, and that is what the Colab runner
+does. Fixing the direct-open case means a one-line change x9 and a full cold run.
+
+**Possible next.** Team names in docs/PROJECT_REPORT.md are still placeholders;
+the Streamlit Community Cloud deploy needs doing from the browser (see below).
 

@@ -5,6 +5,12 @@
 MD3135 Data Science course project — T.Y. B.Tech, Vishwakarma Institute of
 Technology, Pune.
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/colab/SMARTGRID_X.ipynb)
+
+**Run it without installing anything** — the Colab notebook clones this repo,
+fetches the data, executes the analysis and checks its own numbers against the
+published ones. No setup, no account beyond a Google login.
+
 We pair four years of 1-minute electricity readings from seven IIIT-Delhi
 buildings with WiFi-derived occupancy counts, and ask three questions:
 
@@ -88,13 +94,17 @@ between 2014 and 2017**.
 │   ├── dashboard.py            # scores every interval once, saves for Streamlit
 │   └── nbbuild.py              # percent-format .py -> .ipynb
 │
-├── dashboard/app.py            # Streamlit dashboard
+├── colab/SMARTGRID_X.ipynb     # run the whole project on a free Colab runtime
+├── dashboard/
+│   ├── app.py                  # Streamlit dashboard
+│   ├── bootstrap.py            # fetches its data on a fresh deploy
+│   └── requirements.txt        # slim deploy-only dependency set
 ├── docs/
 │   ├── PROJECT_REPORT.md       # the master document
 │   ├── README.md               # index: where to enter the report
 │   ├── bugFix1.md, bugFix2.md  # two rounds of code review, written up
 │   └── planning/               # the original brief, kept unedited
-├── tools/                      # fetch data, build+execute a notebook, leak guard
+├── tools/                      # fetch data + cache, build+execute, leak guard
 ├── results/                    # 50 CSV tables the report and dashboard read
 ├── figures/                    # all 47 charts used in the report
 ├── data/                       # parquet + weather cache — generated, not committed
@@ -110,6 +120,11 @@ reading the package rather than this file.
 python -m pip install -r requirements.txt
 python -m ipykernel install --user --name python3
 ```
+
+`requirements.txt` pins exact versions and needs **Python 3.13+**, because every
+number in the report was produced by that exact stack. On an older Python — or
+anywhere hosted — use `requirements-portable.txt`, which expresses the same
+stack as lower bounds and installs on 3.10–3.12.
 
 Then fetch the data (about 1.6 GB, deliberately **not** in this repository):
 
@@ -150,6 +165,27 @@ existing notebook directly:
 python -m nbconvert --to notebook --execute --inplace notebooks/00_explore.ipynb
 ```
 
+## Skipping the slow phase
+
+Phase 1 turns 1.6 GB of raw 1-minute readings into 10-minute tables and is by
+far the slowest step. Its output is published as a GitHub Release asset, so a
+fresh machine can skip straight to the analysis:
+
+```bash
+python tools/get_cache.py --full        # 278 MB, lets Phases 2-8 run immediately
+python tools/get_cache.py --dashboard   # 34 MB, just what the dashboard reads
+python tools/get_cache.py --list        # show what the release holds
+```
+
+These are **derived** outputs, not raw data — the raw dataset stays on figshare
+under its DOI. They live in a Release rather than the repository so that the
+no-data rule holds: nothing data-shaped is ever committed.
+
+They are a snapshot of one verified run. **If you re-run the pipeline and any
+number moves, rebuild and re-upload the assets** or the fast path will serve
+stale data. `get_cache.py` prints the release tag on every fetch so the staleness
+is visible.
+
 ## Dashboard
 
 ```bash
@@ -178,7 +214,7 @@ python -c "import sys; sys.path.insert(0, '.'); from src import dashboard; dashb
   asserts that none remain.
 - **Never load all 1.6 GB at once.** One meter at a time, in chunks, cached to
   10-minute parquet and reused.
-- **Every judgement call is logged.** Section 7 of the report is a 46-row
+- **Every judgement call is logged.** Section 7 of the report is a 48-row
   decision log: the options considered, the one chosen, why, and what it did to
   the results — including the decisions that made a finding smaller.
 - **Notebooks are committed only after they execute cleanly end to end.**
