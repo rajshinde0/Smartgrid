@@ -290,7 +290,12 @@ def decision_log_table() -> str:
     """Render the whole decision log as the markdown table for section 7."""
     if not DECISIONS_CSV.is_file():
         return "pending Phase 1"
-    log = pd.read_csv(DECISIONS_CSV).sort_values(["phase", "id"]).reset_index(drop=True)
+    # Sort on `id` as text, exactly as log_decision does. Sorting on
+    # ["phase", "id"] here looked equivalent and was a second copy of the bug
+    # fixed there: `phase` comes back from read_csv as int64, so the two
+    # functions were ordering on different keys and only agreed by luck.
+    log = pd.read_csv(DECISIONS_CSV, dtype={"id": "string"})
+    log = log.sort_values("id", kind="stable").reset_index(drop=True)
     log.insert(0, "#", range(1, len(log) + 1))
     log = log.drop(columns=["id"])
     log.columns = [

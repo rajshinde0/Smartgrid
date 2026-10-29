@@ -5,6 +5,12 @@
 MD3135 Data Science course project — T.Y. B.Tech, Vishwakarma Institute of
 Technology, Pune.
 
+![Energy used while nearly empty, and power when empty as a share of average](figures/fig_05_headline.png)
+
+**Left:** the share of each building's energy spent while it is nearly empty.
+**Right:** how hard it is still working when nobody is there — the number this
+project exists to measure.
+
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rajshinde0/Smartgrid/blob/main/colab/SMARTGRID_X.ipynb)
 
 **Run it without installing anything** — the Colab notebook clones this repo,
@@ -59,6 +65,14 @@ controls and scheduling problem — equipment left running on a timetable nobody
 revisits — rather than a thermostat problem, and the remedy is correspondingly
 cheaper.
 
+![Low-occupancy power split into schedule-driven and weather-driven](figures/fig_08_waste_decomposition.png)
+
+![Mean power against outdoor temperature, by building](figures/fig_08_temperature_response.png)
+
+The second chart is the check that licensed the first. Facilities climbs **+62%**
+from mild to hot weather; Lecture *falls* **−12%** — a building that is shut
+cannot respond to heat, so the negative control works.
+
 Two secondary results, both modest and both reported honestly:
 
 - **Occupancy is a weak predictor of power**, and weaker than it first looked.
@@ -69,8 +83,24 @@ Two secondary results, both modest and both reported honestly:
   all five fair comparisons by one to three percentage points each, with the
   gains concentrated on sustained waste rather than spikes.
 
+![Detector T against Detector O across both framings](figures/fig_06_detector_comparison.png)
+
+On the comparison this project originally specified — a fixed cutoff — the
+occupancy-aware detector comes out **worse**. That result is reported first
+rather than buried, and then explained.
+
 We also found, without looking for it, that **campus consumption grew 32%–48%
 between 2014 and 2017**.
+
+### Honest about the data
+
+![Missing data by building and month](figures/fig_01_missing_heatmap.png)
+
+The seven buildings are not equally trustworthy and the analysis says so per
+building rather than averaging the problem away. The Lecture building is only
+**18.9%** usable — its meter reads zero for 25,501 hours — and it is kept in
+every table with that coverage visible, because dropping the one building that
+embarrasses the method is how an analysis becomes dishonest.
 
 ---
 
@@ -218,6 +248,28 @@ If the parquet files are missing:
 python -c "import sys; sys.path.insert(0, '.'); from src import dashboard; dashboard.export_all()"
 ```
 
+## Tests
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest tests/ -q
+```
+
+A focused regression suite: **57 tests, under a second**, entirely on synthetic
+data — it needs no `Dataset/`, no parquet cache and no network, so it runs on a
+bare clone.
+
+It is not broad coverage and does not try to be. Each test pins either a bug
+that actually happened — both rounds in [`docs/bugFix1.md`](docs/bugFix1.md) and
+[`bugFix2.md`](docs/bugFix2.md) found their bugs in small pure functions — or an
+invariant the report depends on, such as the low-occupancy threshold being
+relative to each building's own scale.
+
+The suite sits *alongside* the notebook-diff check rather than replacing it.
+That check is a real regression test, but it takes 13 minutes and only catches a
+bug that moves a published number; the interpolation bug stayed hidden for weeks
+precisely because it moved none.
+
 ## Rules this project follows
 
 - **`Dataset/` is read-only.** Nothing writes to it, and it is never committed.
@@ -229,7 +281,7 @@ python -c "import sys; sys.path.insert(0, '.'); from src import dashboard; dashb
   asserts that none remain.
 - **Never load all 1.6 GB at once.** One meter at a time, in chunks, cached to
   10-minute parquet and reused.
-- **Every judgement call is logged.** Section 7 of the report is a 48-row
+- **Every judgement call is logged.** Section 7 of the report is a 49-row
   decision log: the options considered, the one chosen, why, and what it did to
   the results — including the decisions that made a finding smaller.
 - **Notebooks are committed only after they execute cleanly end to end.**

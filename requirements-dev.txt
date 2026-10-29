@@ -1,0 +1,13 @@
+# Test dependencies. Not needed to run the analysis or the dashboard.
+#
+# Kept separate from requirements.txt on purpose: that file is the canonical
+# pinned stack that reproduces every number in the report, and it should not
+# grow a dependency the analysis never imports.
+#
+#   python -m pip install -r requirements-dev.txt
+#   python -m pytest tests/ -q
+#
+# The suite is synthetic throughout -- it needs no Dataset/, no parquet cache
+# and no network, and runs in under a second.
+
+pytest>=8.0

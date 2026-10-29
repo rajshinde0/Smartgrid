@@ -39,7 +39,7 @@ One thing was found without being looked for: **campus consumption grew 32–48%
 between 2014 and 2017.**
 
 The project is 9 executed notebooks, 17 analysis modules, 47 figures, 50 result
-tables, a 48-row decision log and a 30,900-word report, with a Streamlit
+tables, a 49-row decision log and a 30,900-word report, with a Streamlit
 dashboard over the top.
 
 ---
@@ -492,7 +492,7 @@ diagram because it imports nothing from the package.
 
 ## The decision log
 
-Section 7 of the report is a **48-row table**, one row per judgement call, with
+Section 7 of the report is a **49-row table**, one row per judgement call, with
 columns for the options considered, the one chosen, the reason, and the effect
 on the results. It is generated from the notebooks like everything else, so a
 decision is recorded where it is made rather than remembered afterwards.

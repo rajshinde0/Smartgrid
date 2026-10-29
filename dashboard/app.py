@@ -98,6 +98,13 @@ st.caption(
     "Occupancy-aware energy-waste and anomaly analysis of the I-BLEND campus "
     "dataset (IIIT Delhi, 7 buildings, Feb 2014 – Nov 2017)"
 )
+# The line above says what this is; this one says what it found. Someone who
+# opens the page and reads nothing else should still leave with the result.
+st.markdown(
+    "**When these buildings are at their emptiest they still draw 62–85% of "
+    "their average power.** Only 1–9% of that is cooling — the rest runs on a "
+    "timetable nobody revisits."
+)
 
 # ---------------------------------------------------------------------------
 # Controls
@@ -183,9 +190,19 @@ if not row.empty:
         help=f"Occupancy at or below {entry['threshold']:.1f} devices "
              f"({C.LOW_OCC_FRACTION:.0%} of this building's 95th percentile)",
     )
+    # A lone "74% of average" has no referent, so show where this building
+    # sits against the others. delta_color="off" because neither direction is
+    # good or bad -- it is a position, not a score.
+    peers = headline["intensity ratio"].dropna()
+    vs_median = (
+        None if pd.isna(ratio) or peers.empty
+        else f"{(ratio - peers.median()) * 100:+.0f} pts vs the 7-building median"
+    )
     col2.metric(
         "Power when nearly empty",
         "n/a" if pd.isna(ratio) else f"{ratio:.0%} of average",
+        delta=vs_median,
+        delta_color="off",
         help="Mean power during low-occupancy intervals, as a share of mean "
              "power overall. This is the headline number.",
     )
@@ -416,7 +433,7 @@ with st.expander("Comparison with published figures"):
             "against their published 56%."
         )
 
-with st.expander("How much of the waste is cooling? (Phase 8)"):
+with st.expander("How much of the waste is cooling? (Phase 8)", expanded=True):
     if decomposition is not None:
         st.dataframe(decomposition, width="stretch", hide_index=True)
         st.caption(

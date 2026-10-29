@@ -286,30 +286,44 @@ fixed.to_csv(C.RESULTS_DIR / "phase6_fixed_threshold.csv", index=False)
 # ### The confusion matrix, drawn
 
 # %%
-fig, axes = plt.subplots(1, 2, figsize=(11, 4.4))
+# Colour by the **row** share, not the raw count. Anomalies are a few percent
+# of the data, so a count-coloured matrix is a picture of that imbalance: the
+# true-negative cell swamps the scale and the other three land on
+# near-identical shades however far apart they are. Normalising each row asks
+# the question the detector is actually answering -- "of everything that really
+# was normal, what share did I flag?" -- and makes the two detectors
+# comparable. The counts stay, as the cell text.
+fig, axes = plt.subplots(1, 2, figsize=(11.5, 4.4))
 for ax, label in zip(axes, ("T", "O")):
     row = fixed[(fixed["building"] == "Academic") &
                 (fixed["detector"] == label) &
                 (fixed["anomaly_type"] == "all")].iloc[0]
     matrix = np.array([[row["true_negatives"], row["false_positives"]],
-                       [row["false_negatives"], row["true_positives"]]])
-    ax.imshow(matrix, cmap=viz.SEQ_BLUE,
-              norm=plt.matplotlib.colors.LogNorm(vmin=1, vmax=matrix.max()))
+                       [row["false_negatives"], row["true_positives"]]],
+                      dtype="float64")
+    shares = matrix / matrix.sum(axis=1, keepdims=True)
+
+    mesh = ax.imshow(shares, cmap=viz.SEQ_BLUE, vmin=0, vmax=1)
     for i in range(2):
         for j in range(2):
-            ax.text(j, i, f"{matrix[i, j]:,}", ha="center", va="center",
-                    fontsize=12,
-                    color="#ffffff" if matrix[i, j] > matrix.max() * 0.15
-                    else viz.INK)
+            ax.text(j, i, f"{matrix[i, j]:,.0f}\n{shares[i, j]:.1%}",
+                    ha="center", va="center", fontsize=11, linespacing=1.5,
+                    color="#ffffff" if shares[i, j] > 0.5 else viz.INK)
     ax.set_xticks([0, 1]); ax.set_xticklabels(["not flagged", "flagged"])
     ax.set_yticks([0, 1]); ax.set_yticklabels(["really normal", "really anomaly"])
     ax.set_title(f"Detector {label}  "
                  f"(precision {row['precision']:.2f}, recall {row['recall']:.2f}, "
                  f"F1 {row['f1']:.2f})")
     ax.grid(False)
+
+bar = fig.colorbar(mesh, ax=axes, fraction=0.046, pad=0.04)
+bar.set_label("share of that row", color=viz.INK_SECONDARY)
+bar.ax.tick_params(labelcolor=viz.INK_SECONDARY)
+
+# No subplots_adjust after the colorbar: it steals space from the same budget
+# and pushes the bar over the right-hand title.
 fig.suptitle("Academic building, fixed threshold |z| > 3  [SYNTHETIC ANOMALIES]",
              x=0.09, ha="left", fontsize=12, fontweight="semibold")
-fig.tight_layout(rect=[0, 0, 1, 0.92])
 viz.save_fig(fig, "fig_06_confusion_matrices")
 
 # %% [markdown]

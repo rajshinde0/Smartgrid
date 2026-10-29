@@ -863,6 +863,28 @@ report.log_decision(
                       "committed copy and naming anything that moved.",
 )
 
+report.log_decision(
+    id="D07-05", phase="7",
+    decision="How the code is guarded against regressions",
+    options_considered="Rely on re-running the nine notebooks and diffing "
+                       "results/; add a broad unit-test suite across all 17 "
+                       "modules; add a focused synthetic-data suite covering "
+                       "the functions that have actually broken",
+    chosen="A focused pytest suite on synthetic data, kept alongside the "
+           "notebook-diff check rather than replacing it",
+    reason="The notebook diff is a real regression test, but it takes 13 "
+           "minutes and only catches a bug that moves a published number -- "
+           "the interpolation bug sat latent for weeks precisely because it "
+           "moved none. Both review rounds found their bugs in small pure "
+           "functions, so those are what the suite pins. Synthetic data "
+           "throughout means it runs on a bare clone in under a second, with "
+           "no Dataset/, no parquet and no network.",
+    effect_on_results="None on any number. Verified by reintroducing the "
+                      "pandas interpolate(limit=) bug and confirming the "
+                      "long-gap tests fail -- a regression test that cannot "
+                      "fail is decoration.",
+)
+
 report.publish_decision_log()
 
 # %% [markdown]

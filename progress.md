@@ -581,6 +581,66 @@ rather than resolve something wrong. All five behave correctly.
 Then all nine notebooks rebuilt and re-executed, with `results/` diffed against
 the committed copies to confirm no number moved.
 
+## Review, tests and visual pass (29 Oct 2026) - done
+
+**Why.** The analysis was finished and verified; what was weak was everything
+around it. A full read of the project found two things worth fixing and one
+embarrassment.
+
+**The embarrassment.** The GitHub repo description read *"TY Sem1 DS CP"* -
+wrong semester, no topics, no homepage - and that is the first thing any reader
+sees. The README showed **none** of the 47 figures.
+
+**Tests: 57, under a second, all synthetic.** `tests/` with pytest, plus
+`requirements-dev.txt` kept separate so `requirements.txt` stays the canonical
+pinned stack. Each test pins a bug that actually happened or an invariant the
+report depends on: the whole-run interpolation rule, dead-meter bridging, the
+relative low-occupancy threshold, robust z-scores, the Facilities blank-result
+path, cooling degree hours, and the decision-log ordering.
+
+**The suite was proved able to fail.** Reintroducing the old
+`interpolate(limit=3)` behaviour made exactly the two long-gap tests fail, with
+the right diagnosis (3 of 4 blocks wrongly filled); `src/clean.py` was then
+restored byte-for-byte. A regression test that cannot fail is decoration. The
+suite was also run in a bare temp clone holding only `src/` and `tests/` - no
+Dataset, no data, no results - and all 57 passed, proving it needs nothing.
+
+**Two real finds, from writing the tests rather than reading the code.**
+1. `decision_log_table()` still sorted on `["phase", "id"]` - a second copy of
+   the bug fixed in `log_decision` on 7 Oct. Not actively wrong, because
+   `read_csv` infers a uniform int column, but the two functions were ordering
+   on different keys and agreeing by luck. Now both sort on `id` as text;
+   verified to change no published output.
+2. The first version of the test helper hit the project's own old trap - handing
+   pandas a Series with a RangeIndex while naming a DatetimeIndex makes it
+   *align*, not assign, and every column came out NaN. Fixed and documented in
+   the helper so the next person does not repeat it.
+
+**Visual.**
+- `fig_06_confusion_matrices.png` coloured by raw count, so the 23,216
+  true-negative cell swamped the ramp and 546 vs 1,535 rendered near-identical.
+  Now coloured by **row share** with a colourbar, counts kept as text. The
+  trade-off is finally visible at a glance: T catches 31.0% of real anomalies,
+  O catches 36.5%, but O false-alarms at 11.6% against T's 6.2%.
+- README leads with the headline figure and carries five in total.
+- Dashboard: the finding stated under the title, the headline metric given a
+  7-building-median referent, and the Phase 8 expander opened by default.
+- Repo description, topics and homepage set.
+
+**One layout misstep, caught by looking.** Adding `subplots_adjust` after the
+colorbar pushed the bar over the right-hand subplot title. Reverted to the
+layout that rendered cleanly rather than shipping it unseen.
+
+**Also.** The five `*(add name)*` role placeholders are gone - the table was
+removed rather than left empty. Verified the removal survives a notebook re-run,
+since `report.py` only substitutes inside BEGIN/END markers.
+
+**State.** 9 notebooks, 47 figures, 50 result tables, 49 decisions, 57 tests,
+0 pending sections, 0 broken figure links.
+
+**Possible next.** The Streamlit Community Cloud deploy still needs doing from a
+browser.
+
 **One correction made while patching.** Phases 0 and 1 first fetched with
 `get_data.py --all`. The extra I-BLEND file is a 2018 weather record with zero
 overlap with the analysis window -- the report discusses it, no phase loads it --
