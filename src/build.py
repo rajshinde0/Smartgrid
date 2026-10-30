@@ -26,6 +26,66 @@ def meter_role(meter_key: str) -> str:
     return meter_key.rsplit("_", 1)[-1]
 
 
+PER_METER_COLUMNS = [
+    "power_w", "power_filled_w", "power_min_w", "power_max_w",
+    "meter_off", "is_missing", "was_interpolated",
+    "outlier_iqr", "outlier_zscore", "n_readings",
+]
+
+# Taken from the mains meter only: the UPS is a subset of the same supply and
+# its voltage adds nothing.
+MAINS_ONLY_COLUMNS = ("voltage", "power_factor", "pf_neg_frac")
+
+
+def combine_meters(
+    per_meter: dict[str, pd.DataFrame], mains_role: str
+) -> pd.DataFrame:
+    """Merge one building's cleaned meters into a single table.
+
+    Split out of `build_building` so it can be called directly. It is the most
+    consequential handful of lines in the project -- the version that summed the
+    raw series instead of the gap-filled one silently discarded every
+    interpolated value in the record, and the cross-check did not notice
+    because both sides of it used raw power (docs/bugFix1.md).
+
+    `per_meter` maps a role ("mains", "ups") to that meter's cleaned frame;
+    `mains_role` names which of them carries the electrical-quality columns.
+    Per-meter columns are kept *and* summed, because "which supply keeps running
+    when the rooms empty out" is one of the Phase 5 questions.
+    """
+    frames = [
+        table[PER_METER_COLUMNS].add_suffix(f"_{role}")
+        for role, table in per_meter.items()
+    ]
+    combined = pd.concat(frames, axis=1).sort_index()
+
+    roles = list(per_meter)
+
+    # Sum the *gap-filled* series, not the raw one. `clean_meter` interpolates
+    # gaps of up to INTERPOLATE_LIMIT_MIN minutes into power_filled_w and marks
+    # each filled value in was_interpolated; summing the raw column instead
+    # would compute those fills and then discard them, leaving short gaps as
+    # missing even though the method says they are filled.
+    #
+    # power_filled_w is NaN wherever the meter was off, which is intended: those
+    # blocks are excluded by `usable` later rather than counted as consumption.
+    power_cols = [f"power_filled_w_{r}" for r in roles]
+    # min_count means one missing meter gives NaN rather than the other meter's
+    # value alone, which would silently understate the building's total.
+    combined["power_w"] = combined[power_cols].sum(axis=1, min_count=len(power_cols))
+
+    for flag in ("meter_off", "is_missing", "was_interpolated",
+                 "outlier_iqr", "outlier_zscore"):
+        combined[flag] = combined[[f"{flag}_{r}" for r in roles]].any(axis=1)
+
+    mains = per_meter[mains_role]
+    for col in MAINS_ONLY_COLUMNS:
+        if col in mains:
+            combined[col] = mains[col]
+
+    return combined
+
+
 def build_building(
     building: str, *, force: bool = False, verbose: bool = True
 ) -> tuple[pd.DataFrame, dict]:
@@ -54,47 +114,7 @@ def build_building(
         per_meter[meter_role(meter_key)] = cleaned
         meter_stats[meter_key] = stats
 
-    # ---- assemble the building table on a common index --------------------
-    frames = []
-    for role, table in per_meter.items():
-        frames.append(
-            table[[
-                "power_w", "power_filled_w", "power_min_w", "power_max_w",
-                "meter_off", "is_missing", "was_interpolated",
-                "outlier_iqr", "outlier_zscore", "n_readings",
-            ]].add_suffix(f"_{role}")
-        )
-    combined = pd.concat(frames, axis=1).sort_index()
-
-    roles = list(per_meter)
-
-    # Sum the *gap-filled* series, not the raw one. `clean_meter` interpolates
-    # gaps of up to INTERPOLATE_LIMIT_MIN minutes into power_filled_w and marks
-    # each filled value in was_interpolated; summing the raw column instead
-    # would compute those fills and then discard them, leaving short gaps as
-    # missing even though the method says they are filled.
-    #
-    # power_filled_w is NaN wherever the meter was off, which is intended: those
-    # blocks are excluded by `usable` below rather than counted as consumption.
-    power_cols = [f"power_filled_w_{r}" for r in roles]
-    combined["power_w"] = combined[power_cols].sum(axis=1, min_count=len(power_cols))
-    combined["meter_off"] = combined[[f"meter_off_{r}" for r in roles]].any(axis=1)
-    combined["is_missing"] = combined[[f"is_missing_{r}" for r in roles]].any(axis=1)
-    combined["was_interpolated"] = combined[
-        [f"was_interpolated_{r}" for r in roles]
-    ].any(axis=1)
-    combined["outlier_iqr"] = combined[[f"outlier_iqr_{r}" for r in roles]].any(axis=1)
-    combined["outlier_zscore"] = combined[
-        [f"outlier_zscore_{r}" for r in roles]
-    ].any(axis=1)
-
-    # Electrical quality columns come from the mains meter (the UPS is a subset
-    # of the same supply and its voltage adds nothing).
-    mains_key = spec["meters"][0]
-    mains = per_meter[meter_role(mains_key)]
-    for col in ("voltage", "power_factor", "pf_neg_frac"):
-        if col in mains:
-            combined[col] = mains[col]
+    combined = combine_meters(per_meter, meter_role(spec["meters"][0]))
 
     # ---- merge with occupancy --------------------------------------------
     occupancy = occ.load_occupancy(building)

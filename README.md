@@ -255,12 +255,16 @@ python -m pip install -r requirements-dev.txt
 python -m pytest tests/ -q
 ```
 
-A focused regression suite: **57 tests, under a second**, entirely on synthetic
-data — it needs no `Dataset/`, no parquet cache and no network, so it runs on a
-bare clone.
+A focused regression suite: **78 tests, about 8 seconds**, entirely on
+synthetic data — it needs no `Dataset/`, no parquet cache and no network, so it
+runs on a bare clone.
+
+Almost all of that 8 seconds is importing scikit-learn for the three model
+tests; the tests themselves total well under a second.
 
 It is not broad coverage and does not try to be. Each test pins either a bug
-that actually happened — both rounds in [`docs/bugFix1.md`](docs/bugFix1.md) and
+that actually happened — including the worst one, where the build step summed
+raw power and silently discarded every interpolated value — both rounds in [`docs/bugFix1.md`](docs/bugFix1.md) and
 [`bugFix2.md`](docs/bugFix2.md) found their bugs in small pure functions — or an
 invariant the report depends on, such as the low-occupancy threshold being
 relative to each building's own scale.

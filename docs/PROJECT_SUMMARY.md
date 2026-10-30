@@ -727,6 +727,7 @@ quietly:
 | `results/` | 50 CSV tables, including the decision log |
 | `figures/` | 47 charts, every one referenced by the report |
 | `tools/` | Data fetch, derived-cache fetch, notebook build-and-run, the no-data guard |
+| `tests/` | 78 synthetic regression tests — each pins a bug that happened or an invariant the report rests on |
 | `colab/SMARTGRID_X.ipynb` | Runs the whole project on a free Colab runtime |
 | `progress.md` | Running log: done, found, next |
 

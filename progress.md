@@ -581,6 +581,57 @@ rather than resolve something wrong. All five behave correctly.
 Then all nine notebooks rebuilt and re-executed, with `results/` diffed against
 the committed copies to confirm no number moved.
 
+## Close the gap at the bug site (31 Oct 2026) - done
+
+**Why.** Reviewing yesterday's 57-test suite turned up a hole in my own work:
+the worst bug this project ever had was not covered by it. `docs/bugFix1.md`
+records it - the combine step in `src/build.py` summed `power_w_<role>` instead
+of `power_filled_w_<role>`, computing every interpolated value and then
+discarding it, 5,206 blocks. All 57 tests would have passed if someone flipped
+that column name back. The suite tested `clean.py`, where the fill is
+*computed*, and never `build.py`, where it was *discarded*.
+
+**Why it had no test:** structural. The combine step is pure but sat mid-
+function between two data loads, so nothing could call it.
+
+**The extraction.** `combine_meters(per_meter, mains_role)` lifted out of
+`build_building`, which now calls it. Pure, documented, directly testable. The
+comment explaining the bug moved with it, next to the line it protects.
+
+**21 new tests** (78 total): the combine step, `models.feature_columns`, and
+`build_long_table`'s stale-cache guard.
+
+**Three mutations, three catches.** Each guarantee was verified by breaking it:
+- summing the raw series again -> the two gap-filled tests fail
+- dropping `min_count` -> the missing-meter test fails
+- taking quality columns from the first dict key instead of the mains role ->
+  that test fails
+`src/build.py` restored byte-for-byte after each.
+
+**The real check on the refactor:** a full nine-notebook run, with Phase 1
+rebuilding from raw (`[built]` x17, `[cache]` x0 - so `combine_meters` really
+was exercised in production). Every `results/*.csv`, every figure and
+`PROJECT_REPORT.md` came back **bit-identical**.
+
+**A claim corrected.** The README said "57 tests, under a second". That was
+pytest's own number, which excludes interpreter and import startup. Steady state
+is ~8 seconds for 78 tests, and almost all of it is importing scikit-learn for
+three model tests - the tests themselves still total well under a second. Fixed
+in the README rather than left flattering.
+
+**Notebooks kept this time, not discarded.** Five of them printed
+"decision_log (50 lines)" from before D07-05 was added; they now correctly say
+51. That is a real update, so unlike the 29 Oct run the notebook changes were
+committed rather than treated as churn - the PID-and-timing noise in
+`00_explore` rides along with it.
+
+**State.** 9 notebooks, 47 figures, 50 result tables, 49 decisions, 78 tests,
+0 pending sections, 0 broken figure links.
+
+**Possible next.** The Streamlit Community Cloud deploy still needs a browser.
+`features.py`, `ingest.py`, `pca.py` and `stats.py` remain untested - none has
+bug history, so none is urgent.
+
 ## Review, tests and visual pass (29 Oct 2026) - done
 
 **Why.** The analysis was finished and verified; what was weak was everything
