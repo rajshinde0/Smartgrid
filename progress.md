@@ -581,6 +581,43 @@ rather than resolve something wrong. All five behave correctly.
 Then all nine notebooks rebuilt and re-executed, with `results/` diffed against
 the committed copies to confirm no number moved.
 
+## Colab test step, and a refreshed cache (31 Oct 2026) - done
+
+**Two gaps found by asking whether the project was actually up to date.**
+
+1. The Colab notebook never mentioned the 78-test suite. It calls itself a walk
+   through the whole project; a reader would never have learned the tests
+   existed. Now step 2, deliberately placed *before* any data is fetched -
+   which is the point, since the suite is synthetic and needs none.
+2. The release cache was three weeks behind the repo (data-v1, 7 Oct, commit
+   b59ef82) while the pipeline had been rebuilt from raw twice since. Checked
+   whether that mattered rather than guessing: `LONG_COLUMNS` and the per-meter
+   column list were unchanged, so v1 was compatible - but "up to date" it was
+   not. Rebuilt as **data-v2** from the 31 Oct parquet; `get_cache.py` now
+   defaults to it, and `--tag data-v1` still reaches the old snapshot.
+
+**The upload failed, and the exit code lied.** `processed-cache.zip` hit
+`tls: certificate signed by unknown authority` on uploads.github.com; gh's own
+cleanup of the half-made draft failed the same way, leaving an orphaned draft
+holding one of two assets. The task reported **exit code 0** because the gh
+command was piped through `tail`, so the status came from `tail`. Caught by
+checking the release itself rather than trusting the notification. A plain
+retry succeeded - it was intermittent, not a block.
+
+**A near miss worth recording.** `RELEASE_TAG` had already been pointed at
+data-v2 while data-v2 was still a draft, and drafts are invisible to the
+anonymous API. Committing that would have broken the fetch path for every
+Colab user and the hosted dashboard at once. It was caught because the change
+had not been committed yet - not because anything checked for it.
+
+**One real bug found on the way.** `--tag data-v1` printed the data-v2 URL:
+`RELEASE_PAGE` was a module constant built from the default tag, so it ignored
+the argument. Now `release_page(tag)`, and every caller passes the tag it is
+actually talking about.
+
+**State.** 9 notebooks, 47 figures, 50 result tables, 49 decisions, 78 tests,
+release data-v2 current with the pipeline.
+
 ## Close the gap at the bug site (31 Oct 2026) - done
 
 **Why.** Reviewing yesterday's 57-test suite turned up a hole in my own work:

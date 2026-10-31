@@ -23,11 +23,12 @@ diffable and the .ipynb is a build artefact rather than hand-edited JSON.
 # | Step | What happens |
 # |---|---|
 # | 1 | Clone the repository and install dependencies |
-# | 2 | Fetch the data |
-# | 3 | Execute the analysis phases |
-# | 4 | Walk the whole project, phase by phase, with its figures and tables |
-# | 5 | **Check the numbers against the published ones** |
-# | 6 | *(optional)* Serve the dashboard on a public URL |
+# | 2 | Run the 78-test regression suite — before any data exists |
+# | 3 | Fetch the data |
+# | 4 | Execute the analysis phases |
+# | 5 | Walk the whole project, phase by phase, with its figures and tables |
+# | 6 | **Check the numbers against the published ones** |
+# | 7 | *(optional)* Serve the dashboard on a public URL |
 #
 # ### Two ways to run it
 #
@@ -39,7 +40,7 @@ diffable and the .ipynb is a build artefact rather than hand-edited JSON.
 # **`full`** (~30–60 min) fetches the raw 1.6 GB from figshare and runs all nine
 # phases, proving the whole thing works from nothing.
 #
-# > **Step 5 is the one to watch.** Every number in this project's report was
+# > **Step 6 is the one to watch.** Every number in this project's report was
 # > produced on an exactly-pinned software stack. Colab's is different, so the
 # > results *could* shift. Rather than hope, step 5 compares every regenerated
 # > table against the committed one and reports what moved.
@@ -99,10 +100,42 @@ print(f"scikit-learn {sklearn.__version__}")
 print()
 print("Published results were produced with pandas 3.0.3 / numpy 2.4.3 / "
       "scikit-learn 1.8.0 on Python 3.14.3.")
-print("Step 5 checks whether that difference changed anything.")
+print("Step 6 checks whether that difference changed anything.")
 
 # %% [markdown]
-# ## 2. Choose how to run, and fetch the data
+# ## 2. Run the tests
+#
+# Before any data is fetched — which is the point. The suite is entirely
+# synthetic, so it needs no `Dataset/`, no parquet cache and no network, and
+# it runs here on a clone that has none of them yet.
+#
+# It is not broad coverage and does not try to be. Each test pins either a bug
+# that actually happened or an invariant the report depends on. The one worth
+# knowing about guards the worst bug this project had: the build step once
+# summed raw power instead of the gap-filled series, computing every
+# interpolated value and then discarding it — 5,206 blocks — while the
+# cross-check passed anyway, because both its sides used raw power too.
+
+# %%
+subprocess.run(
+    [sys.executable, "-m", "pip", "install", "-q", "-r", "requirements-dev.txt"],
+    check=True,
+)
+
+tests = subprocess.run(
+    [sys.executable, "-m", "pytest", "tests/", "-q", "--no-header"],
+    capture_output=True, text=True,
+)
+print(tests.stdout[-2500:])
+if tests.returncode != 0:
+    print(tests.stderr[-1500:])
+    raise RuntimeError("the test suite failed -- stopping before the analysis")
+
+print("Most of that runtime is importing scikit-learn for three of the tests;")
+print("the tests themselves total well under a second.")
+
+# %% [markdown]
+# ## 3. Choose how to run, and fetch the data
 #
 # Change `RUN_MODE` to `"full"` for the complete cold run.
 
@@ -130,7 +163,7 @@ print(f"will run {len(PHASES)} phases: {', '.join(PHASES)}")
 # %% [markdown]
 # ### Keep a copy of the published results before we overwrite them
 #
-# The phases rewrite `results/*.csv` as they run. Step 5 needs the committed
+# The phases rewrite `results/*.csv` as they run. Step 6 needs the committed
 # versions to compare against, so they are copied aside first.
 
 # %%
@@ -144,7 +177,7 @@ shutil.copytree("results", PUBLISHED)
 print(f"kept {len(list(PUBLISHED.glob('*.csv')))} published CSVs for comparison")
 
 # %% [markdown]
-# ## 3. Execute the phases
+# ## 4. Execute the phases
 #
 # Each phase is built from its percent-format source and executed end to end
 # with `nbconvert`, exactly as it is locally. A phase that raises stops the run
@@ -188,7 +221,7 @@ pd.DataFrame(timings, columns=["phase", "seconds", "exit code"]).style.format(
 )
 
 # %% [markdown]
-# ## 4. The project, phase by phase
+# ## 5. The project, phase by phase
 #
 # Everything below was produced by the cells above — these are this run's own
 # figures and tables, read off disk, not pictures pasted in.
@@ -501,7 +534,7 @@ for _, row in decisions.sample(3, random_state=0).iterrows():
     print()
 
 # %% [markdown]
-# ## 5. Did running on a different stack change any number?
+# ## 6. Did running on a different stack change any number?
 #
 # This is the step that matters most.
 #
@@ -583,7 +616,7 @@ else:
     print("requirements.txt remains the canonical stack for the report.")
 
 # %% [markdown]
-# ## 6. (Optional) Run the dashboard
+# ## 7. (Optional) Run the dashboard
 #
 # This serves the Streamlit app from the Colab runtime and opens a temporary
 # public URL through a Cloudflare tunnel. The URL lives only as long as this

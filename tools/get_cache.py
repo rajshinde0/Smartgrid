@@ -1,7 +1,7 @@
 """Download the derived parquet cache from this repo's GitHub Release.
 
-    python tools/get_cache.py --dashboard   # 39 MB, what the dashboard needs
-    python tools/get_cache.py --full        # 338 MB, lets Phases 2-8 skip ingest
+    python tools/get_cache.py --dashboard   # 34 MB, what the dashboard needs
+    python tools/get_cache.py --full        # 278 MB, lets Phases 2-8 skip ingest
     python tools/get_cache.py --list        # show what the release holds
 
 Why this script exists
@@ -28,8 +28,10 @@ A snapshot, not a source of truth
 ---------------------------------
 These assets are built from one verified pipeline run. If the pipeline is
 re-run and the numbers move, the assets are stale until they are re-uploaded.
-So every fetch prints the release tag it pulled from -- if that tag is older
-than your last run, you are looking at old data.
+So every fetch prints the release tag and its date -- if that date is older
+than your last pipeline run, you are looking at old data.
+
+Older snapshots stay reachable: `--tag data-v1` still fetches the 7 Oct one.
 """
 
 from __future__ import annotations
@@ -48,13 +50,21 @@ PROCESSED_DIR = ROOT / "data" / "processed"
 
 REPO = "rajshinde0/Smartgrid"
 API = f"https://api.github.com/repos/{REPO}/releases/tags"
-RELEASE_TAG = "data-v1"
+RELEASE_TAG = "data-v2"
 
 DASHBOARD_ASSET = "dashboard-parquet.zip"
 FULL_ASSET = "processed-cache.zip"
 
 TIMEOUT = 120
-RELEASE_PAGE = f"https://github.com/{REPO}/releases/tag/{RELEASE_TAG}"
+
+
+def release_page(tag: str = RELEASE_TAG) -> str:
+    """Human-facing URL for one release.
+
+    A function, not a constant: built once from the default tag, it printed the
+    wrong URL whenever `--tag` asked for a different release.
+    """
+    return f"https://github.com/{REPO}/releases/tag/{tag}"
 
 
 def release_info(tag: str = RELEASE_TAG) -> dict:
@@ -71,7 +81,7 @@ def release_info(tag: str = RELEASE_TAG) -> dict:
         if exc.code == 404:
             sys.exit(
                 f"ERROR: no release tagged '{tag}' on {REPO}.\n"
-                f"       Check {RELEASE_PAGE}\n"
+                f"       Check {release_page(tag)}\n"
                 "       If the release has not been created yet, build the\n"
                 "       cache locally instead:\n"
                 "         python tools/get_data.py\n"
@@ -81,7 +91,7 @@ def release_info(tag: str = RELEASE_TAG) -> dict:
     except urllib.error.URLError as exc:
         sys.exit(
             f"ERROR: could not reach the GitHub API ({exc.reason}).\n"
-            f"       Download the asset by hand from {RELEASE_PAGE}\n"
+            f"       Download the asset by hand from {release_page(tag)}\n"
             f"       and unzip it into data/processed/."
         )
 
@@ -155,7 +165,7 @@ def fetch(asset_name: str, tag: str = RELEASE_TAG) -> None:
         sys.exit(
             f"ERROR: release '{tag}' has no asset named {asset_name}.\n"
             f"       It holds: {available}\n"
-            f"       See {RELEASE_PAGE}"
+            f"       See {release_page(tag)}"
         )
 
     asset = assets[asset_name]
@@ -177,7 +187,7 @@ def list_assets(tag: str = RELEASE_TAG) -> None:
     """Print what the release holds, download nothing."""
     info = release_info(tag)
     print(f"release {tag}  ({info.get('published_at', 'date unknown')})")
-    print(f"  {RELEASE_PAGE}")
+    print(f"  {release_page(tag)}")
     assets = info.get("assets", [])
     if not assets:
         print("  (no assets)")
@@ -191,9 +201,9 @@ def main(argv: list[str]) -> int:
     """Command-line entry point. Returns a process exit code."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--dashboard", action="store_true",
-                        help=f"fetch {DASHBOARD_ASSET} (39 MB): what the dashboard reads")
+                        help=f"fetch {DASHBOARD_ASSET} (34 MB): what the dashboard reads")
     parser.add_argument("--full", action="store_true",
-                        help=f"fetch {FULL_ASSET} (338 MB): lets Phases 2-8 skip ingest")
+                        help=f"fetch {FULL_ASSET} (278 MB): lets Phases 2-8 skip ingest")
     parser.add_argument("--list", action="store_true",
                         help="show what the release holds, download nothing")
     parser.add_argument("--tag", default=RELEASE_TAG,
