@@ -2,8 +2,15 @@
 
 **Occupancy-aware energy-waste and anomaly analysis of the I-BLEND campus dataset**
 
-MD3135 Data Science · T.Y. B.Tech · Vishwakarma Institute of Technology, Pune
-Rajwardhan Shinde
+MD3135 Data Science · T.Y. Computer Science, Batch K3
+Vishwakarma Institute of Technology, Pune
+
+| Roll | Name |
+|---|---|
+| 12 | Gaurav Shende |
+| 13 | Rivan Shetty |
+| 17 | Gandharv Shinde |
+| 18 | Rajwardhan Shinde |
 
 ---
 
@@ -39,7 +46,7 @@ So the waste is a scheduling and controls problem, not a thermostat problem.
 |---|---|
 | `docs/PROJECT_SUMMARY.md` | **Start here.** The whole project in ~5,800 words, with the figures. |
 | `docs/PROJECT_REPORT.md` | The master document: 14 sections, ~30,900 words, every number generated from executed code. |
-| `presentation/SMARTGRID-X.pptx` | The 12-slide deck. |
+| `presentation/SMARTGRID-X.pptx` | The 13-slide deck. |
 | `notebooks/` | Nine executed notebooks — the analysis itself. |
 | `notebooks/src_py/` | The percent-format source each notebook is built from. |
 | `src/` | 17 analysis modules imported by every notebook. |

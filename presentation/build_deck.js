@@ -24,6 +24,13 @@ const ROOT = path.join(__dirname, "..");
 
 // Read from results/decision_log.csv, never typed -- see decisions.js.
 const { DECISIONS } = require("./decisions.js");
+
+const TEAM = [
+  { roll: 12, name: "Gaurav Shende" },
+  { roll: 13, name: "Rivan Shetty" },
+  { roll: 17, name: "Gandharv Shinde" },
+  { roll: 18, name: "Rajwardhan Shinde" },
+];
 const FIG = (name) => {
   const p = path.join(ROOT, "figures", name);
   if (!fs.existsSync(p)) throw new Error(`missing figure: ${name}`);
@@ -54,7 +61,7 @@ const THEME = {
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE";            // 13.3 x 7.5 inches
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
-pres.author = "Rajwardhan Shinde";
+pres.author = "Gaurav Shende, Rivan Shetty, Gandharv Shinde, Rajwardhan Shinde";
 pres.title = "SMARTGRID-X";
 pres.subject = "Occupancy-aware energy-waste and anomaly analysis of I-BLEND";
 
@@ -64,15 +71,18 @@ const FOOTER = "SMARTGRID-X  ·  MD3135 Data Science  ·  VIT Pune";
 // ---------------------------------------------------------------------------
 // Layouts
 // ---------------------------------------------------------------------------
+// The opening and closing slides. Light, like the rest of the deck -- the
+// figures sit on a near-white surface, so dark bookends would have made the
+// two slides that carry no figure the odd ones out.
 pres.defineSlideMaster({
-  title: "DARK",
-  background: { color: THEME.colors.dk1 },
+  title: "COVER",
+  background: { color: C.background2 },
   objects: [
     { placeholder: { options: { name: "title", type: "title",
         x: 0.9, y: 2.1, w: 11.5, h: 1.5, fontSize: 44, bold: true,
-        color: C.background1, align: "left" } } },
+        color: C.text1, align: "left" } } },
     { placeholder: { options: { name: "body", type: "body",
-        x: 0.9, y: 3.7, w: 11.0, h: 2.2, fontSize: 20, color: "CADCFC",
+        x: 0.9, y: 3.7, w: 11.0, h: 2.2, fontSize: 20, color: C.text2,
         align: "left" } } },
   ],
 });
@@ -157,26 +167,48 @@ function statRow(slide, stats, { y = 1.6, h = 1.9 } = {}) {
 // ---------------------------------------------------------------------------
 pres.addSection({ title: "Opening" });
 {
-  const s = pres.addSlide({ masterName: "DARK", sectionTitle: "Opening" });
+  const s = pres.addSlide({ masterName: "COVER", sectionTitle: "Opening" });
   s.addText("SMARTGRID-X", {
-    x: 0.9, y: 1.5, w: 11.5, h: 1.0, isTextBox: true, margin: 0,
-    fontSize: 54, bold: true, color: C.background1, objectName: "wordmark",
+    x: 0.9, y: 0.85, w: 11.5, h: 1.0, isTextBox: true, margin: 0,
+    fontSize: 54, bold: true, color: C.text1, objectName: "wordmark",
   });
   s.addText([
-    { text: "Seven buildings on a real campus draw ", options: { color: "CADCFC" } },
+    { text: "Seven buildings on a real campus draw ", options: { color: C.text1 } },
     { text: "62–85% of their average power", options: { bold: true, color: THEME.colors.accent1 } },
-    { text: " when they are at their emptiest.", options: { color: "CADCFC" } },
+    { text: " when they are at their emptiest.", options: { color: C.text1 } },
   ], {
-    x: 0.9, y: 2.7, w: 11.0, h: 1.4, isTextBox: true, margin: 0,
+    x: 0.9, y: 2.0, w: 11.0, h: 1.4, isTextBox: true, margin: 0,
     fontSize: 26, lineSpacing: 34, objectName: "finding",
   });
   s.addText("Occupancy-aware energy-waste and anomaly analysis of the I-BLEND campus dataset", {
-    x: 0.9, y: 4.35, w: 11.0, h: 0.5, isTextBox: true, margin: 0,
-    fontSize: 15, italic: true, color: "8A8A8A", objectName: "subtitle",
+    x: 0.9, y: 3.3, w: 11.0, h: 0.5, isTextBox: true, margin: 0,
+    fontSize: 15, italic: true, color: C.text2, objectName: "subtitle",
   });
-  s.addText("Rajwardhan Shinde  ·  MD3135 Data Science  ·  T.Y. B.Tech, VIT Pune", {
-    x: 0.9, y: 6.4, w: 11.0, h: 0.4, isTextBox: true, margin: 0,
-    fontSize: 13, color: "8A8A8A", objectName: "byline",
+
+  // Team
+  s.addShape(pres.ShapeType.line, {
+    x: 0.9, y: 4.15, w: 11.5, h: 0,
+    line: { color: THEME.colors.accent1, width: 1.25 }, objectName: "rule",
+  });
+  s.addText("T.Y. Computer Science  ·  Batch K3", {
+    x: 0.9, y: 4.32, w: 11.0, h: 0.35, isTextBox: true, margin: 0,
+    fontSize: 13, bold: true, color: THEME.colors.accent1, objectName: "batch",
+  });
+  TEAM.forEach((m, i) => {
+    const x = 0.9 + i * 2.95;
+    s.addText(String(m.roll), {
+      x, y: 4.78, w: 2.75, h: 0.4, isTextBox: true, margin: 0,
+      fontSize: 22, bold: true, color: THEME.colors.accent1, objectName: `roll-${i}`,
+    });
+    s.addText(m.name, {
+      x, y: 5.2, w: 2.75, h: 0.4, isTextBox: true, margin: 0,
+      fontSize: 15, color: C.text1, objectName: `member-${i}`,
+    });
+  });
+
+  s.addText("MD3135 Data Science  ·  Vishwakarma Institute of Technology, Pune", {
+    x: 0.9, y: 6.5, w: 11.0, h: 0.4, isTextBox: true, margin: 0,
+    fontSize: 13, color: C.text2, objectName: "byline",
   });
   s.addNotes(
     "Give the finding before the method. Everything after this slide is " +
@@ -386,18 +418,18 @@ pres.addSection({ title: "Closing" });
 // 13 — So what
 // ---------------------------------------------------------------------------
 {
-  const s = pres.addSlide({ masterName: "DARK", sectionTitle: "Closing" });
+  const s = pres.addSlide({ masterName: "COVER", sectionTitle: "Closing" });
   s.addText("The opportunity is the fixed part of the load", {
     x: 0.9, y: 1.3, w: 11.5, h: 1.0, isTextBox: true, margin: 0,
-    fontSize: 40, bold: true, color: C.background1, objectName: "closing-title",
+    fontSize: 40, bold: true, color: C.text1, objectName: "closing-title",
   });
   s.addText([
     { text: "This is a controls and commissioning problem, not a sensing problem.",
-      options: { color: "CADCFC", breakLine: true } },
+      options: { color: C.text1, bold: true, breakLine: true } },
     { text: "Only 1–9% of it is cooling — the rest is equipment running on a " +
             "timetable nobody revisits, which is the cheap kind of waste to fix. " +
             "The Library, at 62%, proves the number can be moved.",
-      options: { color: "8A8A8A" } },
+      options: { color: C.text2 } },
   ], {
     x: 0.9, y: 2.5, w: 11.0, h: 1.8, isTextBox: true, margin: 0,
     fontSize: 19, lineSpacing: 28, objectName: "closing-body",
@@ -420,8 +452,40 @@ pres.addSection({ title: "Closing" });
 }
 
 // ---------------------------------------------------------------------------
-const OUT = path.join(__dirname, "SMARTGRID-X.pptx");
-pres.writeFile({ fileName: OUT })
-  .then(() => applyTheme(OUT, THEME))
+// DECK_OUT lets the caller write somewhere else -- useful when the usual
+// target is open in a viewer and therefore locked.
+const OUT = process.env.DECK_OUT
+  ? path.resolve(process.env.DECK_OUT)
+  : path.join(__dirname, "SMARTGRID-X.pptx");
+const TMP = path.join(path.dirname(OUT), `.build-${process.pid}.pptx`);
+
+/** Replace OUT with TMP, retrying briefly.
+ *
+ *  On Windows the freshly written file is often still held for a second or
+ *  two -- by the antivirus scanning it, or by an Office process that has just
+ *  been told to quit. Writing to a temp name and moving it over means a
+ *  transient lock costs a retry instead of a failed build.
+ */
+async function publish() {
+  for (let attempt = 1; attempt <= 10; attempt++) {
+    try {
+      fs.rmSync(OUT, { force: true });
+      fs.renameSync(TMP, OUT);
+      return;
+    } catch (e) {
+      if (attempt === 10) throw e;
+      console.log(`  ${OUT.split(/[\\/]/).pop()} is locked; retry ${attempt}/9`);
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+  }
+}
+
+pres.writeFile({ fileName: TMP })
+  .then(() => applyTheme(TMP, THEME))
+  .then(publish)
   .then(() => console.log(`wrote ${OUT}`))
-  .catch((e) => { console.error(e); process.exit(1); });
+  .catch((e) => {
+    fs.rmSync(TMP, { force: true });
+    console.error(e.message || e);
+    process.exit(1);
+  });

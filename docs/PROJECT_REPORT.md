@@ -5,6 +5,15 @@
 **Programme:** T.Y. B.Tech, Vishwakarma Institute of Technology, Pune
 **Academic year:** 2025–26
 
+**Team** — T.Y. Computer Science, Batch K3
+
+| Roll | Name |
+|---|---|
+| 12 | Gaurav Shende |
+| 13 | Rivan Shetty |
+| 17 | Gandharv Shinde |
+| 18 | Rajwardhan Shinde |
+
 ---
 
 > **How to read this report.** It is written to stand on its own. You do not need

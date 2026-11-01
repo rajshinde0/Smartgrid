@@ -2,7 +2,8 @@
 
 **Occupancy-aware energy-waste and anomaly analysis of the I-BLEND campus dataset**
 
-*7 October 2026 · Rajwardhan Shinde*
+*Gaurav Shende (12) · Rivan Shetty (13) · Gandharv Shinde (17) · Rajwardhan Shinde (18)*  
+*T.Y. Computer Science, Batch K3 · MD3135 Data Science · VIT Pune*
 
 > This is the readable summary of the project. The full working document is
 > [`PROJECT_REPORT.md`](PROJECT_REPORT.md) — 14 sections, ~30,900 words, every

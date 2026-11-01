@@ -37,3 +37,4 @@ package.json
 # ---- Deck render artefacts (regenerate from the .pptx) ----
 presentation/slide-*.png
 presentation/*.pdf
+smartgrid-x.zip
