@@ -1,27 +1,69 @@
-# SMARTGRID-X -- pinned to the versions the notebooks were executed with.
-# Generated from the running environment, not typed by hand.
+# SMARTGRID-X dependencies.
 #
-# Requires Python 3.13 or newer; built and executed on 3.14.3.
-# These are exact pins on purpose: every number in docs/PROJECT_REPORT.md was
-# produced by this exact stack, so a reader can reproduce them bit for bit.
+#     python -m pip install -r requirements.txt
 #
-# All of these versions exist on PyPI. If `pip install -r requirements.txt`
-# reports "No matching distribution found", the cause is almost always an older
-# Python -- check `python --version` first. To run on an older interpreter,
-# relax the pins to lower bounds (for example `pandas>=2.2`); the analysis code
-# does not depend on anything newer than pandas 2.2 / scikit-learn 1.4, but the
-# published numbers were produced with the versions below.
+# One file, two behaviours, chosen by your Python version
+# -------------------------------------------------------
+# Every number in docs/PROJECT_REPORT.md was produced by one exact stack, on
+# Python 3.14.3. A reader who wants to reproduce them bit for bit needs those
+# exact versions -- but they require Python 3.13+, which no hosted notebook
+# platform offers yet, and the project has to run on Colab too.
+#
+# So each package appears twice, with a PEP 508 environment marker. On 3.13 and
+# newer pip installs the pinned version; below that it installs the floor. One
+# install command works everywhere, and the reproduction guarantee survives
+# where it can be kept.
+#
+# The floors are real, not hopeful: the analysis uses no syntax newer than 3.10
+# and no pandas API that changed between 2.2 and 3.0. Results computed below
+# 3.13 are not *guaranteed* identical to the published ones, so the Colab
+# notebook ends with a drift check that diffs every regenerated results/*.csv
+# against the committed copy and names anything that moved.
+#
+# Two other files exist, and neither duplicates this one:
+#   requirements-dev.txt        pytest, for the test suite. Not needed to run
+#                               the analysis or the dashboard.
+#   dashboard/requirements.txt  the six packages the deployed dashboard needs.
+#                               It lives there because Streamlit Community
+#                               Cloud looks in the entrypoint's directory
+#                               first, and it is deliberately smaller so the
+#                               hosted app boots without nbconvert or ipykernel.
 
-pandas==3.0.3
-numpy==2.4.3
-pyarrow==24.0.0
-matplotlib==3.10.8
-seaborn==0.13.2
-scikit-learn==1.8.0
-scipy==1.17.1
-streamlit==1.57.0
-nbformat==5.11.1
-nbconvert==7.17.1
-nbclient==0.11.0
-ipykernel==7.4.0
-jupyter-client==8.10.0
+pandas==3.0.3                 ; python_version >= "3.13"
+pandas>=2.2                   ; python_version <  "3.13"
+
+numpy==2.4.3                  ; python_version >= "3.13"
+numpy>=1.26                   ; python_version <  "3.13"
+
+pyarrow==24.0.0               ; python_version >= "3.13"
+pyarrow>=14.0                 ; python_version <  "3.13"
+
+matplotlib==3.10.8            ; python_version >= "3.13"
+matplotlib>=3.8               ; python_version <  "3.13"
+
+seaborn==0.13.2               ; python_version >= "3.13"
+seaborn>=0.13                 ; python_version <  "3.13"
+
+scikit-learn==1.8.0           ; python_version >= "3.13"
+scikit-learn>=1.4             ; python_version <  "3.13"
+
+scipy==1.17.1                 ; python_version >= "3.13"
+scipy>=1.11                   ; python_version <  "3.13"
+
+streamlit==1.57.0             ; python_version >= "3.13"
+streamlit>=1.30               ; python_version <  "3.13"
+
+nbformat==5.11.1              ; python_version >= "3.13"
+nbformat>=5.9                 ; python_version <  "3.13"
+
+nbconvert==7.17.1             ; python_version >= "3.13"
+nbconvert>=7.10               ; python_version <  "3.13"
+
+nbclient==0.11.0              ; python_version >= "3.13"
+nbclient>=0.9                 ; python_version <  "3.13"
+
+ipykernel==7.4.0              ; python_version >= "3.13"
+ipykernel>=6.27               ; python_version <  "3.13"
+
+jupyter-client==8.10.0        ; python_version >= "3.13"
+jupyter-client>=8.6           ; python_version <  "3.13"

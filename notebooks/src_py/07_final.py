@@ -21,7 +21,7 @@
 # ### Opening this notebook in Colab
 #
 # Colab hands you this `.ipynb` and nothing else -- no `src/`, no data. The cell
-# below clones the repository, installs the portable dependency set and fetches
+# below clones the repository, installs the dependencies and fetches
 # Phase 1's saved output (278 MB from the GitHub Release).
 #
 # It does nothing at all outside Colab, so running this notebook locally, or
@@ -42,7 +42,7 @@ if "google.colab" in sys.modules:
         )
         subprocess.run(
             [sys.executable, "-m", "pip", "install", "-q",
-             "-r", str(REPO / "requirements-portable.txt")],
+             "-r", str(REPO / "requirements.txt")],
             check=True,
         )
         subprocess.run(
@@ -667,7 +667,7 @@ best_ratio = ratio_valid.loc[ratio_valid["intensity ratio"].idxmin()]
 worst_ratio = ratio_valid.loc[ratio_valid["intensity ratio"].idxmax()]
 
 blocks["presentation_outline"] = f"""
-Twelve slides, **headline first**. The rule throughout: one idea per slide, the
+Thirteen slides, **headline first**. The rule throughout: one idea per slide, the
 number on the slide, the caveat spoken aloud.
 
 **1. Title and the one-sentence finding**
@@ -718,9 +718,11 @@ against their published 56%. Different continent, fifteen years apart.
 **This is the credibility slide.**
 
 **9. Can we predict it? (RQ2)**
-Occupancy adds only {mean_r2_gain:+.3f} to validation R-squared. Say the negative
-result plainly -- it matches published work, and three different analyses in this
-project reached it independently.
+Occupancy adds only {mean_r2_gain:+.3f} to validation R-squared -- and once
+outdoor temperature is known it is worth only {occ_given:+.3f}, because occupancy
+and heat are both seasonal and this campus empties in the hottest months. Say the
+negative result plainly: it matches published work, and three different analyses
+in this project reached it independently.
 *Figure:* `fig_04_model_comparison.png`.
 
 **10. Can we detect it automatically? (RQ3)**
@@ -730,13 +732,25 @@ The experiment: two detectors, synthetic labelled anomalies, seed {C.SEED}.
 planned fixed threshold was not a fair comparison.
 *Figure:* `fig_06_detector_comparison.png`.
 
-**11. Limitations, said before anyone asks**
-No weather data (Delhi's vacation is its hottest season, so some of this is
-cooling an empty building). WiFi counts devices, not people -- which makes our
-numbers a *lower* bound. Injected anomalies are synthetic. Lecture has only
+**11. How much of it is just air conditioning?**
+The obvious objection, answered with data rather than argued away. Delhi airport
+weather for the exact analysis window splits low-occupancy power into the part
+that responds to heat and the part that does not: cooling is only
+**{cool_lo:.0f}-{cool_hi:.0f}%** of it. Lead with the negative control --
+Facilities climbs +62% from mild to hot weather while Lecture *falls* 12%, which
+is how we know the method detects cooling when cooling is there.
+*Figure:* `fig_08_waste_decomposition.png`.
+**Say that {not_ident} cannot be decomposed** -- both are shut in the hot months,
+so season and usage are confounded and we report "not identifiable" rather than
+a number.
+
+**12. Limitations, said before anyone asks**
+WiFi counts devices, not people -- which makes our numbers a *lower* bound.
+Airport weather is 25 km from campus: a measured proxy, not campus weather.
+Injected anomalies are synthetic. Lecture has only
 {lecture_row["usable %"]:.0f}% usable data. One campus, one climate.
 
-**12. So what, and a live dashboard**
+**13. So what, and a live dashboard**
 The opportunity is the **fixed** part of the load: this is a controls and
 commissioning problem, not a sensing problem. The Library proves it can be done.
 Then demonstrate `streamlit run dashboard/app.py` -- pick a building, pick a week,
@@ -847,20 +861,44 @@ report.log_decision(
 
 report.log_decision(
     id="D07-04", phase="7",
-    decision="Two dependency files instead of relaxing the canonical pins",
+    decision="Two dependency files instead of relaxing the canonical pins "
+             "(SUPERSEDED by D07-06)",
     options_considered="Relax requirements.txt to lower bounds; keep exact pins "
                        "and accept the project runs nowhere else; keep the pins "
                        "and add a portable sibling file",
-    chosen="requirements.txt stays exactly pinned; requirements-portable.txt "
-           "expresses the same stack as lower bounds",
+    chosen="requirements.txt stayed exactly pinned; requirements-portable.txt "
+           "expressed the same stack as lower bounds",
     reason="The exact pins are what let a reader reproduce every number in the "
            "report bit for bit, and that property is the point of the file. But "
            "they require Python 3.13+, which no hosted notebook platform offers, "
-           "so a single file cannot do both jobs.",
-    effect_on_results="None locally. Results computed against the portable file "
-                      "are not guaranteed identical, so the Colab notebook ends "
-                      "by diffing every regenerated results/*.csv against the "
-                      "committed copy and naming anything that moved.",
+           "so it looked as though a single file could not do both jobs.",
+    effect_on_results="None on any number while it stood. Superseded once it "
+                      "became clear a single file *can* do both jobs, using PEP "
+                      "508 environment markers -- see D07-06.",
+)
+
+report.log_decision(
+    id="D07-06", phase="7",
+    decision="One requirements.txt, with the Python version choosing the pins",
+    options_considered="Keep the two files of D07-04; merge them with "
+                       "environment markers; move to pyproject.toml with "
+                       "optional-dependency groups",
+    chosen="A single requirements.txt declaring each package twice behind a "
+           "`python_version` marker -- the exact pin on 3.13+, the floor below",
+    reason="D07-04 assumed one file could not serve both the reproduction "
+           "guarantee and a hosted runtime. It can: pip honours PEP 508 markers, "
+           "so 'pip install -r requirements.txt' is correct everywhere and the "
+           "reader no longer has to know which file applies to them. Four "
+           "requirements files was also simply confusing to open. "
+           "pyproject.toml would be the modern form, but Streamlit Community "
+           "Cloud resolves requirements.txt by location, so it would have added "
+           "a file rather than removed one.",
+    effect_on_results="None. Verified by resolving the merged file against both "
+                      "interpreters -- 13 pinned on 3.14, the same 13 as floors "
+                      "on 3.12, no duplicates -- and by re-running all nine "
+                      "notebooks. dashboard/requirements.txt stays: Streamlit "
+                      "Cloud finds it first by location, and its six packages "
+                      "let the hosted app boot without nbconvert or ipykernel.",
 )
 
 report.log_decision(

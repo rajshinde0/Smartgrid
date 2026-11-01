@@ -74,17 +74,16 @@ print("commit    :", subprocess.run(
 print("python    :", sys.version.split()[0])
 
 # %% [markdown]
-# Dependencies come from `requirements-portable.txt`, not `requirements.txt`.
-#
-# The pinned file requires Python 3.13+ and exact versions, because that is the
-# stack every published number was produced on. Colab runs an older Python, so
-# the portable file expresses the same stack as lower bounds. The floors are
-# real: the analysis uses no syntax newer than 3.10 and no pandas API that
-# changed between 2.2 and 3.0.
+# One `requirements.txt`, which installs differently depending on the Python it
+# finds. Every published number was produced on an exact stack that needs
+# Python 3.13+; Colab runs older, so each package is declared twice behind a
+# version marker — the pin above 3.13, the floor below it. The floors are real:
+# the analysis uses no syntax newer than 3.10 and no pandas API that changed
+# between 2.2 and 3.0.
 
 # %%
 subprocess.run(
-    [sys.executable, "-m", "pip", "install", "-q", "-r", "requirements-portable.txt"],
+    [sys.executable, "-m", "pip", "install", "-q", "-r", "requirements.txt"],
     check=True,
 )
 

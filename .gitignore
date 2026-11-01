@@ -25,6 +25,15 @@ env/
 .ipynb_checkpoints/
 */.ipynb_checkpoints/
 
+# ---- Node (only pptxgenjs, for building the slide deck) ----
+node_modules/
+package-lock.json
+package.json
+
 # ---- Misc ----
 .vscode/
 .idea/
+
+# ---- Deck render artefacts (regenerate from the .pptx) ----
+presentation/slide-*.png
+presentation/*.pdf

@@ -1,5 +1,5 @@
-Twelve slides, **headline first**. The rule throughout: one idea per slide, the
-number on the slide, the caveat spoken aloud.
+Thirteen slides, **headline first**. The rule throughout: one idea per slide,
+the number on the slide, the caveat spoken aloud.
 
 **1. Title and the one-sentence finding** SMARTGRID-X. *"Seven buildings on a
 real campus draw 62%-85% of their average power when they are at their
@@ -41,7 +41,9 @@ and 55.0% against their published 56%. Different continent, fifteen years apart.
 **This is the credibility slide.**
 
 **9. Can we predict it? (RQ2)** Occupancy adds only +0.106 to validation
-R-squared. Say the negative result plainly -- it matches published work, and
+R-squared -- and once outdoor temperature is known it is worth only +0.078,
+because occupancy and heat are both seasonal and this campus empties in the
+hottest months. Say the negative result plainly: it matches published work, and
 three different analyses in this project reached it independently. *Figure:*
 `fig_04_model_comparison.png`.
 
@@ -51,13 +53,22 @@ occupancy helps consistently but by only 1-3 points, and most on the waste
 anomalies. Mention the trap we caught -- the planned fixed threshold was not a
 fair comparison. *Figure:* `fig_06_detector_comparison.png`.
 
-**11. Limitations, said before anyone asks** No weather data (Delhi's vacation
-is its hottest season, so some of this is cooling an empty building). WiFi
-counts devices, not people -- which makes our numbers a *lower* bound. Injected
-anomalies are synthetic. Lecture has only 19% usable data. One campus, one
-climate.
+**11. How much of it is just air conditioning?** The obvious objection, answered
+with data rather than argued away. Delhi airport weather for the exact analysis
+window splits low-occupancy power into the part that responds to heat and the
+part that does not: cooling is only **1-9%** of it. Lead with the negative
+control -- Facilities climbs +62% from mild to hot weather while Lecture *falls*
+12%, which is how we know the method detects cooling when cooling is there.
+*Figure:* `fig_08_waste_decomposition.png`. **Say that Library, Lecture,
+Facilities cannot be decomposed** -- both are shut in the hot months, so season
+and usage are confounded and we report "not identifiable" rather than a number.
 
-**12. So what, and a live dashboard** The opportunity is the **fixed** part of
+**12. Limitations, said before anyone asks** WiFi counts devices, not people --
+which makes our numbers a *lower* bound. Airport weather is 25 km from campus: a
+measured proxy, not campus weather. Injected anomalies are synthetic. Lecture
+has only 19% usable data. One campus, one climate.
+
+**13. So what, and a live dashboard** The opportunity is the **fixed** part of
 the load: this is a controls and commissioning problem, not a sensing problem.
 The Library proves it can be done. Then demonstrate `streamlit run
 dashboard/app.py` -- pick a building, pick a week, show the flagged periods.

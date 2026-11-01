@@ -581,6 +581,52 @@ rather than resolve something wrong. All five behave correctly.
 Then all nine notebooks rebuilt and re-executed, with `results/` diffed against
 the committed copies to confirm no number moved.
 
+## Submission package (1 Nov 2026) - done
+
+**Requirements: four files, now three.** Not three as reported -- the fourth
+was `dashboard/requirements.txt`, and it turned out to be an exact subset of
+the portable set: the same six packages at identical bounds. The two that
+genuinely overlapped are now one file: each package declared twice behind a
+PEP 508 marker, the exact pin on Python 3.13+ and the floor below it. Verified
+by resolving the merged file against both interpreters -- 13 pinned on 3.14,
+the same 13 as floors on 3.12, no duplicates -- then by rebuilding all nine
+notebooks, which moved no number. `dashboard/requirements.txt` stays because
+Streamlit Cloud resolves by location and its six packages let the hosted app
+boot without nbconvert. D07-04 marked superseded; D07-06 records why.
+
+**The presentation outline was stale, and nobody had noticed.** It is a
+generated block, but it predated Phase 8 entirely: thirteen slides now, with
+the cooling decomposition as slide 11, and "No weather data" gone from the
+limitations -- it had been listing as an open problem the exact thing the
+project closed. The RQ2 slide now carries the +0.107 -> +0.078 shrinkage too.
+
+**The deck.** `presentation/SMARTGRID-X.pptx`, built by a committed script from
+the generated outline and the project's own figures, in the validated palette
+from `src/viz.py` so the slide furniture and the charts are one system.
+Speaker notes on all thirteen slides.
+
+**Two defects caught by looking at the render**, which is the only reason they
+were caught:
+- Slide 13 said "49 judgement calls". D07-06 had just made it 50. The count is
+  now read from `results/decision_log.csv` by `presentation/decisions.js`, the
+  same rule the report follows -- a typed number goes stale silently.
+- Slide 3 carried "This is the slide where the examiner learns we read our own
+  data" *on the slide*. That is a note to the presenter; it is in the speaker
+  notes now.
+
+**Windows got in the way twice.** The pptx skill's render pipeline is
+Linux-only -- its soffice wrapper uses `socket.AF_UNIX` and Poppler is not
+installed -- so slides were exported through PowerPoint COM instead, which has
+the advantage of rendering exactly what the examiner will see. And `npm install
+pptxgenjs` dropped a `node_modules/` into the repo root that nothing ignored;
+caught before it reached a commit.
+
+**Also:** `SUBMISSION.md` carries the GitHub and Colab links and a map of what
+is in the archive.
+
+**State.** 9 notebooks, 47 figures, 50 result tables, 50 decisions, 78 tests,
+13 slides.
+
 ## Colab test step, and a refreshed cache (31 Oct 2026) - done
 
 **Two gaps found by asking whether the project was actually up to date.**

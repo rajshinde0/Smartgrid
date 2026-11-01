@@ -43,7 +43,7 @@
 # ### Opening this notebook in Colab
 #
 # Colab hands you this `.ipynb` and nothing else -- no `src/`, no data. The cell
-# below clones the repository, installs the portable dependency set and fetches
+# below clones the repository, installs the dependencies and fetches
 # Phase 1's saved output (278 MB from the GitHub Release).
 #
 # It does nothing at all outside Colab, so running this notebook locally, or
@@ -64,7 +64,7 @@ if "google.colab" in sys.modules:
         )
         subprocess.run(
             [sys.executable, "-m", "pip", "install", "-q",
-             "-r", str(REPO / "requirements-portable.txt")],
+             "-r", str(REPO / "requirements.txt")],
             check=True,
         )
         subprocess.run(
